@@ -53,16 +53,6 @@ export default function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-          <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="mb-12"
-          >
-            <div className="w-32 h-32 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-              <Scissors className="w-16 h-16 text-primary" />
-            </div>
-          </motion.div>
           <AnimatedText
             text="1BARBERS"
             className="text-8xl font-bold text-white mb-8 tracking-tight"
