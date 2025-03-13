@@ -35,7 +35,7 @@ export function ApplicationsSection() {
     const token = session.user?.accessToken
 
     // Hedef URL'i oluşturuyoruz ve token'ı query parametresi olarak ekliyoruz
-    const targetUrl = `${app.url}/auth/sso?token=${encodeURIComponent(token || '')}&redirect=/dashboard`
+    const targetUrl = `${app.url}/auth/sso?token=${encodeURIComponent(token || '')}&redirect=/`
     
     // Yeni pencerede açıyoruz
     window.open(targetUrl, '_blank')
