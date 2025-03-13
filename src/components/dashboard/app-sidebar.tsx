@@ -17,7 +17,6 @@ import {
   Home,
   AppWindow,
 } from 'lucide-react'
-import { useSession } from 'next-auth/react'  
 import { usePathname } from 'next/navigation'
 
 import { NavMain } from '@/components/dashboard/nav-main'
@@ -98,23 +97,16 @@ const getDefaultData = (sessionUser: any, currentPath: string) => ({
 })
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session } = useSession()
   const pathname = usePathname()
-  const data = React.useMemo(
-    () => getDefaultData(session?.user, pathname || ''),
-    [session?.user, pathname],
-  )
+  
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

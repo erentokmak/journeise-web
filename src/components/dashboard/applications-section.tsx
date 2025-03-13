@@ -2,7 +2,6 @@ import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card'
 import { Button } from '@/ui/button'
 import { ExternalLink } from 'lucide-react'
-import { useRouter } from 'next/router'
 
 interface Application {
   id: string
@@ -13,7 +12,6 @@ interface Application {
 }
 
 export function ApplicationsSection() {
-  const router = useRouter()
 
   const applications: Application[] = [
     {
@@ -25,16 +23,6 @@ export function ApplicationsSection() {
     },
     // Diğer uygulamalar buraya eklenebilir
   ]
-
-  const handleApplicationClick = (app: Application) => {
-
-    // JWT token'ı alıyoruz
-
-    // Hedef URL'i oluşturuyoruz ve token'ı query parametresi olarak ekliyoruz
-    
-    // Yeni pencerede açıyoruz
-    window.open(targetUrl, '_blank')
-  }
 
   return (
     <Card className="w-full">
@@ -48,7 +36,7 @@ export function ApplicationsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {applications.map((app) => (
             <Card key={app.id} className="cursor-pointer hover:bg-muted/50 transition-colors">
-              <CardContent className="p-4 flex items-center justify-between" onClick={() => handleApplicationClick(app)}>
+              <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <h3 className="font-medium">{app.name}</h3>
                   <p className="text-sm text-muted-foreground">{app.description}</p>
