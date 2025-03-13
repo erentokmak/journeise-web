@@ -2,7 +2,6 @@ import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card'
 import { Button } from '@/ui/button'
 import { ExternalLink } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 
 interface Application {
@@ -14,7 +13,6 @@ interface Application {
 }
 
 export function ApplicationsSection() {
-  const { data: session } = useSession()
   const router = useRouter()
 
   const applications: Application[] = [
@@ -29,13 +27,10 @@ export function ApplicationsSection() {
   ]
 
   const handleApplicationClick = (app: Application) => {
-    if (!session) return
 
     // JWT token'ı alıyoruz
-    const token = session.user?.accessToken
 
     // Hedef URL'i oluşturuyoruz ve token'ı query parametresi olarak ekliyoruz
-    const targetUrl = `${app.url}/auth/sso?token=${encodeURIComponent(token || '')}&redirect=/`
     
     // Yeni pencerede açıyoruz
     window.open(targetUrl, '_blank')
