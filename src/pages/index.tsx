@@ -49,9 +49,8 @@ export default function Home() {
           >
             <Link href="/reservation">
               <Button 
-                variant="outline" 
                 size="lg" 
-                className="text-lg group bg-background/10 backdrop-blur-sm hover:bg-primary/20 border-primary/20"
+                className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
               >
                 Hemen Rezervasyon Yap
                 <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -82,17 +81,17 @@ export default function Home() {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection className="text-center p-6 rounded-lg bg-background/50 backdrop-blur-sm">
+            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow">
               <Scissors className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">Profesyonel Hizmet</h3>
               <p className="text-muted-foreground">En son trendler ve klasik kesim teknikleri</p>
             </AnimatedSection>
-            <AnimatedSection className="text-center p-6 rounded-lg bg-background/50 backdrop-blur-sm" delay={0.2}>
+            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.2}>
               <Clock className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">Hızlı Servis</h3>
               <p className="text-muted-foreground">Minimum bekleme süresi, maksimum memnuniyet</p>
             </AnimatedSection>
-            <AnimatedSection className="text-center p-6 rounded-lg bg-background/50 backdrop-blur-sm" delay={0.4}>
+            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.4}>
               <Star className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">Kaliteli Hizmet</h3>
               <p className="text-muted-foreground">Uzman kadro ve steril ortam</p>
@@ -112,30 +111,45 @@ export default function Home() {
           </AnimatedSection>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             <AnimatedSection>
-              <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10">
+              <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
                 <h3 className="mb-4 text-2xl font-semibold">Saç Kesimi</h3>
                 <p className="mb-4 text-muted-foreground">
                   Modern ve klasik kesim teknikleriyle, yüz hatlarınıza en uygun saç stilini buluyoruz.
                 </p>
                 <p className="text-lg font-semibold text-primary">150 TL</p>
+                <Link href="/reservation">
+                  <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
+                    Randevu Al
+                  </Button>
+                </Link>
               </div>
             </AnimatedSection>
             <AnimatedSection delay={0.2}>
-              <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10">
+              <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
                 <h3 className="mb-4 text-2xl font-semibold">Sakal Kesimi</h3>
                 <p className="mb-4 text-muted-foreground">
                   Profesyonel sakal şekillendirme ve bakım hizmetiyle kendine güvenini artır.
                 </p>
                 <p className="text-lg font-semibold text-primary">100 TL</p>
+                <Link href="/reservation">
+                  <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
+                    Randevu Al
+                  </Button>
+                </Link>
               </div>
             </AnimatedSection>
             <AnimatedSection delay={0.4}>
-              <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10">
+              <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
                 <h3 className="mb-4 text-2xl font-semibold">Saç & Sakal Kombo</h3>
                 <p className="mb-4 text-muted-foreground">
                   Komple bakım paketi ile tamamen yenilenmiş bir görünüme kavuş.
                 </p>
                 <p className="text-lg font-semibold text-primary">200 TL</p>
+                <Link href="/reservation">
+                  <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
+                    Randevu Al
+                  </Button>
+                </Link>
               </div>
             </AnimatedSection>
           </div>
@@ -154,7 +168,7 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {BARBERS.map((barber, index) => (
               <AnimatedSection key={barber.id} delay={index * 0.2}>
-                <div className="group overflow-hidden rounded-lg bg-card transition-all hover:bg-card/80 border border-primary/10">
+                <div className="group overflow-hidden rounded-lg bg-card transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
                   <div className="relative mb-4 h-80 w-full overflow-hidden">
                     <Image
                       src={barber.image}
@@ -169,6 +183,11 @@ export default function Home() {
                       <Award className="h-4 w-4 mr-2 text-primary" />
                       {barber.experience} Yıl Deneyim
                     </p>
+                    <Link href="/reservation">
+                      <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
+                        Randevu Al
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </AnimatedSection>
@@ -189,7 +208,7 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {GALLERY_IMAGES.map((image, index) => (
               <AnimatedSection key={image.id} delay={index * 0.1}>
-                <div className="group relative aspect-square overflow-hidden rounded-lg">
+                <div className="group relative aspect-square overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                   <Image
                     src={image.src}
                     alt={image.alt}
@@ -197,7 +216,7 @@ export default function Home() {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <Button variant="outline" className="bg-background/10 backdrop-blur-sm">
+                    <Button variant="secondary" className="bg-background/10 backdrop-blur-sm hover:bg-background/20">
                       Detayları Gör
                     </Button>
                   </div>
@@ -207,7 +226,7 @@ export default function Home() {
           </div>
           <div className="mt-8 text-center">
             <Link href="/gallery">
-              <Button variant="outline" size="lg" className="text-lg group">
+              <Button size="lg" className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground">
                 Tüm Galeriyi Gör
                 <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
@@ -226,17 +245,17 @@ export default function Home() {
             </p>
           </AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <AnimatedSection className="text-center p-6 rounded-lg bg-background/50 backdrop-blur-sm">
+            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow">
               <h3 className="text-xl font-semibold mb-2">Adres</h3>
               <p className="text-muted-foreground">
                 Örnek Mahallesi, Örnek Sokak No:1, İstanbul
               </p>
             </AnimatedSection>
-            <AnimatedSection className="text-center p-6 rounded-lg bg-background/50 backdrop-blur-sm" delay={0.2}>
+            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.2}>
               <h3 className="text-xl font-semibold mb-2">Telefon</h3>
               <p className="text-muted-foreground">+90 555 555 55 55</p>
             </AnimatedSection>
-            <AnimatedSection className="text-center p-6 rounded-lg bg-background/50 backdrop-blur-sm" delay={0.4}>
+            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.4}>
               <h3 className="text-xl font-semibold mb-2">Email</h3>
               <p className="text-muted-foreground">info@1barbers.com</p>
             </AnimatedSection>
