@@ -53,7 +53,7 @@ const getDefaultData = (sessionUser: any, currentPath: string) => ({
       items: [
         {
           title: 'Anasayfa',
-          url: '/dashboard',
+          url: '/',
         },
         {
           title: 'Profil Ayarları',
