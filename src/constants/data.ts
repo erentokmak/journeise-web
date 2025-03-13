@@ -3,9 +3,9 @@ import { IBarber, IGalleryImage } from '@/types/barber.types';
 export const BARBERS: IBarber[] = [
   {
     id: 1,
-    name: "Ahmet Usta",
+    name: "SEBEBCI",
     image: "/assets/images/barber-images/SEBEBCI.jpg",
-    experience: 10,
+    experience: 2,
     services: [
       { id: 1, name: "Saç Kesimi", duration: 30, price: 150 },
       { id: 2, name: "Sakal Kesimi", duration: 20, price: 100 },
@@ -14,9 +14,9 @@ export const BARBERS: IBarber[] = [
   },
   {
     id: 2,
-    name: "Mehmet Usta",
-    image: "/assets/images/barber-images/SEBEBCI.jpg",
-    experience: 8,
+    name: "C1RAK",
+    image: "/assets/images/barber-images/C1RAK.jpg",
+    experience: 1,
     services: [
       { id: 1, name: "Saç Kesimi", duration: 30, price: 150 },
       { id: 2, name: "Sakal Kesimi", duration: 20, price: 100 },
@@ -25,9 +25,9 @@ export const BARBERS: IBarber[] = [
   },
   {
     id: 3,
-    name: "Ali Usta",
-    image: "/assets/images/barber-images/SEBEBCI.jpg",
-    experience: 15,
+    name: "MARCO",
+    image: "/assets/images/barber-images/MARCO.jpg",
+    experience: 1,
     services: [
       { id: 1, name: "Saç Kesimi", duration: 30, price: 150 },
       { id: 2, name: "Sakal Kesimi", duration: 20, price: 100 },
@@ -40,17 +40,32 @@ export const GALLERY_IMAGES: IGalleryImage[] = [
   {
     id: 1,
     src: "/assets/images/gallery-images/1.jpg",
-    alt: "Berber Dükkanı",
+    alt: "Sebepci Usta - Saç Kesimi",
   },
   {
     id: 2,
-    src: "/assets/images/gallery-images/1.jpg",
-    alt: "Berber Dükkanı",
+    src: "/assets/images/gallery-images/2.jpg",
+    alt: "Çırak Usta - Sakal Kesimi",
   },
   {
     id: 3,
-    src: "/assets/images/gallery-images/1.jpg",
-    alt: "Berber Dükkanı",
+    src: "/assets/images/gallery-images/3.jpg",
+    alt: "Kalfa Usta - Saç & Sakal Kesimi",
+  },
+  {
+    id: 4,
+    src: "/assets/images/gallery-images/4.jpg",
+    alt: "Sebepci Usta - Özel Kesim",
+  },
+  {
+    id: 5,
+    src: "/assets/images/gallery-images/5.jpg",
+    alt: "Çırak Usta - Modern Kesim",
+  },
+  {
+    id: 6,
+    src: "/assets/images/gallery-images/6.jpg",
+    alt: "Kalfa Usta - Klasik Kesim",
   },
 ];
 
