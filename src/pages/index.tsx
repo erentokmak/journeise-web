@@ -192,8 +192,8 @@ export default function Home() {
               <AnimatedSection key={barber.id} delay={index * 0.2}>
                 <motion.div
                   className={`group overflow-hidden rounded-lg bg-card transition-all hover:bg-card/80 border ${selectedBarber === barber.id.toString()
-                      ? "border-primary shadow-xl"
-                      : "border-primary/10 shadow-lg hover:shadow-xl"
+                    ? "border-primary shadow-xl"
+                    : "border-primary/10 shadow-lg hover:shadow-xl"
                     }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
