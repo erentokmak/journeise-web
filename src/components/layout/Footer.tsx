@@ -97,7 +97,8 @@ export function Footer() {
                 { href: "/reservation", label: "Rezervasyon" },
                 { href: "/services", label: "Hizmetler" },
                 { href: "/barbers", label: "Berberler" },
-                { href: "/gallery", label: "Galeri" }
+                { href: "/gallery", label: "Galeri" },
+                { href: "/about", label: "Hakkımızda" }
               ].map((link, index) => (
                 <motion.li 
                   key={index}

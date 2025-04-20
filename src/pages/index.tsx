@@ -3,9 +3,6 @@ import { BARBERS, GALLERY_IMAGES } from "@/constants/data";
 import Image from "next/image";
 import Link from "next/link";
 import { MoveRight, Scissors, Clock, Star, Award } from "lucide-react";
-import { AnimatedText } from "@/components/ui/animated-text";
-import { AnimatedSection } from "@/components/ui/animated-section";
-import { ParallaxSection } from "@/components/ui/parallax-section";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -15,7 +12,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Animasyonlu Gradient Arka Plan */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent animate-gradient-x" />
@@ -23,62 +20,58 @@ export default function Home() {
           <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,_var(--tw-gradient-stops))] from-primary/20 via-primary/10 to-transparent animate-spin-slow" />
         </div>
 
-        {/* Animasyonlu Şekiller */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            className="absolute -top-1/2 -left-1/2 w-full h-full bg-primary/5 rounded-full"
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 180, 360],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-          <motion.div
-            className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-primary/5 rounded-full"
-            animate={{
-              scale: [1.2, 1, 1.2],
-              rotate: [360, 180, 0],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        </div>
-
         {/* Hero Content */}
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-          <AnimatedText
-            text="1BARBERS"
-            className="text-8xl font-bold text-white mb-8 tracking-tight"
-            delay={0.2}
-          />
-          <AnimatedText
-            text="Tarzını Yeniden Keşfet"
-            className="text-3xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed text-center justify-center"
-            delay={0.4}
-          />
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex justify-center"
-          >
-            <Link href="/reservation">
-              <Button
-                size="lg"
-                className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 px-8"
+        <div className="relative z-10 container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="text-left space-y-8">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-7xl font-bold text-white mb-4 tracking-tight"
               >
-                Hemen Rezervasyon Yap
-                <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </motion.div>
+                1BARBERS
+              </motion.h1>
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-3xl text-white/90 mb-8 leading-relaxed"
+              >
+                Tarzını Yeniden Keşfet
+              </motion.h2>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <Link href="/reservation">
+                  <Button
+                    size="lg"
+                    className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 px-8"
+                  >
+                    Hemen Rezervasyon Yap
+                    <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+              </motion.div>
+            </div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="relative h-[500px] w-full rounded-lg overflow-hidden shadow-2xl"
+            >
+              <Image
+                src="/assets/images/gallery-images/1.jpg"
+                alt="1Barbers Dükkan"
+                fill
+                className="object-cover"
+                priority
+              />
+            </motion.div>
+          </div>
         </div>
 
         {/* Scroll Indicator */}
@@ -103,21 +96,39 @@ export default function Home() {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
+            >
               <Scissors className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">Profesyonel Hizmet</h3>
               <p className="text-muted-foreground">En son trendler ve klasik kesim teknikleri</p>
-            </AnimatedSection>
-            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.2}>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
+            >
               <Clock className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">Hızlı Servis</h3>
               <p className="text-muted-foreground">Minimum bekleme süresi, maksimum memnuniyet</p>
-            </AnimatedSection>
-            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.4}>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
+            >
               <Star className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">Kaliteli Hizmet</h3>
               <p className="text-muted-foreground">Uzman kadro ve steril ortam</p>
-            </AnimatedSection>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -125,14 +136,25 @@ export default function Home() {
       {/* Services Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <AnimatedSection className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
             <h2 className="text-4xl font-bold mb-6">Hizmetlerimiz</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
               Modern ve klasik kesim teknikleriyle, yüz hatlarınıza en uygun saç stilini buluyoruz.
             </p>
-          </AnimatedSection>
+          </motion.div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <AnimatedSection>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
               <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
                 <h3 className="mb-4 text-2xl font-semibold">Saç Kesimi</h3>
                 <p className="mb-4 text-muted-foreground">
@@ -145,8 +167,13 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-            </AnimatedSection>
-            <AnimatedSection delay={0.2}>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
               <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
                 <h3 className="mb-4 text-2xl font-semibold">Sakal Kesimi</h3>
                 <p className="mb-4 text-muted-foreground">
@@ -159,8 +186,13 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-            </AnimatedSection>
-            <AnimatedSection delay={0.4}>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+            >
               <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
                 <h3 className="mb-4 text-2xl font-semibold">Saç & Sakal Kombo</h3>
                 <p className="mb-4 text-muted-foreground">
@@ -173,7 +205,7 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-            </AnimatedSection>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -181,15 +213,27 @@ export default function Home() {
       {/* Barbers Section */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <AnimatedSection className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
             <h2 className="text-4xl font-bold mb-6">Ustalarımız</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
               Deneyimli ve uzman kadromuzla sizlere en iyi hizmeti sunuyoruz.
             </p>
-          </AnimatedSection>
+          </motion.div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {BARBERS.map((barber, index) => (
-              <AnimatedSection key={barber.id} delay={index * 0.2}>
+              <motion.div
+                key={barber.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                viewport={{ once: true }}
+              >
                 <motion.div
                   className={`group overflow-hidden rounded-lg bg-card transition-all hover:bg-card/80 border ${selectedBarber === barber.id.toString()
                     ? "border-primary shadow-xl"
@@ -223,7 +267,7 @@ export default function Home() {
                     </Link>
                   </div>
                 </motion.div>
-              </AnimatedSection>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -232,15 +276,27 @@ export default function Home() {
       {/* Gallery Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <AnimatedSection className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
             <h2 className="text-4xl font-bold mb-6">Galeri</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
               Çalışmalarımızdan örnekler ve müşteri memnuniyeti.
             </p>
-          </AnimatedSection>
+          </motion.div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {GALLERY_IMAGES.map((image, index) => (
-              <AnimatedSection key={image.id} delay={index * 0.1}>
+              <motion.div
+                key={image.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
                 <div className="group relative aspect-square overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                   <Image
                     src={image.src}
@@ -254,7 +310,7 @@ export default function Home() {
                     </Button>
                   </div>
                 </div>
-              </AnimatedSection>
+              </motion.div>
             ))}
           </div>
           <div className="mt-8 text-center">
@@ -271,27 +327,51 @@ export default function Home() {
       {/* Contact Section */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <AnimatedSection className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
             <h2 className="text-4xl font-bold mb-6">İletişim</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
               Bize ulaşın ve randevu alın.
             </p>
-          </AnimatedSection>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
+            >
               <h3 className="text-xl font-semibold mb-2">Adres</h3>
               <p className="text-muted-foreground">
                 Küçük Piyale, Fişekhane Deresi Cd. No:19, 34440 Beyoğlu/İstanbul
               </p>
-            </AnimatedSection>
-            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.2}>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
+            >
               <h3 className="text-xl font-semibold mb-2">Telefon</h3>
-              <p className="text-muted-foreground">+90 555 555 55 55</p>
-            </AnimatedSection>
-            <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.4}>
+              <p className="text-muted-foreground">+90 530 239 40 05 Sadece WhatsApp Üzerinden Ulaşınız</p>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
+            >
               <h3 className="text-xl font-semibold mb-2">Email</h3>
               <p className="text-muted-foreground">info@1barbers.com</p>
-            </AnimatedSection>
+            </motion.div>
           </div>
         </div>
       </section>

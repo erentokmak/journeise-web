@@ -21,6 +21,9 @@ const Header = () => {
             <Link href="/reservation" className="text-foreground/80 hover:text-foreground">
               Rezervasyon
             </Link>
+            <Link href="/about" className="text-foreground/80 hover:text-foreground">
+              Hakkımızda
+            </Link>
           </nav>
 
           <div className="flex items-center space-x-4">
