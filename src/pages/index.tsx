@@ -70,8 +70,8 @@ export default function Home() {
             className="flex justify-center"
           >
             <Link href="/reservation">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 px-8"
               >
                 Hemen Rezervasyon Yap
@@ -191,11 +191,10 @@ export default function Home() {
             {BARBERS.map((barber, index) => (
               <AnimatedSection key={barber.id} delay={index * 0.2}>
                 <motion.div
-                  className={`group overflow-hidden rounded-lg bg-card transition-all hover:bg-card/80 border ${
-                    selectedBarber === barber.id.toString()
+                  className={`group overflow-hidden rounded-lg bg-card transition-all hover:bg-card/80 border ${selectedBarber === barber.id.toString()
                       ? "border-primary shadow-xl"
                       : "border-primary/10 shadow-lg hover:shadow-xl"
-                  }`}
+                    }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedBarber(barber.id.toString())}
@@ -282,7 +281,7 @@ export default function Home() {
             <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow">
               <h3 className="text-xl font-semibold mb-2">Adres</h3>
               <p className="text-muted-foreground">
-                Örnek Mahallesi, Örnek Sokak No:1, İstanbul
+                Küçük Piyale, Fişekhane Deresi Cd. No:19, 34440 Beyoğlu/İstanbul
               </p>
             </AnimatedSection>
             <AnimatedSection className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow" delay={0.2}>

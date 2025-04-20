@@ -126,8 +126,8 @@ export function Footer() {
             </h4>
             <ul className="space-y-4">
               {[
-                { icon: MapPin, text: "Örnek Mahallesi, Örnek Sokak No:1, İstanbul" },
-                { icon: Phone, text: "+90 555 555 55 55" },
+                { icon: MapPin, text: "Küçük Piyale, Fişekhane Deresi Cd. No:19, 34440 Beyoğlu/İstanbul" },
+                { icon: Phone, text: "+90 530 239 40 05 Sadece WhatsApp Üzerinden Ulaşınız" },
                 { icon: Mail, text: "info@1barbers.com" }
               ].map((contact, index) => (
                 <motion.li 

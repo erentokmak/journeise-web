@@ -12,35 +12,13 @@ export const BARBERS: IBarber[] = [
       { id: 3, name: 'Saç & Sakal Kesimi', duration: 45, price: 200 },
     ],
   },
-  {
-    id: 2,
-    name: 'C1RAK',
-    image: '/assets/images/barber-images/C1RAK.jpg',
-    experience: 1,
-    services: [
-      { id: 1, name: 'Saç Kesimi', duration: 30, price: 150 },
-      { id: 2, name: 'Sakal Kesimi', duration: 20, price: 100 },
-      { id: 3, name: 'Saç & Sakal Kesimi', duration: 45, price: 200 },
-    ],
-  },
-  {
-    id: 3,
-    name: 'MARCO',
-    image: '/assets/images/barber-images/MARCO.jpg',
-    experience: 1,
-    services: [
-      { id: 1, name: 'Saç Kesimi', duration: 30, price: 150 },
-      { id: 2, name: 'Sakal Kesimi', duration: 20, price: 100 },
-      { id: 3, name: 'Saç & Sakal Kesimi', duration: 45, price: 200 },
-    ],
-  },
 ]
 
 export const GALLERY_IMAGES: IGalleryImage[] = [
   {
     id: 1,
     src: '/assets/images/gallery-images/1.jpg',
-    alt: 'Sebepci Usta - Saç Kesimi',
+    alt: 'Dükkan - Dış',
   },
   {
     id: 2,
@@ -61,11 +39,6 @@ export const GALLERY_IMAGES: IGalleryImage[] = [
     id: 5,
     src: '/assets/images/gallery-images/5.jpg',
     alt: 'Çırak Usta - Modern Kesim',
-  },
-  {
-    id: 6,
-    src: '/assets/images/gallery-images/6.jpg',
-    alt: 'Kalfa Usta - Klasik Kesim',
   },
 ]
 
