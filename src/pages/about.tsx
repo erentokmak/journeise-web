@@ -28,26 +28,22 @@ export default function AboutPage() {
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold">Cömert Paşa Sebebci</h2>
             <p className="text-muted-foreground">
-              07.05.2005, Kuştepe doğumluyum. Profesyonel MMA dövüşçüsü ve Kuştepe'nin yerli berberiyim.
+              07.05.2005 doğumluyum, Kuştepe'de büyüdüm. Çocukluğumdan beri öğrendiğim en önemli şey, dua eder ve çaba gösterirsen Rabbim sana her zaman bir yol açar. O yolda yürüyüp yürümemek ise senin kararındır.
             </p>
             <Separator />
             <div className="space-y-2">
               <h3 className="text-xl font-medium">Yolculuğum</h3>
               <p>
-                Berberlik kariyerime Kuştepe'de başladım ve kısa sürede kendime özgü tarzımı yarattım. 
-                "1" lakabımla tanınan bu tarz, hem işimi yaparken kendi yolumu bulmamı sağladı hem de 
-                geniş bir kitleye ulaşmama yardımcı oldu.
+                Hayatımda aşık olduğum tek şey MMA. Bu spor beni ben yapan, karakterimi inşa eden, hayallerimi besleyen şey. Allah'ın izniyle bayrağımı en onurlu şekilde taşımak benim görevim, sorumluluğum ve ekmek kapım.
               </p>
               <p>
-                Şu anda profesyonel MMA dövüşçüsü olarak kariyerime odaklanıyorum. Spor tutkum ve 
-                disiplinli çalışma anlayışım, hem ringde hem de hayatın her alanında başarıya ulaşmamı 
-                sağlıyor.
+                Aynı zamanda 1Barbers çatısı altında kendi berber dükkanımda çalışıyor, aileme destek olmaya devam ediyorum. Daha yolun çok başındayım, öğrenilecek çok şey var. Ama bu yoldayım ve pes etmeye hiç niyetim yok.
               </p>
             </div>
           </div>
         </div>
 
-        <Card className="mb-8">
+        <Card className="mb-12">
           <CardContent className="pt-6">
             <h3 className="text-xl font-medium mb-4">Felsefem</h3>
             <p className="text-muted-foreground">
@@ -58,38 +54,6 @@ export default function AboutPage() {
             </p>
           </CardContent>
         </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <h4 className="font-medium mb-2">Kuştepe Kökeni</h4>
-              <p className="text-sm text-muted-foreground">
-                Kuştepe'nin yerli bir parçası olarak, buradaki kültürü ve değerleri 
-                her zaman taşıyorum.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="pt-6">
-              <h4 className="font-medium mb-2">MMA Kariyeri</h4>
-              <p className="text-sm text-muted-foreground">
-                Profesyonel MMA dövüşçüsü olarak, sürekli kendimi geliştiriyor ve 
-                yeni hedefler için çalışıyorum.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="pt-6">
-              <h4 className="font-medium mb-2">Gelecek Hedefler</h4>
-              <p className="text-sm text-muted-foreground">
-                Hem spor kariyerimde hem de kişisel gelişimimde sürekli ilerlemeye 
-                ve yeni başarılara ulaşmaya odaklanıyorum.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   )

@@ -167,13 +167,15 @@ export default function Home() {
                 <h3 className="text-2xl font-semibold">Profesyonel MMA Dövüşçüsü</h3>
               </div>
               <p className="text-muted-foreground text-lg">
-                Küçüklüğümden beri kendimi hep Batı kültürüne hakim hissettim. Bu kültür,
-                basketboldan dinlediğim müziğe kadar her şeyde bana ilham verdi. Şimdi de MMA
-                ile bu yolculuğuma devam ediyorum.
+                Hayatımda aşık olduğum tek şey MMA. Bu spor beni ben yapan, karakterimi inşa eden, hayallerimi besleyen şey. Allah’ın izniyle bayrağımı en onurlu şekilde taşımak benim görevim, sorumluluğum ve ekmek kapım.
+
               </p>
               <p className="text-muted-foreground text-lg">
-                Amacım, hem ringde hem de hayatta kendimi sürekli geliştirmek ve insanlara ilham kaynağı olmak.
-                Spor tutkum ve disiplinli çalışma anlayışım, hem ringde hem de hayatın her alanında başarıya ulaşmamı sağlıyor.
+
+                Aynı zamanda 1Barbers çatısı altında kendi berber dükkanımda çalışıyor, aileme destek olmaya devam ediyorum. Daha yolun çok başındayım, öğrenilecek çok şey var. Ama bu yoldayım ve pes etmeye hiç niyetim yok.
+              </p>
+              <p className="text-muted-foreground text-lg">
+                – Cömert Paşa Sebebci
               </p>
               <Link href="/about">
                 <Button className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -201,7 +203,7 @@ export default function Home() {
               Modern ve klasik kesim teknikleriyle, yüz hatlarınıza en uygun saç stilini buluyoruz.
             </p>
           </motion.div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 justify-items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
