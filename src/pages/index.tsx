@@ -2,7 +2,7 @@ import { Button } from "@/ui/button";
 import { BARBERS, GALLERY_IMAGES } from "@/constants/data";
 import Image from "next/image";
 import Link from "next/link";
-import { MoveRight, Scissors, Clock, Star, Award } from "lucide-react";
+import { MoveRight, Scissors, Clock, Star, Award, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -12,14 +12,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Animasyonlu Gradient Arka Plan */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent animate-gradient-x" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent animate-gradient-y" />
-          <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,_var(--tw-gradient-stops))] from-primary/20 via-primary/10 to-transparent animate-spin-slow" />
-        </div>
-
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-background to-muted/30">
         {/* Hero Content */}
         <div className="relative z-10 container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -28,7 +21,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-7xl font-bold text-white mb-4 tracking-tight"
+                className="text-7xl font-bold text-primary mb-4 tracking-tight"
               >
                 1BARBERS
               </motion.h1>
@@ -36,7 +29,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="text-3xl text-white/90 mb-8 leading-relaxed"
+                className="text-3xl text-foreground/90 mb-8 leading-relaxed"
               >
                 Tarzını Yeniden Keşfet
               </motion.h2>
@@ -86,8 +79,8 @@ export default function Home() {
             repeatType: "reverse",
           }}
         >
-          <div className="w-6 h-10 border-2 border-white/20 rounded-full p-1">
-            <div className="w-1.5 h-1.5 bg-white/60 rounded-full mx-auto" />
+          <div className="w-6 h-10 border-2 border-primary/20 rounded-full p-1">
+            <div className="w-1.5 h-1.5 bg-primary/60 rounded-full mx-auto" />
           </div>
         </motion.div>
       </section>
@@ -133,8 +126,69 @@ export default function Home() {
         </div>
       </section>
 
+      {/* MMA Career Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold mb-6">MMA Kariyeri</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+              Profesyonel MMA dövüşçüsü olarak kariyerime odaklanıyorum. Spor tutkum ve disiplinli çalışma anlayışım, hem ringde hem de hayatın her alanında başarıya ulaşmamı sağlıyor.
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-xl"
+            >
+              <Image
+                src="/assets/images/barber-images/1.jpg"
+                alt="Cömert Paşa Sebebci - MMA Dövüşçüsü"
+                fill
+                className="object-cover"
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              <div className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-primary" />
+                <h3 className="text-2xl font-semibold">Profesyonel MMA Dövüşçüsü</h3>
+              </div>
+              <p className="text-muted-foreground text-lg">
+                Küçüklüğümden beri kendimi hep Batı kültürüne hakim hissettim. Bu kültür, 
+                basketboldan dinlediğim müziğe kadar her şeyde bana ilham verdi. Şimdi de MMA 
+                ile bu yolculuğuma devam ediyorum.
+              </p>
+              <p className="text-muted-foreground text-lg">
+                Amacım, hem ringde hem de hayatta kendimi sürekli geliştirmek ve insanlara ilham kaynağı olmak.
+                Spor tutkum ve disiplinli çalışma anlayışım, hem ringde hem de hayatın her alanında başarıya ulaşmamı sağlıyor.
+              </p>
+              <Link href="/about">
+                <Button className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
+                  Daha Fazla Bilgi
+                  <MoveRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Services Section */}
-      <section className="py-20">
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -211,7 +265,7 @@ export default function Home() {
       </section>
 
       {/* Barbers Section */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -274,7 +328,7 @@ export default function Home() {
       </section>
 
       {/* Gallery Section */}
-      <section className="py-20">
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -325,7 +379,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
