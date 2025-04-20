@@ -17,21 +17,20 @@ export default function Home() {
         <div className="relative z-10 container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-left space-y-8">
-              <motion.h1 
+              <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-7xl font-bold text-primary mb-4 tracking-tight"
               >
-                1BARBERS
               </motion.h1>
-              <motion.h2 
+              <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="text-3xl text-foreground/90 mb-8 leading-relaxed"
               >
-                Tarzını Yeniden Keşfet
+                Burası Bizim Mekan, Adamım!
               </motion.h2>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -49,7 +48,7 @@ export default function Home() {
                 </Link>
               </motion.div>
             </div>
-            
+
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -57,7 +56,7 @@ export default function Home() {
               className="relative h-[500px] w-full rounded-lg overflow-hidden shadow-2xl"
             >
               <Image
-                src="/assets/images/gallery-images/1.jpg"
+                src="/assets/images/gallery-images/4.jpg"
                 alt="1Barbers Dükkan"
                 fill
                 className="object-cover"
@@ -89,7 +88,7 @@ export default function Home() {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -100,7 +99,7 @@ export default function Home() {
               <h3 className="text-xl font-semibold mb-2">Profesyonel Hizmet</h3>
               <p className="text-muted-foreground">En son trendler ve klasik kesim teknikleri</p>
             </motion.div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -111,7 +110,7 @@ export default function Home() {
               <h3 className="text-xl font-semibold mb-2">Hızlı Servis</h3>
               <p className="text-muted-foreground">Minimum bekleme süresi, maksimum memnuniyet</p>
             </motion.div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -129,7 +128,7 @@ export default function Home() {
       {/* MMA Career Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -168,8 +167,8 @@ export default function Home() {
                 <h3 className="text-2xl font-semibold">Profesyonel MMA Dövüşçüsü</h3>
               </div>
               <p className="text-muted-foreground text-lg">
-                Küçüklüğümden beri kendimi hep Batı kültürüne hakim hissettim. Bu kültür, 
-                basketboldan dinlediğim müziğe kadar her şeyde bana ilham verdi. Şimdi de MMA 
+                Küçüklüğümden beri kendimi hep Batı kültürüne hakim hissettim. Bu kültür,
+                basketboldan dinlediğim müziğe kadar her şeyde bana ilham verdi. Şimdi de MMA
                 ile bu yolculuğuma devam ediyorum.
               </p>
               <p className="text-muted-foreground text-lg">
@@ -190,7 +189,7 @@ export default function Home() {
       {/* Services Section */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -206,53 +205,15 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
-                <h3 className="mb-4 text-2xl font-semibold">Saç Kesimi</h3>
-                <p className="mb-4 text-muted-foreground">
-                  Modern ve klasik kesim teknikleriyle, yüz hatlarınıza en uygun saç stilini buluyoruz.
-                </p>
-                <p className="text-lg font-semibold text-primary">150 TL</p>
-                <Link href="/reservation">
-                  <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
-                    Randevu Al
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
-                <h3 className="mb-4 text-2xl font-semibold">Sakal Kesimi</h3>
-                <p className="mb-4 text-muted-foreground">
-                  Profesyonel sakal şekillendirme ve bakım hizmetiyle kendine güvenini artır.
-                </p>
-                <p className="text-lg font-semibold text-primary">100 TL</p>
-                <Link href="/reservation">
-                  <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
-                    Randevu Al
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               viewport={{ once: true }}
             >
               <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
-                <h3 className="mb-4 text-2xl font-semibold">Saç & Sakal Kombo</h3>
+                <h3 className="mb-4 text-2xl font-semibold">Saç & Sakal Kesimi</h3>
                 <p className="mb-4 text-muted-foreground">
                   Komple bakım paketi ile tamamen yenilenmiş bir görünüme kavuş.
                 </p>
-                <p className="text-lg font-semibold text-primary">200 TL</p>
+                <p className="text-lg font-semibold text-primary">1000 TL</p>
                 <Link href="/reservation">
                   <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
                     Randevu Al
@@ -267,7 +228,7 @@ export default function Home() {
       {/* Barbers Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -330,7 +291,7 @@ export default function Home() {
       {/* Gallery Section */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -381,7 +342,7 @@ export default function Home() {
       {/* Contact Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -394,7 +355,7 @@ export default function Home() {
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -406,7 +367,7 @@ export default function Home() {
                 Küçük Piyale, Fişekhane Deresi Cd. No:19, 34440 Beyoğlu/İstanbul
               </p>
             </motion.div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -416,7 +377,7 @@ export default function Home() {
               <h3 className="text-xl font-semibold mb-2">Telefon</h3>
               <p className="text-muted-foreground">+90 530 239 40 05 Sadece WhatsApp Üzerinden Ulaşınız</p>
             </motion.div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
