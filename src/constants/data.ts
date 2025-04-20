@@ -3,8 +3,8 @@ import { IBarber, IGalleryImage } from '@/types/barber.types'
 export const BARBERS: IBarber[] = [
   {
     id: 1,
-    name: 'SEBEBCI',
-    image: '/assets/images/barber-images/SEBEBCI.jpg',
+    name: '1',
+    image: '/assets/images/barber-images/1.jpg',
     experience: 2,
     services: [
       { id: 1, name: 'Saç Kesimi', duration: 30, price: 150 },
