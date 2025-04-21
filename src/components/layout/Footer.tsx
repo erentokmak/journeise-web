@@ -95,8 +95,6 @@ export function Footer() {
               {[
                 { href: "/", label: "Ana Sayfa" },
                 { href: "/reservation", label: "Rezervasyon" },
-                { href: "/services", label: "Hizmetler" },
-                { href: "/barbers", label: "Berberler" },
                 { href: "/gallery", label: "Galeri" },
                 { href: "/about", label: "Hakkımızda" }
               ].map((link, index) => (

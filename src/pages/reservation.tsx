@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { format } from 'date-fns'
+import Head from 'next/head'
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -294,355 +295,372 @@ export default function ReservationPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-12 text-center"
-        >
-          <h1 className="text-5xl font-bold">Rezervasyon</h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Profesyonel ekibimizle tanışın ve randevunuzu hemen alın.
-          </p>
-        </motion.div>
+    <>
+      <Head>
+        <title>Randevu Al | 1Barbers</title>
+        <meta name="description" content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun." />
+        <meta name="keywords" content="berber randevu, online randevu, kuaför randevu, 1barbers, berber rezervasyon" />
+        <meta property="og:title" content="Randevu Al | 1Barbers" />
+        <meta property="og:description" content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://1barbers.com/reservation" />
+        <meta property="og:image" content="https://1barbers.com/assets/images/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Randevu Al | 1Barbers" />
+        <meta name="twitter:description" content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun." />
+        <meta name="twitter:image" content="https://1barbers.com/assets/images/og-image.jpg" />
+        <link rel="canonical" href="https://1barbers.com/reservation" />
+      </Head>
+      <main className="min-h-screen bg-background text-foreground">
+        <div className="container mx-auto px-4 py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center"
+          >
+            <h1 className="text-5xl font-bold">Rezervasyon</h1>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Profesyonel ekibimizle tanışın ve randevunuzu hemen alın.
+            </p>
+          </motion.div>
 
-        <div className="mx-auto max-w-2xl">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="mb-8 flex justify-center space-x-2">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <div
-                    key={s}
-                    className={cn(
-                      'h-2 w-2 rounded-full transition-all',
-                      s <= step ? 'bg-primary' : 'bg-muted',
-                    )}
-                  />
-                ))}
-              </div>
+          <div className="mx-auto max-w-2xl">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div className="mb-8 flex justify-center space-x-2">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <div
+                      key={s}
+                      className={cn(
+                        'h-2 w-2 rounded-full transition-all',
+                        s <= step ? 'bg-primary' : 'bg-muted',
+                      )}
+                    />
+                  ))}
+                </div>
 
-              <AnimatePresence mode="wait">
-                {step === 1 && (
-                  <motion.div
-                    key="step1"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FormField
-                      control={form.control}
-                      name="barber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xl">
-                            Berber Seçin
-                          </FormLabel>
-                          <FormControl>
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                              {BARBERS.map((barber) => (
+                <AnimatePresence mode="wait">
+                  {step === 1 && (
+                    <motion.div
+                      key="step1"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FormField
+                        control={form.control}
+                        name="barber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xl">
+                              Berber Seçin
+                            </FormLabel>
+                            <FormControl>
+                              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                {BARBERS.map((barber) => (
+                                  <motion.div
+                                    key={barber.id}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                  >
+                                    <Card
+                                      className={cn(
+                                        'cursor-pointer transition-all',
+                                        selectedBarber === barber.id.toString() &&
+                                        'border-2 border-primary shadow-lg',
+                                      )}
+                                      onClick={() => {
+                                        field.onChange(barber.id.toString())
+                                        setSelectedBarber(barber.id.toString())
+                                      }}
+                                    >
+                                      <CardContent className="p-4">
+                                        <div className="relative mb-4 aspect-square w-full overflow-hidden rounded-lg">
+                                          <Image
+                                            src={barber.image}
+                                            alt={barber.name}
+                                            fill
+                                            className="object-cover transition-transform duration-300 hover:scale-110"
+                                          />
+                                        </div>
+                                        <h3 className="text-center text-lg font-semibold">
+                                          {barber.name}
+                                        </h3>
+                                        <p className="text-center text-sm text-muted-foreground">
+                                          {barber.experience} Yıl Deneyim
+                                        </p>
+                                      </CardContent>
+                                    </Card>
+                                  </motion.div>
+                                ))}
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </motion.div>
+                  )}
+
+                  {step === 2 && selectedBarberData && (
+                    <motion.div
+                      key="step2"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FormField
+                        control={form.control}
+                        name="service"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xl">
+                              Hizmet Seçin
+                            </FormLabel>
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              {selectedBarberData.services.map((service) => (
                                 <motion.div
-                                  key={barber.id}
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
+                                  key={service.id}
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
                                 >
                                   <Card
                                     className={cn(
                                       'cursor-pointer transition-all',
-                                      selectedBarber === barber.id.toString() &&
+                                      field.value === service.id.toString() &&
                                       'border-2 border-primary shadow-lg',
                                     )}
-                                    onClick={() => {
-                                      field.onChange(barber.id.toString())
-                                      setSelectedBarber(barber.id.toString())
-                                    }}
+                                    onClick={() =>
+                                      field.onChange(service.id.toString())
+                                    }
                                   >
-                                    <CardContent className="p-4">
-                                      <div className="relative mb-4 aspect-square w-full overflow-hidden rounded-lg">
-                                        <Image
-                                          src={barber.image}
-                                          alt={barber.name}
-                                          fill
-                                          className="object-cover transition-transform duration-300 hover:scale-110"
-                                        />
+                                    <CardContent className="flex items-center justify-between p-4">
+                                      <div className="flex items-center space-x-4">
+                                        <Scissors className="h-6 w-6 text-primary" />
+                                        <div>
+                                          <h3 className="font-semibold">
+                                            {service.name}
+                                          </h3>
+                                          <p className="text-sm text-muted-foreground">
+                                            {service.duration} dk
+                                          </p>
+                                        </div>
                                       </div>
-                                      <h3 className="text-center text-lg font-semibold">
-                                        {barber.name}
-                                      </h3>
-                                      <p className="text-center text-sm text-muted-foreground">
-                                        {barber.experience} Yıl Deneyim
-                                      </p>
+                                      <span className="text-lg font-bold">
+                                        {service.price} TL
+                                      </span>
                                     </CardContent>
                                   </Card>
                                 </motion.div>
                               ))}
                             </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </motion.div>
-                )}
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </motion.div>
+                  )}
 
-                {step === 2 && selectedBarberData && (
-                  <motion.div
-                    key="step2"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FormField
-                      control={form.control}
-                      name="service"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xl">
-                            Hizmet Seçin
-                          </FormLabel>
-                          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            {selectedBarberData.services.map((service) => (
-                              <motion.div
-                                key={service.id}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
+                  {step === 3 && (
+                    <motion.div
+                      key="step3"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FormField
+                        control={form.control}
+                        name="date"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel className="text-xl">Tarih Seçin</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant={'outline'}
+                                    className={cn(
+                                      'h-12 w-full pl-3 text-left text-lg font-normal',
+                                      !field.value && 'text-muted-foreground',
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      format(field.value, 'PPP')
+                                    ) : (
+                                      <span>Tarih seçin</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                className="w-auto p-0"
+                                align="start"
                               >
-                                <Card
-                                  className={cn(
-                                    'cursor-pointer transition-all',
-                                    field.value === service.id.toString() &&
-                                    'border-2 border-primary shadow-lg',
-                                  )}
-                                  onClick={() =>
-                                    field.onChange(service.id.toString())
-                                  }
-                                >
-                                  <CardContent className="flex items-center justify-between p-4">
-                                    <div className="flex items-center space-x-4">
-                                      <Scissors className="h-6 w-6 text-primary" />
-                                      <div>
-                                        <h3 className="font-semibold">
-                                          {service.name}
-                                        </h3>
-                                        <p className="text-sm text-muted-foreground">
-                                          {service.duration} dk
-                                        </p>
-                                      </div>
-                                    </div>
-                                    <span className="text-lg font-bold">
-                                      {service.price} TL
-                                    </span>
-                                  </CardContent>
-                                </Card>
-                              </motion.div>
-                            ))}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </motion.div>
-                )}
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  disabled={(date) => {
+                                    const today = new Date()
+                                    today.setHours(0, 0, 0, 0)
+                                    date.setHours(0, 0, 0, 0)
+                                    return date < today
+                                  }}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </motion.div>
+                  )}
 
-                {step === 3 && (
-                  <motion.div
-                    key="step3"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FormField
-                      control={form.control}
-                      name="date"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel className="text-xl">Tarih Seçin</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={'outline'}
-                                  className={cn(
-                                    'h-12 w-full pl-3 text-left text-lg font-normal',
-                                    !field.value && 'text-muted-foreground',
-                                  )}
+                  {step === 4 && (
+                    <motion.div
+                      key="step4"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FormField
+                        control={form.control}
+                        name="time"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xl">Saat Seçin</FormLabel>
+                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                              {filteredHours.map((hour) => (
+                                <motion.div
+                                  key={hour}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
                                 >
-                                  {field.value ? (
-                                    format(field.value, 'PPP')
-                                  ) : (
-                                    <span>Tarih seçin</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) => {
-                                  const today = new Date()
-                                  today.setHours(0, 0, 0, 0)
-                                  date.setHours(0, 0, 0, 0)
-                                  return date < today
-                                }}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </motion.div>
-                )}
-
-                {step === 4 && (
-                  <motion.div
-                    key="step4"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FormField
-                      control={form.control}
-                      name="time"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xl">Saat Seçin</FormLabel>
-                          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                            {filteredHours.map((hour) => (
-                              <motion.div
-                                key={hour}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                              >
-                                <Button
-                                  type="button"
-                                  variant={
-                                    field.value === hour ? 'default' : 'outline'
-                                  }
-                                  className="w-full"
-                                  onClick={() => field.onChange(hour)}
-                                >
-                                  <Clock className="mr-2 h-4 w-4" />
-                                  {hour}
-                                </Button>
-                              </motion.div>
-                            ))}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </motion.div>
-                )}
-
-                {step === 5 && (
-                  <motion.div
-                    key="step5"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-6"
-                  >
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xl">Ad Soyad</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                              <input
-                                {...field}
-                                className="flex h-12 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="Adınız ve soyadınız"
-                              />
+                                  <Button
+                                    type="button"
+                                    variant={
+                                      field.value === hour ? 'default' : 'outline'
+                                    }
+                                    className="w-full"
+                                    onClick={() => field.onChange(hour)}
+                                  >
+                                    <Clock className="mr-2 h-4 w-4" />
+                                    {hour}
+                                  </Button>
+                                </motion.div>
+                              ))}
                             </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </motion.div>
+                  )}
 
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xl">Telefon</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <PhoneInput
-                                country={'tr'}
-                                value={field.value}
-                                onChange={(phone) => field.onChange(phone)}
-                                inputClass="!w-full !h-12 !text-base !pl-12 !rounded-md !border-input"
-                                containerClass="!w-full"
-                                buttonClass="!h-12 !border !border-input !rounded-l-md"
-                                dropdownClass="!w-[300px]"
-                                enableSearch
-                                searchPlaceholder="Ülke Ara..."
-                                searchNotFound="Ülke Bulunamadı"
-                                preferredCountries={['tr', 'us', 'gb', 'de']}
-                                inputProps={{
-                                  name: 'phone',
-                                  required: true,
-                                  autoFocus: false,
-                                  className: "flex h-12 w-full rounded-md border border-input bg-background pl-12 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                }}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  {step === 5 && (
+                    <motion.div
+                      key="step5"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xl">Ad Soyad</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                  {...field}
+                                  className="flex h-12 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                  placeholder="Adınız ve soyadınız"
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-              <div className="flex justify-between pt-8">
-                {step > 1 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={prevStep}
-                    className="w-24"
-                  >
-                    Geri
-                  </Button>
-                )}
-                {step < 5 ? (
-                  <Button
-                    type="button"
-                    onClick={nextStep}
-                    className={cn('ml-auto w-24', step === 1 && 'w-full')}
-                  >
-                    İleri
-                  </Button>
-                ) : (
-                  <Button type="submit" className="ml-auto ">
-                    Rezervasyon Yap
-                  </Button>
-                )}
-              </div>
-            </form>
-          </Form>
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xl">Telefon</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <PhoneInput
+                                  country={'tr'}
+                                  value={field.value}
+                                  onChange={(phone) => field.onChange(phone)}
+                                  inputClass="!w-full !h-12 !text-base !pl-12 !rounded-md !border-input"
+                                  containerClass="!w-full"
+                                  buttonClass="!h-12 !border !border-input !rounded-l-md"
+                                  dropdownClass="!w-[300px]"
+                                  enableSearch
+                                  searchPlaceholder="Ülke Ara..."
+                                  searchNotFound="Ülke Bulunamadı"
+                                  preferredCountries={['tr', 'us', 'gb', 'de']}
+                                  inputProps={{
+                                    name: 'phone',
+                                    required: true,
+                                    autoFocus: false,
+                                    className: "flex h-12 w-full rounded-md border border-input bg-background pl-12 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                  }}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="flex justify-between pt-8">
+                  {step > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={prevStep}
+                      className="w-24"
+                    >
+                      Geri
+                    </Button>
+                  )}
+                  {step < 5 ? (
+                    <Button
+                      type="button"
+                      onClick={nextStep}
+                      className={cn('ml-auto w-24', step === 1 && 'w-full')}
+                    >
+                      İleri
+                    </Button>
+                  ) : (
+                    <Button type="submit" className="ml-auto ">
+                      Rezervasyon Yap
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </Form>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   )
 }
