@@ -21,22 +21,22 @@ export const GALLERY_IMAGES: IGalleryImage[] = [
   {
     id: 2,
     src: '/assets/images/gallery-images/2.jpg',
-    alt: 'Çırak Usta - Sakal Kesimi',
+    alt: 'Dükkan',
   },
   {
     id: 3,
     src: '/assets/images/gallery-images/3.jpg',
-    alt: 'Kalfa Usta - Saç & Sakal Kesimi',
+    alt: 'Dükkan',
   },
   {
     id: 4,
     src: '/assets/images/gallery-images/4.jpg',
-    alt: 'Sebepci Usta - Özel Kesim',
+    alt: 'Dükkan',
   },
   {
     id: 5,
     src: '/assets/images/gallery-images/5.jpg',
-    alt: 'Çırak Usta - Modern Kesim',
+    alt: 'Dükkan',
   },
 ]
 
