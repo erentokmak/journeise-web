@@ -562,7 +562,7 @@ export default function ReservationPage() {
                     İleri
                   </Button>
                 ) : (
-                  <Button type="submit" className="ml-auto w-full">
+                  <Button type="submit" className="ml-auto ">
                     Rezervasyon Yap
                   </Button>
                 )}
