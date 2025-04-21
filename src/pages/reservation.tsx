@@ -34,9 +34,9 @@ import { toast } from 'sonner'
 import Image from 'next/image'
 import { Card, CardContent } from '@/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useMutation, useQuery } from '@apollo/client'
-import { CREATE_CUSTOMER, CREATE_APPOINTMENT, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/mutations/appointment'
-import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_PHONE } from '@/graphql/queries/appointment'
+import { useMutation, useQuery, useLazyQuery } from '@apollo/client'
+import { CREATE_CUSTOMER, CREATE_APPOINTMENT } from '@/graphql/mutations/appointment'
+import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_PHONE, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
 
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
@@ -55,13 +55,28 @@ const formSchema = z.object({
   }),
 })
 
+// GraphQL Response Types
+interface Appointment {
+  id: number
+  start_time: string
+  end_time: string
+}
+
+interface AvailableTimeSlotsResponse {
+  appointments: Appointment[]
+}
+
+interface CheckAvailabilityResponse {
+  appointments: Appointment[]
+}
+
 export default function ReservationPage() {
   const [selectedBarber, setSelectedBarber] = useState<string>('')
   const [step, setStep] = useState(1)
 
   const [createCustomer] = useMutation(CREATE_CUSTOMER)
   const [createAppointment] = useMutation(CREATE_APPOINTMENT)
-  const [checkAvailability] = useMutation(CHECK_APPOINTMENT_AVAILABILITY)
+  const [checkAvailability, { data: availabilityData }] = useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,7 +92,7 @@ export default function ReservationPage() {
       const customerResult = await createCustomer({
         variables: {
           input: {
-            business_id: 7,
+            business_id: 1,
             full_name: values.name,
             phone: values.phone,
             is_quickesta_user: false
@@ -89,19 +104,19 @@ export default function ReservationPage() {
 
       // Randevu saatini kontrol et
       const endTime = new Date(`2000-01-01 ${values.time}`);
-      endTime.setHours(endTime.getHours() + 1);
+      endTime.setMinutes(endTime.getMinutes() + 30); // 1 saat yerine 30 dakika
       const endTimeString = endTime.toTimeString().slice(0, 8);
 
       const availabilityResult = await checkAvailability({
         variables: {
-          business_id: 7,
+          business_id: 1,
           appointment_date: format(values.date, 'yyyy-MM-dd'),
           start_time: values.time,
           end_time: endTimeString
         }
       });
 
-      if (availabilityResult.data.appointments.length > 0) {
+      if (availabilityResult.data?.appointments?.length && availabilityResult.data.appointments.length > 0) {
         toast.error('Seçilen saat dolu! Lütfen başka bir saat seçin.');
         return;
       }
@@ -110,14 +125,14 @@ export default function ReservationPage() {
       await createAppointment({
         variables: {
           input: {
-            business_id: 7,
+            business_id: 1,
             customer_id: customerId,
-            team_member_id: parseInt(values.barber),
-            service_id: parseInt(values.service),
+            team_member_id: 1,
+            service_id: 1,
             appointment_date: format(values.date, 'yyyy-MM-dd'),
             start_time: values.time,
             end_time: endTimeString,
-            price_charged: 1000, // Servisten gelen fiyatı kullanabilirsiniz
+            price_charged: 1000,
             status: 'scheduled'
           }
         }
@@ -134,9 +149,9 @@ export default function ReservationPage() {
   }
 
   // Mevcut saatleri kontrol et
-  const { data: availableSlots } = useQuery(GET_AVAILABLE_TIME_SLOTS, {
+  const { data: availableSlots } = useQuery<AvailableTimeSlotsResponse>(GET_AVAILABLE_TIME_SLOTS, {
     variables: {
-      business_id: 7,
+      business_id: 1,
       date: form.watch('date') ? format(form.watch('date'), 'yyyy-MM-dd') : null
     },
     skip: !form.watch('date')
@@ -145,15 +160,15 @@ export default function ReservationPage() {
   // Kullanılabilir saatleri filtrele
   const filteredHours = AVAILABLE_HOURS.filter(hour => {
     if (!availableSlots) return true;
-    
+
     const startTime = new Date(`2000-01-01 ${hour}`);
     const endTime = new Date(`2000-01-01 ${hour}`);
-    endTime.setHours(endTime.getHours() + 1);
+    endTime.setMinutes(endTime.getMinutes() + 30); // 1 saat yerine 30 dakika
 
     return !availableSlots.appointments.some(appointment => {
       const appointmentStart = new Date(`2000-01-01 ${appointment.start_time}`);
       const appointmentEnd = new Date(`2000-01-01 ${appointment.end_time}`);
-      
+
       return (
         (startTime >= appointmentStart && startTime < appointmentEnd) ||
         (endTime > appointmentStart && endTime <= appointmentEnd)
@@ -248,7 +263,7 @@ export default function ReservationPage() {
                                     className={cn(
                                       'cursor-pointer transition-all',
                                       selectedBarber === barber.id.toString() &&
-                                        'border-2 border-primary shadow-lg',
+                                      'border-2 border-primary shadow-lg',
                                     )}
                                     onClick={() => {
                                       field.onChange(barber.id.toString())
@@ -310,7 +325,7 @@ export default function ReservationPage() {
                                   className={cn(
                                     'cursor-pointer transition-all',
                                     field.value === service.id.toString() &&
-                                      'border-2 border-primary shadow-lg',
+                                    'border-2 border-primary shadow-lg',
                                   )}
                                   onClick={() =>
                                     field.onChange(service.id.toString())

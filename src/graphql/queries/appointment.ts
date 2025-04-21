@@ -56,4 +56,30 @@ export const GET_CUSTOMER_APPOINTMENTS = gql`
       team_member_id
     }
   }
+`
+
+export const CHECK_APPOINTMENT_AVAILABILITY = gql`
+  query CheckAppointmentAvailability(
+    $business_id: Int!
+    $appointment_date: date!
+    $start_time: time!
+    $end_time: time!
+  ) {
+    appointments(
+      where: {
+        business_id: { _eq: $business_id }
+        appointment_date: { _eq: $appointment_date }
+        _and: [
+          { start_time: { _lt: $end_time } }
+          { end_time: { _gt: $start_time } }
+        ]
+        is_deleted: { _eq: false }
+        status: { _eq: "scheduled" }
+      }
+    ) {
+      id
+      start_time
+      end_time
+    }
+  }
 ` 
