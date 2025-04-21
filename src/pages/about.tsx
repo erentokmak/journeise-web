@@ -28,7 +28,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div className="relative h-[400px] w-full">
               <Image
-                src="/assets/images/barber-images/1.jpg"
+                src="/assets/images/barber-images/1.JPG"
                 alt="Cömert Paşa Sebebci"
                 fill
                 className="object-cover rounded-lg"
