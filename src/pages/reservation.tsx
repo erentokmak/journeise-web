@@ -42,6 +42,7 @@ import { CREATE_CUSTOMER, CREATE_APPOINTMENT } from '@/graphql/mutations/appoint
 import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_PHONE, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import moment from 'moment'
 
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
@@ -129,7 +130,8 @@ export default function ReservationPage() {
               business_id: 1,
               full_name: values.name,
               phone: values.phone,
-              is_quickesta_user: false
+              is_quickesta_user: false,
+              created_at: moment().add(3, 'hours').toISOString()
             }
           }
         });
@@ -176,7 +178,8 @@ export default function ReservationPage() {
             start_time: values.time + ':00',
             end_time: endTimeString,
             price_charged: 1000,
-            status: 'scheduled'
+            status: 'scheduled',
+            created_at: moment().add(3, 'hours').toISOString()
           }
         }
       });
