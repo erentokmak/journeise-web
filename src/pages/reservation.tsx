@@ -34,6 +34,9 @@ import { toast } from 'sonner'
 import Image from 'next/image'
 import { Card, CardContent } from '@/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useMutation, useQuery } from '@apollo/client'
+import { CREATE_CUSTOMER, CREATE_APPOINTMENT, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/mutations/appointment'
+import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_PHONE } from '@/graphql/queries/appointment'
 
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
@@ -56,6 +59,10 @@ export default function ReservationPage() {
   const [selectedBarber, setSelectedBarber] = useState<string>('')
   const [step, setStep] = useState(1)
 
+  const [createCustomer] = useMutation(CREATE_CUSTOMER)
+  const [createAppointment] = useMutation(CREATE_APPOINTMENT)
+  const [checkAvailability] = useMutation(CHECK_APPOINTMENT_AVAILABILITY)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,12 +71,95 @@ export default function ReservationPage() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.success('Rezervasyonunuz başarıyla alındı!')
-    form.reset()
-    setSelectedBarber('')
-    setStep(1)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      // Önce müşteri oluştur
+      const customerResult = await createCustomer({
+        variables: {
+          input: {
+            business_id: 7,
+            full_name: values.name,
+            phone: values.phone,
+            is_quickesta_user: false
+          }
+        }
+      });
+
+      const customerId = customerResult.data.insert_customers_one.id;
+
+      // Randevu saatini kontrol et
+      const endTime = new Date(`2000-01-01 ${values.time}`);
+      endTime.setHours(endTime.getHours() + 1);
+      const endTimeString = endTime.toTimeString().slice(0, 8);
+
+      const availabilityResult = await checkAvailability({
+        variables: {
+          business_id: 7,
+          appointment_date: format(values.date, 'yyyy-MM-dd'),
+          start_time: values.time,
+          end_time: endTimeString
+        }
+      });
+
+      if (availabilityResult.data.appointments.length > 0) {
+        toast.error('Seçilen saat dolu! Lütfen başka bir saat seçin.');
+        return;
+      }
+
+      // Randevu oluştur
+      await createAppointment({
+        variables: {
+          input: {
+            business_id: 7,
+            customer_id: customerId,
+            team_member_id: parseInt(values.barber),
+            service_id: parseInt(values.service),
+            appointment_date: format(values.date, 'yyyy-MM-dd'),
+            start_time: values.time,
+            end_time: endTimeString,
+            price_charged: 1000, // Servisten gelen fiyatı kullanabilirsiniz
+            status: 'scheduled'
+          }
+        }
+      });
+
+      toast.success('Rezervasyonunuz başarıyla alındı!')
+      form.reset()
+      setSelectedBarber('')
+      setStep(1)
+    } catch (error) {
+      console.error('Rezervasyon hatası:', error)
+      toast.error('Rezervasyon alınırken bir hata oluştu!')
+    }
   }
+
+  // Mevcut saatleri kontrol et
+  const { data: availableSlots } = useQuery(GET_AVAILABLE_TIME_SLOTS, {
+    variables: {
+      business_id: 7,
+      date: form.watch('date') ? format(form.watch('date'), 'yyyy-MM-dd') : null
+    },
+    skip: !form.watch('date')
+  });
+
+  // Kullanılabilir saatleri filtrele
+  const filteredHours = AVAILABLE_HOURS.filter(hour => {
+    if (!availableSlots) return true;
+    
+    const startTime = new Date(`2000-01-01 ${hour}`);
+    const endTime = new Date(`2000-01-01 ${hour}`);
+    endTime.setHours(endTime.getHours() + 1);
+
+    return !availableSlots.appointments.some(appointment => {
+      const appointmentStart = new Date(`2000-01-01 ${appointment.start_time}`);
+      const appointmentEnd = new Date(`2000-01-01 ${appointment.end_time}`);
+      
+      return (
+        (startTime >= appointmentStart && startTime < appointmentEnd) ||
+        (endTime > appointmentStart && endTime <= appointmentEnd)
+      );
+    });
+  });
 
   const selectedBarberData = BARBERS.find(
     (barber) => barber.id.toString() === selectedBarber,
@@ -324,7 +414,7 @@ export default function ReservationPage() {
                         <FormItem>
                           <FormLabel className="text-xl">Saat Seçin</FormLabel>
                           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                            {AVAILABLE_HOURS.map((hour) => (
+                            {filteredHours.map((hour) => (
                               <motion.div
                                 key={hour}
                                 whileHover={{ scale: 1.05 }}

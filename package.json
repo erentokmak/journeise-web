@@ -49,6 +49,7 @@
     "env-cmd": "^10.1.0",
     "firebase": "^10.14.0",
     "framer-motion": "^12.5.0",
+    "graphql": "^16.10.0",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
