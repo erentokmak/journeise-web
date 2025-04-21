@@ -26,7 +26,6 @@ NEXT_PUBLIC_APP_ENV=production
 NEXT_PUBLIC_SITE_URL=https://accounts.quickesta.com
 NEXT_PUBLIC_HASURA_GRAPHQL_URL=https://hasura.abantsu.com.tr/v1/graphql
 NEXT_PUBLIC_HASURA_ADMIN_SECRET=your_hasura_admin_secret
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 NEXT_PUBLIC_ABANT_API_PROXY=https://api.accounts.quickesta.com
 NEXTAUTH_SECRET=your_nextauth_secret
 ```
