@@ -165,9 +165,10 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-xl"
               >
-                <img
-                  src="/assets/images/barber-images/1.jpg"
+                <Image
+                  src="/assets/images/barber-images/1.JPG"
                   alt="Cömert Paşa Sebebci - MMA Dövüşçüsü"
+                  fill
                   className="object-cover"
                 />
               </motion.div>

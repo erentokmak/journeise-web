@@ -378,9 +378,10 @@ export default function ReservationPage() {
                                     >
                                       <CardContent className="p-4">
                                         <div className="relative mb-4 aspect-square w-full overflow-hidden rounded-lg">
-                                          <img
+                                          <Image
                                             src={barber.image}
                                             alt={barber.name}
+                                            fill
                                             className="object-cover transition-transform duration-300 hover:scale-110"
                                           />
                                         </div>
