@@ -66,6 +66,19 @@ interface Appointment {
   end_time: string
 }
 
+interface Customer {
+  id: number
+  business_id: number
+  full_name: string
+  phone: string
+  email?: string
+  notes?: string
+}
+
+interface CustomerByPhoneResponse {
+  customers: Customer[]
+}
+
 interface AvailableTimeSlotsResponse {
   appointments: Appointment[]
 }
@@ -82,6 +95,7 @@ export default function ReservationPage() {
   const [createCustomer] = useMutation(CREATE_CUSTOMER)
   const [createAppointment] = useMutation(CREATE_APPOINTMENT)
   const [checkAvailability, { data: availabilityData }] = useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY)
+  const [getCustomerByPhone] = useLazyQuery<CustomerByPhoneResponse>(GET_CUSTOMER_BY_PHONE)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,19 +107,34 @@ export default function ReservationPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Önce müşteri oluştur
-      const customerResult = await createCustomer({
+      let customerId: number;
+
+      // Önce telefon numarasına göre müşteri ara
+      const customerResult = await getCustomerByPhone({
         variables: {
-          input: {
-            business_id: 1,
-            full_name: values.name,
-            phone: values.phone,
-            is_quickesta_user: false
-          }
+          business_id: 1,
+          phone: values.phone
         }
       });
 
-      const customerId = customerResult.data.insert_customers_one.id;
+      // Eğer müşteri varsa, onun ID'sini kullan
+      if (customerResult.data?.customers && customerResult.data.customers.length > 0) {
+        customerId = customerResult.data.customers[0].id;
+      } else {
+        // Müşteri yoksa yeni müşteri oluştur
+        const newCustomerResult = await createCustomer({
+          variables: {
+            input: {
+              business_id: 1,
+              full_name: values.name,
+              phone: values.phone,
+              is_quickesta_user: false
+            }
+          }
+        });
+
+        customerId = newCustomerResult.data.insert_customers_one.id;
+      }
 
       // Randevu saatini kontrol et
       const [hours, minutes] = values.time.split(':');
