@@ -37,6 +37,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useMutation, useQuery, useLazyQuery } from '@apollo/client'
 import { CREATE_CUSTOMER, CREATE_APPOINTMENT } from '@/graphql/mutations/appointment'
 import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_PHONE, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
@@ -103,15 +105,18 @@ export default function ReservationPage() {
       const customerId = customerResult.data.insert_customers_one.id;
 
       // Randevu saatini kontrol et
-      const endTime = new Date(`2000-01-01 ${values.time}`);
-      endTime.setMinutes(endTime.getMinutes() + 30); // 1 saat yerine 30 dakika
-      const endTimeString = endTime.toTimeString().slice(0, 8);
+      const [hours, minutes] = values.time.split(':');
+      const endTime = new Date();
+      endTime.setUTCHours(parseInt(hours));
+      endTime.setUTCMinutes(parseInt(minutes));
+      endTime.setUTCMinutes(endTime.getUTCMinutes() + 60);
+      const endTimeString = `${endTime.getUTCHours().toString().padStart(2, '0')}:${endTime.getUTCMinutes().toString().padStart(2, '0')}:00`;
 
       const availabilityResult = await checkAvailability({
         variables: {
           business_id: 1,
           appointment_date: format(values.date, 'yyyy-MM-dd'),
-          start_time: values.time,
+          start_time: values.time + ':00',
           end_time: endTimeString
         }
       });
@@ -130,7 +135,7 @@ export default function ReservationPage() {
             team_member_id: 1,
             service_id: 1,
             appointment_date: format(values.date, 'yyyy-MM-dd'),
-            start_time: values.time,
+            start_time: values.time + ':00',
             end_time: endTimeString,
             price_charged: 1000,
             status: 'scheduled'
@@ -161,13 +166,25 @@ export default function ReservationPage() {
   const filteredHours = AVAILABLE_HOURS.filter(hour => {
     if (!availableSlots) return true;
 
-    const startTime = new Date(`2000-01-01 ${hour}`);
-    const endTime = new Date(`2000-01-01 ${hour}`);
-    endTime.setMinutes(endTime.getMinutes() + 30); // 1 saat yerine 30 dakika
+    const [startHours, startMinutes] = hour.split(':');
+    const startTime = new Date();
+    startTime.setUTCHours(parseInt(startHours));
+    startTime.setUTCMinutes(parseInt(startMinutes));
+
+    const endTime = new Date(startTime);
+    endTime.setUTCMinutes(endTime.getUTCMinutes() + 60);
 
     return !availableSlots.appointments.some(appointment => {
-      const appointmentStart = new Date(`2000-01-01 ${appointment.start_time}`);
-      const appointmentEnd = new Date(`2000-01-01 ${appointment.end_time}`);
+      const [appStartHours, appStartMinutes] = appointment.start_time.split(':');
+      const [appEndHours, appEndMinutes] = appointment.end_time.split(':');
+
+      const appointmentStart = new Date();
+      appointmentStart.setUTCHours(parseInt(appStartHours));
+      appointmentStart.setUTCMinutes(parseInt(appStartMinutes));
+
+      const appointmentEnd = new Date();
+      appointmentEnd.setUTCHours(parseInt(appEndHours));
+      appointmentEnd.setUTCMinutes(parseInt(appEndMinutes));
 
       return (
         (startTime >= appointmentStart && startTime < appointmentEnd) ||
@@ -399,10 +416,12 @@ export default function ReservationPage() {
                                 mode="single"
                                 selected={field.value}
                                 onSelect={field.onChange}
-                                disabled={(date) =>
-                                  date < new Date() ||
-                                  date < new Date('1900-01-01')
-                                }
+                                disabled={(date) => {
+                                  const today = new Date()
+                                  today.setHours(0, 0, 0, 0)
+                                  date.setHours(0, 0, 0, 0)
+                                  return date < today
+                                }}
                                 initialFocus
                               />
                             </PopoverContent>
@@ -494,12 +513,24 @@ export default function ReservationPage() {
                           <FormLabel className="text-xl">Telefon</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                              <input
-                                {...field}
-                                type="tel"
-                                className="flex h-12 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="Telefon numaranız"
+                              <PhoneInput
+                                country={'tr'}
+                                value={field.value}
+                                onChange={(phone) => field.onChange(phone)}
+                                inputClass="!w-full !h-12 !text-base !pl-12 !rounded-md !border-input"
+                                containerClass="!w-full"
+                                buttonClass="!h-12 !border !border-input !rounded-l-md"
+                                dropdownClass="!w-[300px]"
+                                enableSearch
+                                searchPlaceholder="Ülke Ara..."
+                                searchNotFound="Ülke Bulunamadı"
+                                preferredCountries={['tr', 'us', 'gb', 'de']}
+                                inputProps={{
+                                  name: 'phone',
+                                  required: true,
+                                  autoFocus: false,
+                                  className: "flex h-12 w-full rounded-md border border-input bg-background pl-12 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                }}
                               />
                             </div>
                           </FormControl>
