@@ -9,6 +9,7 @@ import {
   User,
   Phone,
   Scissors,
+  Check,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
@@ -30,7 +31,8 @@ import {
   SelectValue,
 } from '@/ui/select'
 import { BARBERS, AVAILABLE_HOURS } from '@/constants/data'
-import { toast } from 'sonner'
+import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/ui/toast"
 import Image from 'next/image'
 import { Card, CardContent } from '@/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -73,6 +75,7 @@ interface CheckAvailabilityResponse {
 }
 
 export default function ReservationPage() {
+  const { toast } = useToast()
   const [selectedBarber, setSelectedBarber] = useState<string>('')
   const [step, setStep] = useState(1)
 
@@ -122,7 +125,12 @@ export default function ReservationPage() {
       });
 
       if (availabilityResult.data?.appointments?.length && availabilityResult.data.appointments.length > 0) {
-        toast.error('Seçilen saat dolu! Lütfen başka bir saat seçin.');
+        toast({
+          variant: "destructive",
+          title: "Hata!",
+          description: "Seçilen saat dolu! Lütfen başka bir saat seçin.",
+          duration: 5000,
+        })
         return;
       }
 
@@ -143,13 +151,28 @@ export default function ReservationPage() {
         }
       });
 
-      toast.success('Rezervasyonunuz başarıyla alındı!')
+      toast({
+        title: "Rezervasyon Başarılı!",
+        description: `${format(values.date, 'PPP')} tarihinde saat ${values.time} için randevunuz oluşturuldu.`,
+        duration: 5000,
+        action: (
+          <ToastAction altText="Tamam">
+            <Check className="h-4 w-4" />
+          </ToastAction>
+        ),
+      })
+
       form.reset()
       setSelectedBarber('')
       setStep(1)
     } catch (error) {
       console.error('Rezervasyon hatası:', error)
-      toast.error('Rezervasyon alınırken bir hata oluştu!')
+      toast({
+        variant: "destructive",
+        title: "Hata!",
+        description: "Rezervasyon alınırken bir hata oluştu!",
+        duration: 5000,
+      })
     }
   }
 
@@ -199,19 +222,39 @@ export default function ReservationPage() {
 
   const nextStep = () => {
     if (step === 1 && !selectedBarber) {
-      toast.error('Lütfen bir berber seçin')
+      toast({
+        variant: "destructive",
+        title: "Hata!",
+        description: "Lütfen bir berber seçin",
+        duration: 5000,
+      })
       return
     }
     if (step === 2 && !form.getValues('service')) {
-      toast.error('Lütfen bir hizmet seçin')
+      toast({
+        variant: "destructive",
+        title: "Hata!",
+        description: "Lütfen bir hizmet seçin",
+        duration: 5000,
+      })
       return
     }
     if (step === 3 && !form.getValues('date')) {
-      toast.error('Lütfen bir tarih seçin')
+      toast({
+        variant: "destructive",
+        title: "Hata!",
+        description: "Lütfen bir tarih seçin",
+        duration: 5000,
+      })
       return
     }
     if (step === 4 && !form.getValues('time')) {
-      toast.error('Lütfen bir saat seçin')
+      toast({
+        variant: "destructive",
+        title: "Hata!",
+        description: "Lütfen bir saat seçin",
+        duration: 5000,
+      })
       return
     }
     setStep(step + 1)
