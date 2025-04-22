@@ -86,7 +86,7 @@ export default function Home() {
 
           {/* Scroll Indicator */}
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+            className="absolute bottom-8 -translate-x-1/2"
             animate={{
               y: [0, 10, 0],
             }}
