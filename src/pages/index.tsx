@@ -33,7 +33,7 @@ export default function Home() {
           {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="text-left space-y-8">
+              <div className="text-left">
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -47,7 +47,7 @@ export default function Home() {
                   transition={{ duration: 0.5, delay: 0.4 }}
                   className="text-3xl text-foreground/90 mb-8 leading-relaxed"
                 >
-                  Burası Bizim Mekan, Adamım!
+                  Tekrardan Hoşgeldin,
                 </motion.h2>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -75,9 +75,10 @@ export default function Home() {
                 <Image
                   src="/assets/images/gallery-images/4.jpg"
                   alt="1Barbers Dükkan"
-                  fill
                   className="object-cover"
                   priority
+                  width={1000} 
+                  height={1000}
                 />
               </motion.div>
             </div>
