@@ -11,6 +11,7 @@ import {
   Phone,
   Scissors,
   Check,
+  Mail,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
@@ -47,6 +48,7 @@ import moment from 'moment'
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
   phone: z.string().min(10, 'Geçerli bir telefon numarası giriniz'),
+  email: z.string().email('Geçerli bir email adresi giriniz').optional(),
   date: z.date({
     required_error: 'Lütfen bir tarih seçin',
   }),
@@ -131,7 +133,8 @@ export default function ReservationPage() {
               full_name: values.name,
               phone: values.phone,
               is_quickesta_user: false,
-              created_at: moment().add(3, 'hours').toISOString()
+              created_at: moment().add(3, 'hours').toISOString(),
+              email: values.email
             }
           }
         });
@@ -179,7 +182,7 @@ export default function ReservationPage() {
             end_time: endTimeString,
             price_charged: 1000,
             status: 'scheduled',
-            created_at: moment().add(3, 'hours').toISOString()
+            created_at: moment().add(3, 'hours').toISOString(),
           }
         }
       });
@@ -648,6 +651,28 @@ export default function ReservationPage() {
                                     autoFocus: false,
                                     className: "flex h-12 w-full rounded-md border border-input bg-background pl-12 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                   }}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xl">Email (Opsiyonel)</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                  {...field}
+                                  type="email"
+                                  className="flex h-12 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                  placeholder="Email adresiniz"
                                 />
                               </div>
                             </FormControl>
