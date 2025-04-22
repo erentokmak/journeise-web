@@ -222,6 +222,20 @@ export default function ReservationPage() {
   const filteredHours = AVAILABLE_HOURS.filter(hour => {
     if (!availableSlots) return true;
 
+    const selectedDate = form.watch('date');
+    const today = new Date();
+
+    // Eğer seçilen tarih bugünse, geçmiş saatleri filtrele
+    if (selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')) {
+      const [hourStr, minuteStr] = hour.split(':');
+      const selectedTime = new Date();
+      selectedTime.setHours(parseInt(hourStr), parseInt(minuteStr), 0);
+
+      if (selectedTime <= today) {
+        return false;
+      }
+    }
+
     const [startHours, startMinutes] = hour.split(':');
     const startTime = new Date();
     startTime.setUTCHours(parseInt(startHours));
@@ -509,10 +523,21 @@ export default function ReservationPage() {
                                   selected={field.value}
                                   onSelect={field.onChange}
                                   disabled={(date) => {
-                                    const today = new Date()
-                                    today.setHours(0, 0, 0, 0)
-                                    date.setHours(0, 0, 0, 0)
-                                    return date < today
+                                    const today = new Date();
+                                    today.setHours(0, 0, 0, 0);
+                                    date.setHours(0, 0, 0, 0);
+
+                                    // Geçmiş tarihleri devre dışı bırak
+                                    if (date < today) {
+                                      return true;
+                                    }
+
+                                    // Pazar günlerini devre dışı bırak (0 = Pazar)
+                                    if (date.getDay() === 0) {
+                                      return true;
+                                    }
+
+                                    return false;
                                   }}
                                   initialFocus
                                 />
