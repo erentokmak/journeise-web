@@ -70,7 +70,7 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
-                className="relative h-[500px] w-full rounded-lg overflow-hidden shadow-2xl"
+                className="relative h-[500px] w-full rounded-lg overflow-hidden"
               >
                 <Image
                   src="/assets/images/gallery-images/4.jpg"

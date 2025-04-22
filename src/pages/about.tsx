@@ -53,18 +53,6 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-
-          <Card className="mb-12">
-            <CardContent className="pt-6">
-              <h3 className="text-xl font-medium mb-4">Felsefem</h3>
-              <p className="text-muted-foreground">
-                "Küçüklüğümden beri kendimi hep Batı kültürüne hakim hissettim. Bu kültür,
-                basketboldan dinlediğim müziğe kadar her şeyde bana ilham verdi. Şimdi de MMA
-                ile bu yolculuğuma devam ediyorum. Amacım, hem ringde hem de hayatta kendimi
-                sürekli geliştirmek ve insanlara ilham kaynağı olmak."
-              </p>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </>
