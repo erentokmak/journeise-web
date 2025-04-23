@@ -19,7 +19,7 @@ export const CREATE_CUSTOMER = gql`
 `
 
 export const UPDATE_CUSTOMER_QUICKESTA_INFO = gql`
-  mutation UpdateCustomerQuickestaInfo($customer_id: Int!, $quickesta_user_id: Int!) {
+  mutation UpdateCustomerQuickestaInfo($customer_id: Int!, $quickesta_user_id: uuid!) {
     update_customers_by_pk(
       pk_columns: { id: $customer_id },
       _set: { 

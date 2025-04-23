@@ -175,8 +175,9 @@ export default function ReservationPage() {
         const registerResponse = await register(registerData);
 
         if (registerResponse.isSuccess) {
-          quickestaUserId = registerResponse.data?.user?.id || null;
-          quickestaAccount = registerResponse.data?.user;
+          console.log("registerResponse", registerResponse.value.userIdentity)
+          quickestaUserId = registerResponse.value.userIdentity.id || null;
+          quickestaAccount = registerResponse.value.userIdentity;
           registrationSuccess = true;
         } else {
           // Kullanıcı zaten var olabilir, hata mesajını kontrol et
@@ -226,7 +227,10 @@ export default function ReservationPage() {
         customerId = customer.id;
 
         // Update with Quickesta ID if needed (if we have a valid ID)
-        if (!customer.is_quickesta_user && quickestaUserId && quickestaUserId > 0) {
+        console.log("customer", customer)
+        console.log("quickestaUserId", quickestaUserId)
+        console.log("customer.is_quickesta_user", customer.is_quickesta_user)
+        if (!customer.is_quickesta_user && quickestaUserId) {
           // Müşteri kaydını güncelle
           try {
             const updateResult = await updateCustomerQuickestaInfo({
