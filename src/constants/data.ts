@@ -7,7 +7,7 @@ export const BARBERS: IBarber[] = [
     image: '/assets/images/barber-images/1.JPG',
     experience: 2,
     services: [
-      { id: 3, name: 'Saç & Sakal Kesimi', duration: 45, price: 1000 },
+      { id: 3, name: 'Saç & Sakal Kesimi', duration: 60, price: 1000 },
     ],
   },
 ]

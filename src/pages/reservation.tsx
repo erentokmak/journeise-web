@@ -48,7 +48,7 @@ import moment from 'moment'
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
   phone: z.string().min(10, 'Geçerli bir telefon numarası giriniz'),
-  email: z.string().email('Geçerli bir email adresi giriniz').optional(),
+  email: z.string().email('Geçerli bir email adresi giriniz'),
   date: z.date({
     required_error: 'Lütfen bir tarih seçin',
   }),
@@ -664,7 +664,7 @@ export default function ReservationPage() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xl">Email (Opsiyonel)</FormLabel>
+                            <FormLabel className="text-xl">Email</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
