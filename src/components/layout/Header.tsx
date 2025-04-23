@@ -50,10 +50,8 @@ const Header = () => {
             {session?.user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="h-9 w-9 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90">
-                    <AvatarFallback>
-                      <User className="h-5 w-5" />
-                    </AvatarFallback>
+                  <Avatar className="h-9 w-9 cursor-pointer bg-primary text-primary-foreground justify-center items-center">
+                      <User className="h-5 w-5 " />
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
