@@ -30,16 +30,11 @@ function AppContent({ Component, pageProps }: AppProps) {
     router?.pathname as (typeof PUBLIC_PATHS)[number],
   )
   const isAddAccountMode = router?.query?.mode === 'add'
-  const isSSOMode = router?.pathname === '/auth/sso'
 
   // Auth redirect effect
   useEffect(() => {
     if (status === 'loading') return
 
-    // Allow access to SSO page without redirection
-    if (isSSOMode) {
-      return
-    }
 
     // Allow access to sign-in page in add account mode even when logged in
     if (isAddAccountMode && router?.pathname === '/auth/sign-in') {
@@ -56,7 +51,7 @@ function AppContent({ Component, pageProps }: AppProps) {
     if (!session?.user && !isPublicPath) {
       router?.push('/auth/sign-in')
     }
-  }, [session, status, router, isPublicPath, isAddAccountMode, isSSOMode])
+  }, [session, status, router, isPublicPath, isAddAccountMode])
 
   if (status === 'loading') return null
 
@@ -68,7 +63,7 @@ function AppContent({ Component, pageProps }: AppProps) {
       disableTransitionOnChange
     >
       <ApolloProvider client={client}>
-        {session || isSSOMode ? (
+        {session ? (
           <Base>
             <Main>
               <Component {...pageProps} />
