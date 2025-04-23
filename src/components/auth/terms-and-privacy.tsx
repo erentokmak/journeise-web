@@ -36,6 +36,30 @@ export function TermsAndPrivacy() {
             sosyalleştirilmiş ticaret platformudur.
           </p>
 
+          <h3 className="text-base font-semibold text-primary">
+            1Barbers Müşteri İlişkisi
+          </h3>
+          <p>
+            Bu platforma üye olduğunuzda, hem Quickesta'nın hem de 1Barbers'in müşterisi olursunuz.
+            1Barbers, Quickesta platformunu kullanarak berberlik hizmetleri sunan bir işletmedir.
+            Burada oluşturduğunuz hesap bilgileri ve kişisel verileriniz, 1Barbers tarafından
+            randevu yönetimi, iletişim ve müşteri hizmetleri amacıyla kullanılacaktır.
+          </p>
+          <ul className="list-inside list-disc space-y-2 pl-4">
+            <li>
+              1Barbers Hizmetleri: - Saç kesimi - Sakal tıraşı - Cilt bakımı - Özel bakım paketleri
+              - VIP hizmetler
+            </li>
+            <li>
+              1Barbers Ayrıcalıkları: - Özel indirimler - Sadakat programı - Doğum günü indirimleri
+              - Arkadaş getir kampanyaları
+            </li>
+            <li>
+              Randevu İptali: 1Barbers, randevu saatinden en az 2 saat önce iptal edilmeyen
+              randevular için hizmet bedeli talep etme hakkını saklı tutar.
+            </li>
+          </ul>
+
           <h3 className="text-base font-semibold text-foreground">
             2. Platform Özellikleri
           </h3>
@@ -197,6 +221,28 @@ export function TermsAndPrivacy() {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 pr-4 text-sm text-muted-foreground">
+          <h3 className="text-base font-semibold text-primary">
+            1Barbers Müşteri Veri Kullanımı
+          </h3>
+          <p>
+            Bu platformu kullandığınızda, verileriniz hem Quickesta hem de 1Barbers tarafından
+            işlenmektedir. 1Barbers, Quickesta'nın altyapısını kullanan bir hizmet sağlayıcıdır.
+          </p>
+          <ul className="list-inside list-disc space-y-2 pl-4">
+            <li>
+              1Barbers Veri Kullanımı: - Randevu planlaması - Müşteri tercihlerinin kaydedilmesi -
+              Hizmet geçmişi - Kişiselleştirilmiş kampanyalar - Sadakat programları
+            </li>
+            <li>
+              İletişim: 1Barbers, onayınız dahilinde SMS, e-posta ve telefon yoluyla sizinle
+              iletişime geçebilir.
+            </li>
+            <li>
+              Fotoğraf Kullanımı: 1Barbers, izniniz dahilinde saç kesimi öncesi/sonrası
+              fotoğraflarınızı sosyal medya ve tanıtım amaçlı kullanabilir.
+            </li>
+          </ul>
+
           <h3 className="text-base font-semibold text-foreground">
             1. Veri Toplama ve Kullanım
           </h3>
@@ -300,6 +346,11 @@ export function TermsAndPrivacy() {
           <p>
             Gizlilik politikamız hakkında sorularınız için support@quickesta.com
             adresinden bize ulaşabilirsiniz.
+          </p>
+          <p className="mt-2">
+            1Barbers ile ilgili sorularınız için info@1barbers.com adresinden
+            veya +90 530 239 40 05 numaralı telefondan whatsapp üzerinden
+            iletişime geçebilirsiniz.
           </p>
 
           <h3 className="text-base font-semibold text-foreground">

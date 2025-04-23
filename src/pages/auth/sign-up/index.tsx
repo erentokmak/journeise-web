@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { signIn, getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useDispatch, useSelector } from 'react-redux'
-import { addAccount, setActiveAccount } from '@/store/accountsSlice'
 import Image from 'next/image'
 import Link from 'next/link'
 import PhoneInput from 'react-phone-input-2'
@@ -41,7 +39,6 @@ export default function SignUp() {
   const isMobile = useIsMobile()
   const { toast } = useToast()
   const router = useRouter()
-  const dispatch = useDispatch()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -149,9 +146,6 @@ export default function SignUp() {
           roles: session.user.roles,
           permissions: session.user.permissions,
         }
-
-        dispatch(addAccount(accountData))
-        dispatch(setActiveAccount(accountData.id))
 
         router.push('/dashboard')
       } else {
@@ -294,15 +288,8 @@ export default function SignUp() {
         <div className="w-full max-w-sm">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2">
-              <Image
-                src="/assets/images/brand-images/quickestaiconblue.png"
-                alt="Quickesta"
-                width={32}
-                height={32}
-                className="rounded-md"
-              />
               <h1 className="text-xl font-bold">
-                Quickesta&apos;ya Kayıt Olun
+                1BARBERS&apos;a Kayıt Olun
               </h1>
               <div className="text-center text-sm">
                 Zaten hesabınız var mı?{' '}
