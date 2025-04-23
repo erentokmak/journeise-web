@@ -43,7 +43,7 @@ function AppContent({ Component, pageProps }: AppProps) {
 
     // Normal auth flow
     if (session?.user && isPublicPath && !isAddAccountMode) {
-      router?.push('/dashboard')
+      router?.push('/')
       return
     }
 
