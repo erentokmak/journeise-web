@@ -6,9 +6,11 @@ import Head from "next/head";
 import { MoveRight, Scissors, Clock, Star, Award, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
-
+import { useSession } from "next-auth/react";
 export default function Home() {
   const [selectedBarber, setSelectedBarber] = useState<string | null>(null);
+  const { data: session } = useSession();
+  console.log(session);
 
   return (
     <>
@@ -77,7 +79,7 @@ export default function Home() {
                   alt="1Barbers Dükkan"
                   className="object-cover"
                   priority
-                  width={1000} 
+                  width={1000}
                   height={1000}
                 />
               </motion.div>
