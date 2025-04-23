@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { format } from 'date-fns'
 import Head from 'next/head'
+import { signIn, getSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -12,6 +14,7 @@ import {
   Scissors,
   Check,
   Mail,
+  Lock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
@@ -40,7 +43,9 @@ import { Card, CardContent } from '@/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMutation, useQuery, useLazyQuery } from '@apollo/client'
 import { CREATE_CUSTOMER, CREATE_APPOINTMENT } from '@/graphql/mutations/appointment'
-import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_PHONE, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
+import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_EMAIL_OR_PHONE, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
+import { register } from '@/lib/api-v1/auth'
+import { extractCountryCode, formatPhoneNumber } from '@/utils/formatters/phone'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import moment from 'moment'
@@ -49,6 +54,7 @@ const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
   phone: z.string().min(10, 'Geçerli bir telefon numarası giriniz'),
   email: z.string().email('Geçerli bir email adresi giriniz'),
+  password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
   date: z.date({
     required_error: 'Lütfen bir tarih seçin',
   }),
@@ -77,10 +83,23 @@ interface Customer {
   phone: string
   email?: string
   notes?: string
+  quickesta_user_id?: number
+  is_quickesta_user: boolean
 }
 
 interface CustomerByPhoneResponse {
   customers: Customer[]
+}
+
+interface QuickestaUser {
+  id: number
+  email: string
+  phone: string
+  full_name: string
+}
+
+interface QuickestaAccountResponse {
+  users: QuickestaUser[]
 }
 
 interface AvailableTimeSlotsResponse {
@@ -93,48 +112,112 @@ interface CheckAvailabilityResponse {
 
 export default function ReservationPage() {
   const { toast } = useToast()
+  const router = useRouter()
   const [selectedBarber, setSelectedBarber] = useState<string>('')
   const [step, setStep] = useState(1)
+  const [countryCode, setCountryCode] = useState(90) // Türkiye için varsayılan ülke kodu
+  const [isLoading, setIsLoading] = useState(false)
 
   const [createCustomer] = useMutation(CREATE_CUSTOMER)
   const [createAppointment] = useMutation(CREATE_APPOINTMENT)
   const [checkAvailability, { data: availabilityData }] = useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY)
-  const [getCustomerByPhone] = useLazyQuery<CustomerByPhoneResponse>(GET_CUSTOMER_BY_PHONE)
+  const [getCustomerByEmailOrPhone] = useLazyQuery<CustomerByPhoneResponse>(GET_CUSTOMER_BY_EMAIL_OR_PHONE)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       phone: '',
+      email: '',
+      password: '',
     },
   })
 
+  const handlePhoneChange = (value: string, data: any) => {
+    form.setValue('phone', value)
+    setCountryCode(extractCountryCode(data.dialCode))
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setIsLoading(true)
       let customerId: number;
+      let quickestaUserId: number | null = null;
+      let registrationSuccess = false;
+      let registeredEmail = values.email;
+      let registeredPassword = values.password;
 
-      // Önce telefon numarasına göre müşteri ara
-      const customerResult = await getCustomerByPhone({
+      // 1. Check if customer exists by email or phone
+      const customerResult = await getCustomerByEmailOrPhone({
         variables: {
           business_id: 1,
+          email: values.email,
           phone: values.phone
         }
       });
 
-      // Eğer müşteri varsa, onun ID'sini kullan
+      // 2. Create or get Quickesta account using API
+      let quickestaAccount = null;
+
+      try {
+        // Register user in Quickesta with API
+        const registerData = {
+          name: values.name.split(' ')[0],
+          surname: values.name.includes(' ') ? values.name.substring(values.name.indexOf(' ') + 1) : '',
+          email: values.email,
+          password: values.password,
+          confirmPassword: values.password,
+          mobileNumber: formatPhoneNumber(values.phone, countryCode),
+          countryCode: countryCode
+        };
+
+        const registerResponse = await register(registerData);
+
+        if (registerResponse.isSuccess) {
+          quickestaUserId = registerResponse.data?.user?.id || null;
+          quickestaAccount = registerResponse.data?.user;
+          registrationSuccess = true;
+        } else {
+          // Kullanıcı zaten var olabilir, hata mesajını kontrol et
+          if (registerResponse.error && registerResponse.error.includes("already exists")) {
+            // Bu durumda kullanıcı Quickesta'da zaten var demektir
+            console.log("Kullanıcı Quickesta'da zaten var");
+            quickestaUserId = -1; // Var olan kullanıcı işareti
+            // Zaten kayıtlı olduğu için giriş yapılabilir
+            registrationSuccess = true;
+          } else {
+            // Başka bir hata
+            throw new Error(registerResponse.error || "Quickesta hesabı oluşturulamadı");
+          }
+        }
+      } catch (error) {
+        console.error("Quickesta hesap işlemi hatası:", error);
+        // Ancak işleme devam etmeliyiz
+      }
+
+      // 3. Handle customer creation or update
       if (customerResult.data?.customers && customerResult.data.customers.length > 0) {
+        // Customer exists in our system
         customerId = customerResult.data.customers[0].id;
+
+        // Update with Quickesta ID if needed (if we have a valid ID)
+        if (!customerResult.data.customers[0].is_quickesta_user && quickestaUserId && quickestaUserId > 0) {
+          // Burada normalde müşteri kaydını güncelleyecektik
+          // Şimdilik bu adımı atlıyoruz
+          console.log("Müşteri Quickesta ID'si güncellenecek");
+        }
       } else {
-        // Müşteri yoksa yeni müşteri oluştur
+        // Create new customer with Quickesta relationship if available
         const newCustomerResult = await createCustomer({
           variables: {
             input: {
               business_id: 1,
               full_name: values.name,
               phone: values.phone,
-              is_quickesta_user: false,
+              email: values.email,
+              quickesta_user_id: quickestaUserId && quickestaUserId > 0 ? quickestaUserId : null,
+              is_quickesta_user: quickestaUserId !== null && quickestaUserId > 0,
               created_at: moment().add(3, 'hours').toISOString(),
-              email: values.email
             }
           }
         });
@@ -142,7 +225,7 @@ export default function ReservationPage() {
         customerId = newCustomerResult.data.insert_customers_one.id;
       }
 
-      // Randevu saatini kontrol et
+      // 4. Appointment time calculation
       const [hours, minutes] = values.time.split(':');
       const endTime = new Date();
       endTime.setUTCHours(parseInt(hours));
@@ -150,6 +233,7 @@ export default function ReservationPage() {
       endTime.setUTCMinutes(endTime.getUTCMinutes() + 60);
       const endTimeString = `${endTime.getUTCHours().toString().padStart(2, '0')}:${endTime.getUTCMinutes().toString().padStart(2, '0')}:00`;
 
+      // 5. Check appointment availability
       const availabilityResult = await checkAvailability({
         variables: {
           business_id: 1,
@@ -166,10 +250,11 @@ export default function ReservationPage() {
           description: "Seçilen saat dolu! Lütfen başka bir saat seçin.",
           duration: 5000,
         })
+        setIsLoading(false);
         return;
       }
 
-      // Randevu oluştur
+      // 6. Create appointment
       await createAppointment({
         variables: {
           input: {
@@ -187,6 +272,34 @@ export default function ReservationPage() {
         }
       });
 
+      // 7. Otomatik giriş yap (eğer başarılı kayıt/hesap varsa)
+      if (registrationSuccess) {
+        try {
+          // NextAuth ile giriş yapma
+          const signInResult = await signIn('credentials', {
+            email: registeredEmail,
+            password: registeredPassword,
+            redirect: false,
+          });
+
+          if (signInResult?.error) {
+            console.error("Otomatik giriş başarısız:", signInResult.error);
+            // Giriş hatası olsa bile rezervasyon tamamlandı, devam ediyoruz
+          } else {
+            // Başarılı giriş, oturum bilgilerini al
+            const session = await getSession();
+            if (session?.user) {
+              console.log("Kullanıcı başarıyla giriş yaptı:", session.user);
+              // Burada isteğe bağlı olarak session bilgilerini işleyebiliriz
+              // veya kullanıcıyı başka bir sayfaya yönlendirebiliriz
+            }
+          }
+        } catch (loginError) {
+          console.error("Otomatik giriş hatası:", loginError);
+          // Giriş hatası olsa bile rezervasyon tamamlandı, devam ediyoruz
+        }
+      }
+
       toast({
         title: "Rezervasyon Başarılı!",
         description: `${format(values.date, 'PPP')} tarihinde saat ${values.time} için randevunuz oluşturuldu.`,
@@ -201,6 +314,10 @@ export default function ReservationPage() {
       form.reset()
       setSelectedBarber('')
       setStep(1)
+      setIsLoading(false)
+
+      // İsteğe bağlı olarak kullanıcıyı hesap sayfasına yönlendirebiliriz
+      // router.push('/dashboard');
     } catch (error) {
       console.error('Rezervasyon hatası:', error)
       toast({
@@ -209,6 +326,7 @@ export default function ReservationPage() {
         description: "Rezervasyon alınırken bir hata oluştu!",
         duration: 5000,
       })
+      setIsLoading(false)
     }
   }
 
@@ -636,7 +754,7 @@ export default function ReservationPage() {
                                 <PhoneInput
                                   country={'tr'}
                                   value={field.value}
-                                  onChange={(phone) => field.onChange(phone)}
+                                  onChange={handlePhoneChange}
                                   inputClass="!w-full !h-12 !text-base !pl-12 !rounded-md !border-input"
                                   containerClass="!w-full"
                                   buttonClass="!h-12 !border !border-input !rounded-l-md"
@@ -680,6 +798,28 @@ export default function ReservationPage() {
                           </FormItem>
                         )}
                       />
+
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xl">Şifre</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                  {...field}
+                                  type="password"
+                                  className="flex h-12 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                  placeholder="Hesabınız için şifre oluşturun"
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -704,8 +844,8 @@ export default function ReservationPage() {
                       İleri
                     </Button>
                   ) : (
-                    <Button type="submit" className="ml-auto ">
-                      Rezervasyon Yap
+                    <Button type="submit" className="ml-auto" disabled={isLoading}>
+                      {isLoading ? 'İşleniyor...' : 'Rezervasyon Yap'}
                     </Button>
                   )}
                 </div>

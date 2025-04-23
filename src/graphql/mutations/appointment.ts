@@ -18,6 +18,34 @@ export const CREATE_CUSTOMER = gql`
   }
 `
 
+export const UPDATE_CUSTOMER_QUICKESTA_INFO = gql`
+  mutation UpdateCustomerQuickestaInfo($customer_id: Int!, $quickesta_user_id: Int!) {
+    update_customers_by_pk(
+      pk_columns: { id: $customer_id },
+      _set: { 
+        quickesta_user_id: $quickesta_user_id,
+        is_quickesta_user: true
+      }
+    ) {
+      id
+      quickesta_user_id
+      is_quickesta_user
+      updated_at
+    }
+  }
+`
+
+export const REGISTER_QUICKESTA_USER = gql`
+  mutation RegisterQuickestaUser($input: users_insert_input!) {
+    insert_users_one(object: $input) {
+      id
+      email
+      phone
+      full_name
+    }
+  }
+`
+
 export const CREATE_APPOINTMENT = gql`
   mutation CreateAppointment($input: appointments_insert_input!) {
     insert_appointments_one(object: $input) {
