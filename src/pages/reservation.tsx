@@ -42,7 +42,7 @@ import Image from 'next/image'
 import { Card, CardContent } from '@/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMutation, useQuery, useLazyQuery } from '@apollo/client'
-import { CREATE_CUSTOMER, CREATE_APPOINTMENT } from '@/graphql/mutations/appointment'
+import { CREATE_CUSTOMER, CREATE_APPOINTMENT, UPDATE_CUSTOMER_QUICKESTA_INFO } from '@/graphql/mutations/appointment'
 import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_EMAIL_OR_PHONE, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
 import { register } from '@/lib/api-v1/auth'
 import { extractCountryCode, formatPhoneNumber } from '@/utils/formatters/phone'
@@ -120,6 +120,7 @@ export default function ReservationPage() {
 
   const [createCustomer] = useMutation(CREATE_CUSTOMER)
   const [createAppointment] = useMutation(CREATE_APPOINTMENT)
+  const [updateCustomerQuickestaInfo] = useMutation(UPDATE_CUSTOMER_QUICKESTA_INFO)
   const [checkAvailability, { data: availabilityData }] = useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY)
   const [getCustomerByEmailOrPhone] = useLazyQuery<CustomerByPhoneResponse>(GET_CUSTOMER_BY_EMAIL_OR_PHONE)
 
@@ -182,9 +183,32 @@ export default function ReservationPage() {
           if (registerResponse.error && registerResponse.error.includes("already exists")) {
             // Bu durumda kullanıcı Quickesta'da zaten var demektir
             console.log("Kullanıcı Quickesta'da zaten var");
-            quickestaUserId = -1; // Var olan kullanıcı işareti
-            // Zaten kayıtlı olduğu için giriş yapılabilir
-            registrationSuccess = true;
+
+            // Eğer kullanıcı login yapabiliyorsa quickesta_user_id'yi almak için
+            // Otomatik olarak login yapmayı dene ve id'yi almaya çalış
+            try {
+              const signInResult = await signIn('credentials', {
+                email: values.email,
+                password: values.password,
+                redirect: false,
+              });
+
+              if (!signInResult?.error) {
+                const session = await getSession();
+                if (session?.user?.id) {
+                  quickestaUserId = Number(session.user.id);
+                  registrationSuccess = true;
+                }
+              }
+            } catch (loginError) {
+              console.error("Auto login error:", loginError);
+            }
+
+            // Hala ID bulunamadıysa -1 olarak işaretle (sonraki update adımlarının çalışması için)
+            if (!quickestaUserId) {
+              quickestaUserId = -1; // Var olan kullanıcı işareti
+              registrationSuccess = true;
+            }
           } else {
             // Başka bir hata
             throw new Error(registerResponse.error || "Quickesta hesabı oluşturulamadı");
@@ -198,13 +222,24 @@ export default function ReservationPage() {
       // 3. Handle customer creation or update
       if (customerResult.data?.customers && customerResult.data.customers.length > 0) {
         // Customer exists in our system
-        customerId = customerResult.data.customers[0].id;
+        const customer = customerResult.data.customers[0];
+        customerId = customer.id;
 
         // Update with Quickesta ID if needed (if we have a valid ID)
-        if (!customerResult.data.customers[0].is_quickesta_user && quickestaUserId && quickestaUserId > 0) {
-          // Burada normalde müşteri kaydını güncelleyecektik
-          // Şimdilik bu adımı atlıyoruz
-          console.log("Müşteri Quickesta ID'si güncellenecek");
+        if (!customer.is_quickesta_user && quickestaUserId && quickestaUserId > 0) {
+          // Müşteri kaydını güncelle
+          try {
+            const updateResult = await updateCustomerQuickestaInfo({
+              variables: {
+                customer_id: customerId,
+                quickesta_user_id: quickestaUserId
+              }
+            });
+
+            console.log("Müşteri Quickesta ID'si güncellendi:", updateResult.data);
+          } catch (updateError) {
+            console.error("Müşteri güncelleme hatası:", updateError);
+          }
         }
       } else {
         // Create new customer with Quickesta relationship if available
@@ -272,7 +307,7 @@ export default function ReservationPage() {
         }
       });
 
-      // 7. Otomatik giriş yap (eğer başarılı kayıt/hesap varsa)
+      // 7. Otomatik giriş yap (eğer başarılı kayıt/hesap varsa ve henüz giriş yapılmadıysa)
       if (registrationSuccess) {
         try {
           // NextAuth ile giriş yapma
@@ -289,7 +324,7 @@ export default function ReservationPage() {
             // Başarılı giriş, oturum bilgilerini al
             const session = await getSession();
             if (session?.user) {
-              console.log("Kullanıcı başarıyla giriş yaptı:", session.user);
+              console.log("Kullanıcı başarıyla giriş yaptı");
               // Burada isteğe bağlı olarak session bilgilerini işleyebiliriz
               // veya kullanıcıyı başka bir sayfaya yönlendirebiliriz
             }

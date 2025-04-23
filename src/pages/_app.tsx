@@ -33,31 +33,19 @@ function AppContent({ Component, pageProps }: AppProps) {
   const isPublicPath = PUBLIC_PATHS.includes(
     router?.pathname as (typeof PUBLIC_PATHS)[number],
   )
-  const isAddAccountMode = router?.query?.mode === 'add'
 
-  // Auth redirect effect
+  // Simplified auth redirect logic
   useEffect(() => {
-    if (status === 'loading') return
-
-
-    // Allow access to sign-in page in add account mode even when logged in
-    if (isAddAccountMode && router?.pathname === '/auth/sign-in') {
-      return
-    }
-
-    // Normal auth flow
-    if (session?.user && isPublicPath && !isAddAccountMode) {
-      router?.push('/')
-      return
-    }
-
-    // Only redirect to sign-in if there are no accounts
-    if (!session?.user && !isPublicPath) {
+    // Only redirect to sign-in if user is not authenticated and tries to access protected route
+    if (status === 'unauthenticated' && !isPublicPath) {
       router?.push('/auth/sign-in')
     }
-  }, [session, status, router, isPublicPath, isAddAccountMode])
+  }, [status, router, isPublicPath])
 
-  if (status === 'loading') return null
+  // Show loading state or content
+  if (status === 'loading') {
+    return null
+  }
 
   return (
     <ThemeProvider
@@ -67,15 +55,11 @@ function AppContent({ Component, pageProps }: AppProps) {
       disableTransitionOnChange
     >
       <ApolloProvider client={client}>
-        {session ? (
-          <Base>
-            <Main>
-              <Component {...pageProps} />
-            </Main>
-          </Base>
-        ) : (
-          <Component {...pageProps} />
-        )}
+        <Base>
+          <Main>
+            <Component {...pageProps} />
+          </Main>
+        </Base>
         <Toaster />
       </ApolloProvider>
     </ThemeProvider>
@@ -84,13 +68,8 @@ function AppContent({ Component, pageProps }: AppProps) {
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ApolloProvider client={client}>
-      <Base>
-        <SessionProvider session={pageProps.session}>
-          <AppContent Component={Component} pageProps={pageProps} />
-        </SessionProvider>
-        <Toaster />
-      </Base>
-    </ApolloProvider>
+    <SessionProvider session={pageProps.session}>
+      <AppContent Component={Component} pageProps={pageProps} />
+    </SessionProvider>
   )
 }
