@@ -19,6 +19,10 @@ const PUBLIC_PATHS = [
   '/auth/sign-in',
   '/auth/forgot-password',
   '/auth/sign-up',
+  '/reservation',
+  '/',
+  '/about',
+  '/gallery',
 ] as const
 
 // App Content Component
