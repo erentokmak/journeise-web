@@ -202,15 +202,8 @@ export default function SignIn() {
         <div className="w-full max-w-sm">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2">
-              <Image
-                src="/assets/images/brand-images/quickestaiconblue.png"
-                alt="Quickesta"
-                width={32}
-                height={32}
-                className="rounded-md"
-              />
               <h1 className="text-xl font-bold">
-                {isAddMode ? 'Hesap Ekle' : "Quickesta'ya Giriş Yapın"}
+                {isAddMode ? 'Hesap Ekle' : "1BARBERS'a Giriş Yapın"}
               </h1>
               {!isAddMode && (
                 <div className="text-center text-sm">

@@ -28,8 +28,8 @@ const Header = () => {
 
           <div className="flex items-center space-x-4">
             <ModeToggle />
-            <Link href="/reservation">
-              <Button>Rezervasyon Yap</Button>
+            <Link href="/auth/sign-in">
+              <Button>Giriş Yap</Button>
             </Link>
           </div>
         </div>

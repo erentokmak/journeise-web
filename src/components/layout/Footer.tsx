@@ -96,7 +96,8 @@ export function Footer() {
                 { href: "/", label: "Ana Sayfa" },
                 { href: "/reservation", label: "Rezervasyon" },
                 { href: "/gallery", label: "Galeri" },
-                { href: "/about", label: "Hakkımızda" }
+                { href: "/about", label: "Hakkımızda" },
+                { href: "/auth/sign-in", label: "Giriş Yap" }
               ].map((link, index) => (
                 <motion.li 
                   key={index}
