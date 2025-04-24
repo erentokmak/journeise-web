@@ -7,10 +7,22 @@ import { MoveRight, Scissors, Clock, Star, Award, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+
 export default function Home() {
   const [selectedBarber, setSelectedBarber] = useState<string | null>(null);
   const { data: session } = useSession();
-  console.log(session);
+
+  // Günün saatine göre selamlama mesajı oluştur
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return 'Günaydın';
+    } else if (hour >= 12 && hour < 18) {
+      return 'İyi günler';
+    } else {
+      return 'İyi akşamlar';
+    }
+  };
 
   return (
     <>
@@ -40,17 +52,28 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-7xl font-bold text-primary mb-4 tracking-tight"
+                  className="text-3xl font-bold text-primary tracking-tight"
                 >
+                  {session?.user ? (
+                    <>
+                      {getGreeting()}, {session.user.name}
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </motion.h1>
-                <motion.h2
+                <motion.h3
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                   className="text-3xl text-foreground/90 mb-8 leading-relaxed"
                 >
-                  Tekrardan Hoşgeldin,
-                </motion.h2>
+                  {session?.user ? (
+                    'Tekrardan Hoşgeldin,'
+                  ) : (
+                    'Tekrardan Hoşgeldin,'
+                  )}
+                </motion.h3>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
