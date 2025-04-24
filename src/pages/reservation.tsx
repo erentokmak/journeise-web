@@ -51,6 +51,7 @@ import { CREATE_CUSTOMER, UPDATE_CUSTOMER_QUICKESTA_INFO } from '@/graphql/mutat
 import { GET_CUSTOMER_BY_EMAIL_OR_PHONE } from '@/graphql/queries/customer'
 import { CREATE_APPOINTMENT } from '@/graphql/mutations/appointment'
 import { GET_AVAILABLE_TIME_SLOTS, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
+import { TermsAndPrivacy } from '@/components/auth/terms-and-privacy'
 
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
@@ -603,22 +604,22 @@ export default function ReservationPage() {
         <link rel="canonical" href="https://1barbers.com/reservation" />
       </Head>
       <main className="min-h-screen bg-background text-foreground">
-        <div className="container mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="mb-12 text-center"
           >
-            <h1 className="text-5xl font-bold">Rezervasyon</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <h1 className="text-4xl font-bold">Rezervasyon</h1>
+            <p className="mt-2 text-base text-muted-foreground">
               Profesyonel ekibimizle tanışın ve randevunuzu hemen alın.
             </p>
           </motion.div>
 
           <div className="mx-auto max-w-2xl">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="mb-8 flex justify-center space-x-2">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <div
@@ -647,7 +648,7 @@ export default function ReservationPage() {
                         name="barber"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xl">
+                            <FormLabel className="text-md">
                               Berber Seçin
                             </FormLabel>
                             <FormControl>
@@ -710,7 +711,7 @@ export default function ReservationPage() {
                         name="service"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xl">
+                            <FormLabel className="text-md">
                               Hizmet Seçin
                             </FormLabel>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -770,7 +771,7 @@ export default function ReservationPage() {
                         name="date"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
-                            <FormLabel className="text-xl">Tarih Seçin</FormLabel>
+                            <FormLabel className="text-md">Tarih Seçin</FormLabel>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <FormControl>
@@ -839,7 +840,7 @@ export default function ReservationPage() {
                         name="time"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xl">Saat Seçin</FormLabel>
+                            <FormLabel className="text-md">Saat Seçin</FormLabel>
                             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
                               {filteredHours.map((hour) => (
                                 <motion.div
@@ -883,13 +884,13 @@ export default function ReservationPage() {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xl">Ad Soyad</FormLabel>
+                            <FormLabel className="text-md">Ad Soyad</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <input
                                   {...field}
-                                  className="flex h-12 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                  className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-xs ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                   placeholder="Adınız ve soyadınız"
                                 />
                               </div>
@@ -904,16 +905,16 @@ export default function ReservationPage() {
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xl">Telefon</FormLabel>
+                            <FormLabel className="text-md">Telefon</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <PhoneInput
                                   country={'tr'}
                                   value={field.value}
                                   onChange={handlePhoneChange}
-                                  inputClass="!w-full !h-12 !text-base !pl-12 !rounded-md !border-input"
+                                  inputClass="!w-full !h-10 !text-xs !pl-12 !rounded-md !border-input"
                                   containerClass="!w-full"
-                                  buttonClass="!h-12 !border !border-input !rounded-l-md"
+                                  buttonClass="!h-10 !border !border-input !rounded-l-md"
                                   dropdownClass="!w-[300px]"
                                   enableSearch
                                   searchPlaceholder="Ülke Ara..."
@@ -922,8 +923,7 @@ export default function ReservationPage() {
                                   inputProps={{
                                     name: 'phone',
                                     required: true,
-                                    autoFocus: false,
-                                    className: "flex h-12 w-full rounded-md border border-input bg-background pl-12 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    autoFocus: false
                                   }}
                                 />
                               </div>
@@ -938,14 +938,14 @@ export default function ReservationPage() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xl">Email</FormLabel>
+                            <FormLabel className="text-md">Email</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <input
                                   {...field}
                                   type="email"
-                                  className="flex h-12 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                  className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-xs ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                   placeholder="Email adresiniz"
                                 />
                               </div>
@@ -960,14 +960,14 @@ export default function ReservationPage() {
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xl">Şifre</FormLabel>
+                            <FormLabel className="text-md">Şifre</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <input
                                   {...field}
                                   type="password"
-                                  className="flex h-12 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                  className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-xs ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                   placeholder="Hesabınız için şifre oluşturun"
                                 />
                               </div>
@@ -976,11 +976,13 @@ export default function ReservationPage() {
                           </FormItem>
                         )}
                       />
+
+                      <TermsAndPrivacy />
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                <div className="flex justify-between pt-8">
+                <div className="flex justify-between pt-6">
                   {step > 1 && (
                     <Button
                       type="button"

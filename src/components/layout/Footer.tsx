@@ -29,7 +29,7 @@ const itemVariants = {
 
 export function Footer() {
   return (
-    <motion.footer 
+    <motion.footer
       className="border-t bg-background relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
@@ -45,7 +45,7 @@ export function Footer() {
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Logo ve Açıklama */}
-          <motion.div 
+          <motion.div
             className="space-y-6"
             variants={itemVariants}
           >
@@ -67,9 +67,9 @@ export function Footer() {
               ].map((social, index) => (
                 <HoverCard key={index}>
                   <HoverCardTrigger asChild>
-                    <Link 
-                      href={social.href} 
-                      target="_blank" 
+                    <Link
+                      href={social.href}
+                      target="_blank"
                       className="group relative p-2 rounded-full bg-muted/50 hover:bg-primary/10 transition-all duration-300"
                     >
                       <social.icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -99,13 +99,13 @@ export function Footer() {
                 { href: "/about", label: "Hakkımızda" },
                 { href: "/auth/sign-in", label: "Giriş Yap" }
               ].map((link, index) => (
-                <motion.li 
+                <motion.li
                   key={index}
                   whileHover={{ x: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Link 
-                    href={link.href} 
+                  <Link
+                    href={link.href}
                     className="group flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     <ArrowRight className="h-4 w-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -130,7 +130,7 @@ export function Footer() {
                 { icon: Phone, text: "+90 530 239 40 05 Sadece WhatsApp Üzerinden Ulaşınız" },
                 { icon: Mail, text: "info@1barbers.com" }
               ].map((contact, index) => (
-                <motion.li 
+                <motion.li
                   key={index}
                   className="flex items-start space-x-3 group"
                   whileHover={{ x: 5 }}
@@ -159,7 +159,7 @@ export function Footer() {
                 { day: "Cumartesi", hours: "10:00 - 22:00" },
                 { day: "Pazar", hours: "Kapalı" }
               ].map((schedule, index) => (
-                <motion.li 
+                <motion.li
                   key={index}
                   className="flex items-center space-x-3 group"
                   whileHover={{ x: 5 }}
@@ -177,7 +177,7 @@ export function Footer() {
         </div>
 
         {/* Alt Bilgi */}
-        <motion.div 
+        <motion.div
           className="mt-16 border-t pt-8"
           variants={itemVariants}
         >
@@ -186,15 +186,15 @@ export function Footer() {
               © {new Date().getFullYear()} 1Barbers. Tüm hakları saklıdır.
             </p>
             <div className="flex space-x-6">
-              <Link 
-                href="/privacy" 
+              <Link
+                href="/privacy"
                 className="group flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 Gizlilik Politikası
                 <ArrowRight className="h-4 w-4 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
               </Link>
-              <Link 
-                href="/terms" 
+              <Link
+                href="/terms"
                 className="group flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 Kullanım Koşulları
