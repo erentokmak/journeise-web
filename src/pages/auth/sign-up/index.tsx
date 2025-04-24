@@ -5,6 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { useMutation } from '@apollo/client'
+import moment from 'moment'
 
 import { Button } from '@/ui/button'
 import { cn } from '@/lib/utils'
@@ -24,6 +26,7 @@ import { extractCountryCode, formatPhoneNumber } from '@/utils/formatters/phone'
 import { ISignUpFormData, ISignUpFormErrors } from '@/types/auth'
 import { TermsAndPrivacy } from '@/components/auth/terms-and-privacy'
 import { validateSignUpFormFields } from '@/utils/validations/auth'
+import { CREATE_CUSTOMER, UPDATE_CUSTOMER_QUICKESTA_INFO } from '@/graphql/mutations/appointment'
 
 export default function SignUp() {
   const [formData, setFormData] = useState<ISignUpFormData>({
@@ -39,6 +42,10 @@ export default function SignUp() {
   const isMobile = useIsMobile()
   const { toast } = useToast()
   const router = useRouter()
+
+  // GraphQL mutations
+  const [createCustomer] = useMutation(CREATE_CUSTOMER)
+  const [updateCustomerQuickestaInfo] = useMutation(UPDATE_CUSTOMER_QUICKESTA_INFO)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -100,6 +107,62 @@ export default function SignUp() {
       const response = await register(registerData)
 
       if (response.isSuccess) {
+        // Quickesta'ya kayıt başarılı, şimdi 1Barbers customer tablosuna kayıt atalım
+        let quickestaUserId: string | null = null;
+
+        if (response.value && response.value.userIdentity) {
+          quickestaUserId = response.value.userIdentity.id;
+
+          // 1Barbers customer tablosuna kayıt at
+          try {
+            const fullName = `${formData.name} ${formData.surname}`;
+            const formattedPhone = formatPhoneNumber(formData.mobileNumber, formData.countryCode);
+
+            // Yeni müşteri oluştur
+            const newCustomerResult = await createCustomer({
+              variables: {
+                input: {
+                  business_id: 1,
+                  full_name: fullName,
+                  phone: formattedPhone,
+                  email: formData.email,
+                  // UUID tipinde olduğu için string olarak gönderiyoruz
+                  quickesta_user_id: quickestaUserId ? quickestaUserId.toString() : null,
+                  // Quickesta kullanıcı ID'si varsa true
+                  is_quickesta_user: !!quickestaUserId,
+                  created_at: moment().add(3, 'hours').toISOString(),
+                }
+              }
+            });
+
+            console.log("1Barbers customer tablosuna kayıt başarılı:", newCustomerResult.data);
+
+            // Eğer müşteri kaydı başarılı olduysa ve Quickesta ID'si doğru şekilde atandıysa
+            if (newCustomerResult.data && newCustomerResult.data.insert_customers_one) {
+              const customerId = newCustomerResult.data.insert_customers_one.id;
+
+              // Eğer quickesta_user_id veya is_quickesta_user alanları doğru şekilde atanmadıysa güncelle
+              if (!newCustomerResult.data.insert_customers_one.quickesta_user_id ||
+                !newCustomerResult.data.insert_customers_one.is_quickesta_user) {
+                try {
+                  const updateResult = await updateCustomerQuickestaInfo({
+                    variables: {
+                      customer_id: customerId,
+                      quickesta_user_id: quickestaUserId ? quickestaUserId.toString() : null
+                    }
+                  });
+                  console.log("Müşteri Quickesta ID'si güncellendi:", updateResult.data);
+                } catch (updateError) {
+                  console.error("Müşteri güncelleme hatası:", updateError);
+                }
+              }
+            }
+          } catch (customerError) {
+            console.error("1Barbers customer tablosuna kayıt hatası:", customerError);
+            // Hata olsa bile devam et, kullanıcı kaydı başarılı
+          }
+        }
+
         toast({
           title: 'Kayıt başarılı!',
           description: 'Yönlendiriliyorsunuz...',
@@ -147,7 +210,7 @@ export default function SignUp() {
           permissions: session.user.permissions,
         }
 
-        router.push('/dashboard')
+        router.push('/')
       } else {
         toast({
           variant: 'destructive',
