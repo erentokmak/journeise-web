@@ -63,25 +63,25 @@ const Header = () => {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/" className="flex w-full cursor-pointer items-center">
+                    <Link href="#" className="flex w-full cursor-pointer items-center">
                       <Home className="mr-2 h-4 w-4" />
                       <span>Ana Sayfa</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="flex w-full cursor-pointer items-center">
+                    <Link href="#" className="flex w-full cursor-pointer items-center">
                       <User className="mr-2 h-4 w-4" />
                       <span>Hesabım</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/reservation" className="flex w-full cursor-pointer items-center">
+                    <Link href="#" className="flex w-full cursor-pointer items-center">
                       <Calendar className="mr-2 h-4 w-4" />
                       <span>Randevularım</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/settings" className="flex w-full cursor-pointer items-center">
+                    <Link href="#" className="flex w-full cursor-pointer items-center">
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Ayarlar</span>
                     </Link>
