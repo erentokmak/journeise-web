@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -117,12 +117,23 @@ export default function ReservationPage() {
   const [step, setStep] = useState(1)
   const [countryCode, setCountryCode] = useState(90) // Türkiye için varsayılan ülke kodu
   const [isLoading, setIsLoading] = useState(false)
+  const [session, setSession] = useState<any>(null)
 
   const [createCustomer] = useMutation(CREATE_CUSTOMER)
   const [createAppointment] = useMutation(CREATE_APPOINTMENT)
   const [updateCustomerQuickestaInfo] = useMutation(UPDATE_CUSTOMER_QUICKESTA_INFO)
   const [checkAvailability, { data: availabilityData }] = useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY)
   const [getCustomerByEmailOrPhone] = useLazyQuery<CustomerByPhoneResponse>(GET_CUSTOMER_BY_EMAIL_OR_PHONE)
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const currentSession = await getSession();
+      setSession(currentSession);
+    };
+
+    checkSession();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -139,6 +150,11 @@ export default function ReservationPage() {
     setCountryCode(extractCountryCode(data.dialCode))
   }
 
+  /**
+   * Form gönderme işlemi
+   * Kullanıcı bilgilerini ve randevu detaylarını işler
+   * Oturum açmış kullanıcılar için farklı, yeni kullanıcılar için farklı işlem yapar
+   */
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true)
@@ -148,76 +164,89 @@ export default function ReservationPage() {
       let registeredEmail = values.email;
       let registeredPassword = values.password;
 
-      // 1. Check if customer exists by email or phone
+      // Eğer kullanıcı oturum açmışsa, oturum verilerini kullan
+      if (session?.user) {
+        registeredEmail = session.user.email || values.email;
+        registeredPassword = '********'; // Şifre için yer tutucu
+      }
+
+      // 1. E-posta veya telefon ile müşteri var mı kontrol et
       const customerResult = await getCustomerByEmailOrPhone({
         variables: {
           business_id: 1,
-          email: values.email,
+          email: registeredEmail,
           phone: values.phone
         }
       });
 
-      // 2. Create or get Quickesta account using API
+      // 2. Quickesta hesabı oluştur veya al
       let quickestaAccount = null;
 
-      try {
-        // Register user in Quickesta with API
-        const registerData = {
-          name: values.name.split(' ')[0],
-          surname: values.name.includes(' ') ? values.name.substring(values.name.indexOf(' ') + 1) : '',
-          email: values.email,
-          password: values.password,
-          confirmPassword: values.password,
-          mobileNumber: formatPhoneNumber(values.phone, countryCode),
-          countryCode: countryCode
-        };
+      // Sadece oturum açmamış kullanıcılar için kayıt işlemi yap
+      if (!session?.user) {
+        try {
+          // Quickesta API ile kullanıcı kaydı
+          const registerData = {
+            name: values.name.split(' ')[0],
+            surname: values.name.includes(' ') ? values.name.substring(values.name.indexOf(' ') + 1) : '',
+            email: values.email,
+            password: values.password,
+            confirmPassword: values.password,
+            mobileNumber: formatPhoneNumber(values.phone, countryCode),
+            countryCode: countryCode
+          };
 
-        const registerResponse = await register(registerData);
+          const registerResponse = await register(registerData);
 
-        if (registerResponse.isSuccess) {
-          console.log("registerResponse", registerResponse.value.userIdentity)
-          quickestaUserId = registerResponse.value.userIdentity.id || null;
-          quickestaAccount = registerResponse.value.userIdentity;
-          registrationSuccess = true;
-        } else {
-          // Kullanıcı zaten var olabilir, hata mesajını kontrol et
-          if (registerResponse.error && registerResponse.error.includes("already exists")) {
-            // Bu durumda kullanıcı Quickesta'da zaten var demektir
-            console.log("Kullanıcı Quickesta'da zaten var");
-
-            // Eğer kullanıcı login yapabiliyorsa quickesta_user_id'yi almak için
-            // Otomatik olarak login yapmayı dene ve id'yi almaya çalış
-            try {
-              const signInResult = await signIn('credentials', {
-                email: values.email,
-                password: values.password,
-                redirect: false,
-              });
-
-              if (!signInResult?.error) {
-                const session = await getSession();
-                if (session?.user?.id) {
-                  quickestaUserId = Number(session.user.id);
-                  registrationSuccess = true;
-                }
-              }
-            } catch (loginError) {
-              console.error("Auto login error:", loginError);
-            }
-
-            // Hala ID bulunamadıysa -1 olarak işaretle (sonraki update adımlarının çalışması için)
-            if (!quickestaUserId) {
-              quickestaUserId = -1; // Var olan kullanıcı işareti
-              registrationSuccess = true;
-            }
+          if (registerResponse.isSuccess) {
+            console.log("registerResponse", registerResponse.value.userIdentity)
+            quickestaUserId = registerResponse.value.userIdentity.id || null;
+            quickestaAccount = registerResponse.value.userIdentity;
+            registrationSuccess = true;
           } else {
-            // Başka bir hata
-            throw new Error(registerResponse.error || "Quickesta hesabı oluşturulamadı");
+            // Kullanıcı zaten var olabilir, hata mesajını kontrol et
+            if (registerResponse.error && registerResponse.error.includes("already exists")) {
+              // Bu durumda kullanıcı Quickesta'da zaten var demektir
+              console.log("Kullanıcı Quickesta'da zaten var");
+
+              // Eğer kullanıcı login yapabiliyorsa quickesta_user_id'yi almak için
+              // Otomatik olarak login yapmayı dene ve id'yi almaya çalış
+              try {
+                const signInResult = await signIn('credentials', {
+                  email: values.email,
+                  password: values.password,
+                  redirect: false,
+                });
+
+                if (!signInResult?.error) {
+                  const session = await getSession();
+                  if (session?.user?.id) {
+                    quickestaUserId = Number(session.user.id);
+                    registrationSuccess = true;
+                  }
+                }
+              } catch (loginError) {
+                console.error("Otomatik giriş hatası:", loginError);
+              }
+
+              // Hala ID bulunamadıysa -1 olarak işaretle (sonraki update adımlarının çalışması için)
+              if (!quickestaUserId) {
+                quickestaUserId = -1; // Var olan kullanıcı işareti
+                registrationSuccess = true;
+              }
+            } else {
+              // Başka bir hata
+              throw new Error(registerResponse.error || "Quickesta hesabı oluşturulamadı");
+            }
           }
+        } catch (error) {
+          console.error("Quickesta hesap işlemi hatası:", error);
+          // Ancak işleme devam etmeliyiz
         }
-      } catch (error) {
-        console.error("Quickesta hesap işlemi hatası:", error);
-        // Ancak işleme devam etmeliyiz
+      } else {
+        // Kullanıcı oturum açmış, oturum ID'sini kullan
+        quickestaUserId = Number(session.user.id);
+        registrationSuccess = true;
       }
 
       // 3. Handle customer creation or update
@@ -227,9 +256,6 @@ export default function ReservationPage() {
         customerId = customer.id;
 
         // Update with Quickesta ID if needed (if we have a valid ID)
-        console.log("customer", customer)
-        console.log("quickestaUserId", quickestaUserId)
-        console.log("customer.is_quickesta_user", customer.is_quickesta_user)
         if (!customer.is_quickesta_user && quickestaUserId) {
           // Müşteri kaydını güncelle
           try {
@@ -246,7 +272,8 @@ export default function ReservationPage() {
           }
         }
       } else {
-        // Create new customer with Quickesta relationship if available
+
+        // Yeni müşteri oluşturma - Quickesta ilişkisi varsa
         const newCustomerResult = await createCustomer({
           variables: {
             input: {
@@ -254,14 +281,35 @@ export default function ReservationPage() {
               full_name: values.name,
               phone: values.phone,
               email: values.email,
-              quickesta_user_id: quickestaUserId && quickestaUserId > 0 ? quickestaUserId : null,
-              is_quickesta_user: quickestaUserId !== null && quickestaUserId > 0,
+              // UUID tipinde olduğu için string olarak gönderiyoruz
+              quickesta_user_id: quickestaUserId ? quickestaUserId.toString() : null,
+              // Quickesta kullanıcı ID'si varsa true, yoksa false
+              is_quickesta_user: quickestaUserId !== null && quickestaUserId !== -1,
               created_at: moment().add(3, 'hours').toISOString(),
             }
           }
         });
 
         customerId = newCustomerResult.data.insert_customers_one.id;
+
+        // Eğer geçerli bir Quickesta kullanıcı ID'si varsa ve müşteri bu ID ile oluşturulmadıysa,
+        // müşteri kaydını güncelle
+        if (quickestaUserId && quickestaUserId > 0 &&
+          (!newCustomerResult.data.insert_customers_one.quickesta_user_id ||
+            !newCustomerResult.data.insert_customers_one.is_quickesta_user)) {
+          try {
+            const updateResult = await updateCustomerQuickestaInfo({
+              variables: {
+                customer_id: customerId,
+                // UUID tipinde olduğu için string olarak gönderiyoruz
+                quickesta_user_id: quickestaUserId.toString()
+              }
+            });
+            console.log("Yeni müşteri Quickesta ID'si güncellendi:", updateResult.data);
+          } catch (updateError) {
+            console.error("Yeni müşteri güncelleme hatası:", updateError);
+          }
+        }
       }
 
       // 4. Appointment time calculation
@@ -427,7 +475,13 @@ export default function ReservationPage() {
     (barber) => barber.id.toString() === selectedBarber,
   )
 
+  /**
+   * Bir sonraki adıma geçiş fonksiyonu
+   * Kullanıcının seçimlerini kontrol eder ve bir sonraki adıma geçer
+   * Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atlar
+   */
   const nextStep = () => {
+    // Berber seçimi kontrolü
     if (step === 1 && !selectedBarber) {
       toast({
         variant: "destructive",
@@ -437,6 +491,8 @@ export default function ReservationPage() {
       })
       return
     }
+
+    // Hizmet seçimi kontrolü
     if (step === 2 && !form.getValues('service')) {
       toast({
         variant: "destructive",
@@ -446,6 +502,8 @@ export default function ReservationPage() {
       })
       return
     }
+
+    // Tarih seçimi kontrolü
     if (step === 3 && !form.getValues('date')) {
       toast({
         variant: "destructive",
@@ -455,6 +513,8 @@ export default function ReservationPage() {
       })
       return
     }
+
+    // Saat seçimi kontrolü
     if (step === 4 && !form.getValues('time')) {
       toast({
         variant: "destructive",
@@ -464,9 +524,21 @@ export default function ReservationPage() {
       })
       return
     }
+
+    // Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atla
+    if (step === 4 && session?.user) {
+      // Formu doğrudan gönder
+      form.handleSubmit(onSubmit)();
+      return;
+    }
+
+    // Bir sonraki adıma geç
     setStep(step + 1)
   }
 
+  /**
+   * Bir önceki adıma dönüş fonksiyonu
+   */
   const prevStep = () => {
     setStep(step - 1)
   }
@@ -752,7 +824,7 @@ export default function ReservationPage() {
                     </motion.div>
                   )}
 
-                  {step === 5 && (
+                  {step === 5 && !session?.user && (
                     <motion.div
                       key="step5"
                       initial={{ opacity: 0, x: -20 }}
