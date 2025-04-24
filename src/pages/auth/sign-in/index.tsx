@@ -94,22 +94,6 @@ export default function SignIn() {
         return
       }
 
-      // Add account to Redux store
-      const accountData = {
-        id: session.user.id,
-        email: formData.email,
-        name: session.user.name,
-        surname: session.user.surname,
-        phoneNumber: session.user.phoneNumber,
-        username: formData.email,
-        accessToken: session.user.accessToken,
-        refreshToken: session.user.refreshToken,
-        expiresIn: Date.now() + 3600000,
-        roles: session.user.roles,
-        permissions: session.user.permissions,
-      }
-
-
       if (isAddMode) {
         router.push('/')
       } else {
