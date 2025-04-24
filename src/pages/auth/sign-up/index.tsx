@@ -212,17 +212,81 @@ export default function SignUp() {
 
         router.push('/')
       } else {
+        // Hata mesajını daha anlaşılır hale getir
+        let errorMessage = response.error || 'Bir hata oluştu.'
+
+        // Eğer hata mesajı JSON formatındaysa, parse et ve daha anlaşılır hale getir
+        try {
+          if (typeof response.error === 'string' && response.error.includes('{')) {
+            const errorData = JSON.parse(response.error)
+
+            if (errorData.detail) {
+              // Kullanıcı adı veya e-posta adresi zaten kullanılıyorsa
+              if (errorData.detail.includes('is already taken')) {
+                const takenFields = errorData.detail.split(',').map((field: string) => {
+                  if (field.includes('Username')) {
+                    return 'Kullanıcı adı'
+                  } else if (field.includes('Email')) {
+                    return 'E-posta adresi'
+                  } else if (field.includes('Phone')) {
+                    return 'Telefon numarası'
+                  }
+                  return field
+                })
+
+                errorMessage = `${takenFields.join(' ve ')} zaten kullanılıyor. Lütfen başka bir değer deneyin.`
+              } else {
+                errorMessage = errorData.detail
+              }
+            }
+          }
+        } catch (parseError) {
+          console.error('Hata mesajı parse edilemedi:', parseError)
+        }
+
         toast({
           variant: 'destructive',
           title: 'Kayıt başarısız',
-          description: response.error || 'Bir hata oluştu.',
+          description: errorMessage,
         })
       }
     } catch (error: any) {
+      // Hata mesajını daha anlaşılır hale getir
+      let errorMessage = error.message || 'Lütfen daha sonra tekrar deneyiniz.'
+
+      // Eğer hata mesajı JSON formatındaysa, parse et ve daha anlaşılır hale getir
+      try {
+        if (error.response?.data) {
+          const errorData = error.response.data
+
+          if (errorData.detail) {
+            // Kullanıcı adı veya e-posta adresi zaten kullanılıyorsa
+            if (errorData.detail.includes('is already taken')) {
+              const takenFields = errorData.detail.split(',').map((field: string) => {
+                if (field.includes('Username')) {
+                  return 'Kullanıcı adı'
+                } else if (field.includes('Email')) {
+                  return 'E-posta adresi'
+                } else if (field.includes('Phone')) {
+                  return 'Telefon numarası'
+                }
+                return field
+              })
+
+              errorMessage = `${takenFields.join(' ve ')} zaten kullanılıyor. Lütfen başka bir email veya telefon numarası deneyin.`
+            } else {
+              errorMessage = errorData.detail
+            }
+          }
+        }
+      } catch (parseError) {
+        console.error('Hata mesajı parse edilemedi:', parseError)
+      }
+
       toast({
         variant: 'destructive',
         title: 'Bir sorun oluştu',
-        description: error.message || 'Lütfen daha sonra tekrar deneyiniz.',
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)
