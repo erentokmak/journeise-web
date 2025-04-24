@@ -1,3 +1,14 @@
+/**
+ * @file Reservation.tsx
+ * @description Randevu alma sayfası bileşeni. Bu sayfa, müşterilerin berber randevusu 
+ * oluşturmasını sağlar. 5 adımlı bir form sürecini içerir:
+ * 1. Berber seçimi
+ * 2. Hizmet seçimi
+ * 3. Tarih seçimi
+ * 4. Saat seçimi
+ * 5. Kişisel bilgiler (oturum açmamış kullanıcılar için)
+ */
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,6 +73,7 @@ import {
 } from "@/graphql/queries/appointment";
 import { TermsAndPrivacy } from "@/components/auth/terms-and-privacy";
 
+// Form şeması tanımlaması
 const formSchema = z.object({
   name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
   phone: z.string().min(10, "Geçerli bir telefon numarası giriniz"),
@@ -81,7 +93,9 @@ const formSchema = z.object({
   }),
 });
 
-// GraphQL Response Types
+/**
+ * GraphQL yanıt tipleri
+ */
 interface Appointment {
   id: number;
   start_time: string;
@@ -111,35 +125,34 @@ interface CheckAvailabilityResponse {
   appointments: Appointment[];
 }
 
+/**
+ * @component ReservationPage
+ * @description Ana randevu sayfası bileşeni. Tüm randevu alma sürecini yönetir.
+ */
 export default function ReservationPage() {
   const { toast } = useToast();
+
+  /**
+   * State tanımlamaları
+   */
   const [selectedBarber, setSelectedBarber] = useState<string>("");
   const [step, setStep] = useState(1);
   const [countryCode, setCountryCode] = useState(90); // Türkiye için varsayılan ülke kodu
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<any>(null);
 
+  /**
+   * GraphQL mutation ve query hook'ları
+   */
   const [createCustomer] = useMutation(CREATE_CUSTOMER);
   const [createAppointment] = useMutation(CREATE_APPOINTMENT);
-  const [updateCustomerQuickestaInfo] = useMutation(
-    UPDATE_CUSTOMER_QUICKESTA_INFO
-  );
-  const [checkAvailability, { data: availabilityData }] =
-    useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY);
-  const [getCustomerByEmailOrPhone] = useLazyQuery<CustomerByPhoneResponse>(
-    GET_CUSTOMER_BY_EMAIL_OR_PHONE
-  );
+  const [updateCustomerQuickestaInfo] = useMutation(UPDATE_CUSTOMER_QUICKESTA_INFO);
+  const [checkAvailability, { data: availabilityData }] = useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY);
+  const [getCustomerByEmailOrPhone] = useLazyQuery<CustomerByPhoneResponse>(GET_CUSTOMER_BY_EMAIL_OR_PHONE);
 
-  // Check if user is logged in
-  useEffect(() => {
-    const checkSession = async () => {
-      const currentSession = await getSession();
-      setSession(currentSession);
-    };
-
-    checkSession();
-  }, []);
-
+  /**
+   * Form tanımlaması ve validasyon
+   */
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -150,15 +163,29 @@ export default function ReservationPage() {
     },
   });
 
-  // Session varsa form değerlerini otomatik doldur
+  /**
+   * Oturum kontrolü ve form otomatik doldurma
+   * @effect
+   */
+  useEffect(() => {
+    const checkSession = async () => {
+      const currentSession = await getSession();
+      setSession(currentSession);
+    };
+
+    checkSession();
+  }, []);
+
+  /**
+   * Session varsa form değerlerini otomatik doldurma
+   * @effect
+   */
   useEffect(() => {
     if (session?.user) {
       form.setValue("name", session.user.name || "");
       form.setValue("email", session.user.email || "");
-      // Telefon numarası varsa ayarla
       if (session.user.phone) {
         form.setValue("phone", session.user.phone);
-        // Ülke kodunu ayarla
         const phoneCountryCode = extractCountryCode(session.user.phone);
         if (phoneCountryCode) {
           setCountryCode(phoneCountryCode);
@@ -167,7 +194,9 @@ export default function ReservationPage() {
     }
   }, [session, form]);
 
-  // Form şemasını session durumuna göre dinamik olarak ayarla
+  /**
+   * Dinamik form şeması - session durumuna göre güncellenir
+   */
   const dynamicFormSchema = z.object({
     name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
     phone: z.string().min(10, "Geçerli bir telefon numarası giriniz"),
@@ -189,6 +218,11 @@ export default function ReservationPage() {
     }),
   });
 
+  /**
+   * Telefon numarası değişikliği handler'ı
+   * @param {string} value - Telefon numarası
+   * @param {any} data - Ülke kodu ve diğer metadata
+   */
   const handlePhoneChange = (value: string, data: any) => {
     form.setValue("phone", value);
     setCountryCode(extractCountryCode(data.dialCode));
@@ -196,8 +230,7 @@ export default function ReservationPage() {
 
   /**
    * Form gönderme işlemi
-   * Kullanıcı bilgilerini ve randevu detaylarını işler
-   * Oturum açmış kullanıcılar için farklı, yeni kullanıcılar için farklı işlem yapar
+   * @param {z.infer<typeof dynamicFormSchema>} values - Form değerleri
    */
   async function onSubmit(values: z.infer<typeof dynamicFormSchema>) {
     try {
@@ -494,7 +527,9 @@ export default function ReservationPage() {
     }
   }
 
-  // Mevcut saatleri kontrol et
+  /**
+   * Müsait saatleri kontrol etme query'si
+   */
   const { data: availableSlots } = useQuery<AvailableTimeSlotsResponse>(
     GET_AVAILABLE_TIME_SLOTS,
     {
@@ -508,7 +543,9 @@ export default function ReservationPage() {
     }
   );
 
-  // Kullanılabilir saatleri filtrele
+  /**
+   * Müsait saatleri filtreleme
+   */
   const filteredHours = AVAILABLE_HOURS.filter((hour) => {
     if (!availableSlots) return true;
 
@@ -557,14 +594,15 @@ export default function ReservationPage() {
     });
   });
 
+  /**
+   * Seçili berber bilgilerini alma
+   */
   const selectedBarberData = BARBERS.find(
     (barber) => barber.id.toString() === selectedBarber
   );
 
   /**
    * Bir sonraki adıma geçiş fonksiyonu
-   * Kullanıcının seçimlerini kontrol eder ve bir sonraki adıma geçer
-   * Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atlar
    */
   const nextStep = () => {
     // Berber seçimi kontrolü
