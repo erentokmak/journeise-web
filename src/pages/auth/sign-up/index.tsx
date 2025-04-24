@@ -27,20 +27,8 @@ import { extractCountryCode, formatPhoneNumber } from '@/utils/formatters/phone'
 import { ISignUpFormData, ISignUpFormErrors } from '@/types/auth'
 import { TermsAndPrivacy } from '@/components/auth/terms-and-privacy'
 import { validateSignUpFormFields } from '@/utils/validations/auth'
-import { CREATE_CUSTOMER, UPDATE_CUSTOMER_QUICKESTA_INFO } from '@/graphql/mutations/appointment'
-
-// GraphQL mutations
-const GET_CUSTOMER_BY_EMAIL_AND_PHONE = gql`
-  query GetCustomerByEmailAndPhone($email: String!, $phone: String!) {
-    customers(where: { _or: [{ email: { _eq: $email } }, { phone: { _eq: $phone } }] }) {
-      id
-      email
-      phone
-      quickesta_user_id
-      is_quickesta_user
-    }
-  }
-`
+import { CREATE_CUSTOMER, UPDATE_CUSTOMER_QUICKESTA_INFO } from '@/graphql/mutations/customer'
+import { GET_CUSTOMER_BY_EMAIL_AND_PHONE } from '@/graphql/queries/customer'
 
 export default function SignUp() {
   const [formData, setFormData] = useState<ISignUpFormData>({
@@ -139,7 +127,6 @@ export default function SignUp() {
                     quickesta_user_id: quickestaUserId
                   }
                 })
-                console.log("Var olan müşteri Quickesta bilgileri güncellendi:", updateResult.data)
               }
             } catch (updateError) {
               console.error("Müşteri güncelleme hatası:", updateError)
@@ -165,8 +152,6 @@ export default function SignUp() {
                   }
                 })
 
-                console.log("Yeni müşteri oluşturuldu:", newCustomerResult.data)
-
                 // Eğer quickesta_user_id veya is_quickesta_user alanları doğru şekilde atanmadıysa güncelle
                 if (newCustomerResult.data && newCustomerResult.data.insert_customers_one) {
                   const customerId = newCustomerResult.data.insert_customers_one.id
@@ -180,7 +165,6 @@ export default function SignUp() {
                           quickesta_user_id: quickestaUserId
                         }
                       })
-                      console.log("Müşteri Quickesta bilgileri güncellendi:", updateResult.data)
                     } catch (updateError) {
                       console.error("Müşteri güncelleme hatası:", updateError)
                     }
@@ -196,6 +180,7 @@ export default function SignUp() {
         toast({
           title: 'Kayıt başarılı!',
           description: 'Yönlendiriliyorsunuz...',
+          duration: 2000,
         })
 
         const signInResult = await signIn('credentials', {

@@ -42,13 +42,15 @@ import Image from 'next/image'
 import { Card, CardContent } from '@/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMutation, useQuery, useLazyQuery } from '@apollo/client'
-import { CREATE_CUSTOMER, CREATE_APPOINTMENT, UPDATE_CUSTOMER_QUICKESTA_INFO } from '@/graphql/mutations/appointment'
-import { GET_AVAILABLE_TIME_SLOTS, GET_CUSTOMER_BY_EMAIL_OR_PHONE, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
 import { register } from '@/lib/api-v1/auth'
 import { extractCountryCode, formatPhoneNumber } from '@/utils/formatters/phone'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import moment from 'moment'
+import { CREATE_CUSTOMER, UPDATE_CUSTOMER_QUICKESTA_INFO } from '@/graphql/mutations/customer'
+import { GET_CUSTOMER_BY_EMAIL_OR_PHONE } from '@/graphql/queries/customer'
+import { CREATE_APPOINTMENT } from '@/graphql/mutations/appointment'
+import { GET_AVAILABLE_TIME_SLOTS, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
 
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
@@ -231,7 +233,6 @@ export default function ReservationPage() {
           const registerResponse = await register(registerData);
 
           if (registerResponse.isSuccess) {
-            console.log("registerResponse", registerResponse.value.userIdentity)
             quickestaUserId = registerResponse.value.userIdentity.id || null;
             quickestaAccount = registerResponse.value.userIdentity;
             registrationSuccess = true;
@@ -239,7 +240,6 @@ export default function ReservationPage() {
             // Kullanıcı zaten var olabilir, hata mesajını kontrol et
             if (registerResponse.error && registerResponse.error.includes("already exists")) {
               // Bu durumda kullanıcı Quickesta'da zaten var demektir
-              console.log("Kullanıcı Quickesta'da zaten var");
 
               // Eğer kullanıcı login yapabiliyorsa quickesta_user_id'yi almak için
               // Otomatik olarak login yapmayı dene ve id'yi almaya çalış
@@ -298,7 +298,6 @@ export default function ReservationPage() {
               }
             });
 
-            console.log("Müşteri Quickesta ID'si güncellendi:", updateResult.data);
           } catch (updateError) {
             console.error("Müşteri güncelleme hatası:", updateError);
           }
@@ -336,7 +335,6 @@ export default function ReservationPage() {
                 quickesta_user_id: quickestaUserId.toString()
               }
             });
-            console.log("Yeni müşteri Quickesta ID'si güncellendi:", updateResult.data);
           } catch (updateError) {
             console.error("Yeni müşteri güncelleme hatası:", updateError);
           }
@@ -407,7 +405,6 @@ export default function ReservationPage() {
             // Başarılı giriş, oturum bilgilerini al
             const session = await getSession();
             if (session?.user) {
-              console.log("Kullanıcı başarıyla giriş yaptı");
               // Burada isteğe bağlı olarak session bilgilerini işleyebiliriz
               // veya kullanıcıyı başka bir sayfaya yönlendirebiliriz
             }
@@ -512,7 +509,6 @@ export default function ReservationPage() {
    * Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atlar
    */
   const nextStep = () => {
-    console.log("nextStep çağrıldı, step:", step, "session:", session);
 
     // Berber seçimi kontrolü
     if (step === 1 && !selectedBarber) {
@@ -560,7 +556,6 @@ export default function ReservationPage() {
 
     // Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atla
     if (step === 4 && session?.user) {
-      console.log("Kullanıcı oturum açmış, formu doğrudan gönder");
 
       // Form değerlerini al
       const formValues = form.getValues();
