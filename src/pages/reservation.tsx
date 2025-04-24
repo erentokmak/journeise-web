@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { format } from 'date-fns'
-import Head from 'next/head'
-import { signIn, getSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { format } from "date-fns";
+import Head from "next/head";
+import { signIn, getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -15,10 +15,10 @@ import {
   Check,
   Mail,
   Lock,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/ui/button'
-import { Calendar } from '@/ui/calendar'
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/ui/button";
+import { Calendar } from "@/ui/calendar";
 import {
   Form,
   FormControl,
@@ -26,102 +26,109 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/ui/form'
-import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
+} from "@/ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/ui/select'
-import { BARBERS, AVAILABLE_HOURS } from '@/constants/data'
-import { useToast } from "@/hooks/use-toast"
-import { ToastAction } from "@/ui/toast"
-import Image from 'next/image'
-import { Card, CardContent } from '@/ui/card'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useMutation, useQuery, useLazyQuery } from '@apollo/client'
-import { register } from '@/lib/api-v1/auth'
-import { extractCountryCode, formatPhoneNumber } from '@/utils/formatters/phone'
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
-import moment from 'moment'
-import { CREATE_CUSTOMER, UPDATE_CUSTOMER_QUICKESTA_INFO } from '@/graphql/mutations/customer'
-import { GET_CUSTOMER_BY_EMAIL_OR_PHONE } from '@/graphql/queries/customer'
-import { CREATE_APPOINTMENT } from '@/graphql/mutations/appointment'
-import { GET_AVAILABLE_TIME_SLOTS, CHECK_APPOINTMENT_AVAILABILITY } from '@/graphql/queries/appointment'
-import { TermsAndPrivacy } from '@/components/auth/terms-and-privacy'
+} from "@/ui/select";
+import { BARBERS, AVAILABLE_HOURS } from "@/constants/data";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/ui/toast";
+import Image from "next/image";
+import { Card, CardContent } from "@/ui/card";
+import { motion, AnimatePresence } from "framer-motion";
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
+import { register } from "@/lib/api-v1/auth";
+import {
+  extractCountryCode,
+  formatPhoneNumber,
+} from "@/utils/formatters/phone";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import moment from "moment";
+import {
+  CREATE_CUSTOMER,
+  UPDATE_CUSTOMER_QUICKESTA_INFO,
+} from "@/graphql/mutations/customer";
+import { GET_CUSTOMER_BY_EMAIL_OR_PHONE } from "@/graphql/queries/customer";
+import { CREATE_APPOINTMENT } from "@/graphql/mutations/appointment";
+import {
+  GET_AVAILABLE_TIME_SLOTS,
+  CHECK_APPOINTMENT_AVAILABILITY,
+} from "@/graphql/queries/appointment";
+import { TermsAndPrivacy } from "@/components/auth/terms-and-privacy";
 
 const formSchema = z.object({
-  name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
-  phone: z.string().min(10, 'Geçerli bir telefon numarası giriniz'),
-  email: z.string().email('Geçerli bir email adresi giriniz'),
-  password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
+  name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
+  phone: z.string().min(10, "Geçerli bir telefon numarası giriniz"),
+  email: z.string().email("Geçerli bir email adresi giriniz"),
+  password: z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
   date: z.date({
-    required_error: 'Lütfen bir tarih seçin',
+    required_error: "Lütfen bir tarih seçin",
   }),
   time: z.string({
-    required_error: 'Lütfen bir saat seçin',
+    required_error: "Lütfen bir saat seçin",
   }),
   barber: z.string({
-    required_error: 'Lütfen bir berber seçin',
+    required_error: "Lütfen bir berber seçin",
   }),
   service: z.string({
-    required_error: 'Lütfen bir hizmet seçin',
+    required_error: "Lütfen bir hizmet seçin",
   }),
-})
+});
 
 // GraphQL Response Types
 interface Appointment {
-  id: number
-  start_time: string
-  end_time: string
+  id: number;
+  start_time: string;
+  end_time: string;
 }
 
 interface Customer {
-  id: number
-  business_id: number
-  full_name: string
-  phone: string
-  email?: string
-  notes?: string
-  quickesta_user_id?: number
-  is_quickesta_user: boolean
+  id: number;
+  business_id: number;
+  full_name: string;
+  phone: string;
+  email?: string;
+  notes?: string;
+  quickesta_user_id?: number;
+  is_quickesta_user: boolean;
 }
 
 interface CustomerByPhoneResponse {
-  customers: Customer[]
-}
-
-interface QuickestaUser {
-  id: number
-  email: string
-  phone: string
-  full_name: string
+  customers: Customer[];
 }
 
 interface AvailableTimeSlotsResponse {
-  appointments: Appointment[]
+  appointments: Appointment[];
 }
 
 interface CheckAvailabilityResponse {
-  appointments: Appointment[]
+  appointments: Appointment[];
 }
 
 export default function ReservationPage() {
-  const { toast } = useToast()
-  const [selectedBarber, setSelectedBarber] = useState<string>('')
-  const [step, setStep] = useState(1)
-  const [countryCode, setCountryCode] = useState(90) // Türkiye için varsayılan ülke kodu
-  const [isLoading, setIsLoading] = useState(false)
-  const [session, setSession] = useState<any>(null)
+  const { toast } = useToast();
+  const [selectedBarber, setSelectedBarber] = useState<string>("");
+  const [step, setStep] = useState(1);
+  const [countryCode, setCountryCode] = useState(90); // Türkiye için varsayılan ülke kodu
+  const [isLoading, setIsLoading] = useState(false);
+  const [session, setSession] = useState<any>(null);
 
-  const [createCustomer] = useMutation(CREATE_CUSTOMER)
-  const [createAppointment] = useMutation(CREATE_APPOINTMENT)
-  const [updateCustomerQuickestaInfo] = useMutation(UPDATE_CUSTOMER_QUICKESTA_INFO)
-  const [checkAvailability, { data: availabilityData }] = useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY)
-  const [getCustomerByEmailOrPhone] = useLazyQuery<CustomerByPhoneResponse>(GET_CUSTOMER_BY_EMAIL_OR_PHONE)
+  const [createCustomer] = useMutation(CREATE_CUSTOMER);
+  const [createAppointment] = useMutation(CREATE_APPOINTMENT);
+  const [updateCustomerQuickestaInfo] = useMutation(
+    UPDATE_CUSTOMER_QUICKESTA_INFO
+  );
+  const [checkAvailability, { data: availabilityData }] =
+    useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY);
+  const [getCustomerByEmailOrPhone] = useLazyQuery<CustomerByPhoneResponse>(
+    GET_CUSTOMER_BY_EMAIL_OR_PHONE
+  );
 
   // Check if user is logged in
   useEffect(() => {
@@ -136,21 +143,21 @@ export default function ReservationPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      phone: '',
-      email: '',
-      password: '',
+      name: "",
+      phone: "",
+      email: "",
+      password: "",
     },
-  })
+  });
 
   // Session varsa form değerlerini otomatik doldur
   useEffect(() => {
     if (session?.user) {
-      form.setValue('name', session.user.name || '');
-      form.setValue('email', session.user.email || '');
+      form.setValue("name", session.user.name || "");
+      form.setValue("email", session.user.email || "");
       // Telefon numarası varsa ayarla
       if (session.user.phone) {
-        form.setValue('phone', session.user.phone);
+        form.setValue("phone", session.user.phone);
         // Ülke kodunu ayarla
         const phoneCountryCode = extractCountryCode(session.user.phone);
         if (phoneCountryCode) {
@@ -162,28 +169,30 @@ export default function ReservationPage() {
 
   // Form şemasını session durumuna göre dinamik olarak ayarla
   const dynamicFormSchema = z.object({
-    name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
-    phone: z.string().min(10, 'Geçerli bir telefon numarası giriniz'),
-    email: z.string().email('Geçerli bir email adresi giriniz'),
-    password: session?.user ? z.string().optional() : z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
+    name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
+    phone: z.string().min(10, "Geçerli bir telefon numarası giriniz"),
+    email: z.string().email("Geçerli bir email adresi giriniz"),
+    password: session?.user
+      ? z.string().optional()
+      : z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
     date: z.date({
-      required_error: 'Lütfen bir tarih seçin',
+      required_error: "Lütfen bir tarih seçin",
     }),
     time: z.string({
-      required_error: 'Lütfen bir saat seçin',
+      required_error: "Lütfen bir saat seçin",
     }),
     barber: z.string({
-      required_error: 'Lütfen bir berber seçin',
+      required_error: "Lütfen bir berber seçin",
     }),
     service: z.string({
-      required_error: 'Lütfen bir hizmet seçin',
+      required_error: "Lütfen bir hizmet seçin",
     }),
   });
 
   const handlePhoneChange = (value: string, data: any) => {
-    form.setValue('phone', value)
-    setCountryCode(extractCountryCode(data.dialCode))
-  }
+    form.setValue("phone", value);
+    setCountryCode(extractCountryCode(data.dialCode));
+  };
 
   /**
    * Form gönderme işlemi
@@ -192,17 +201,17 @@ export default function ReservationPage() {
    */
   async function onSubmit(values: z.infer<typeof dynamicFormSchema>) {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       let customerId: number;
       let quickestaUserId: string | null = null;
       let registrationSuccess = false;
       let registeredEmail = values.email;
-      let registeredPassword = values.password || '';
+      let registeredPassword = values.password || "";
 
       // Eğer kullanıcı oturum açmışsa, oturum verilerini kullan
       if (session?.user) {
         registeredEmail = session.user.email || values.email;
-        registeredPassword = '********'; // Şifre için yer tutucu
+        registeredPassword = "********"; // Şifre için yer tutucu
       }
 
       // 1. E-posta veya telefon ile müşteri var mı kontrol et
@@ -210,8 +219,8 @@ export default function ReservationPage() {
         variables: {
           business_id: 1,
           email: registeredEmail,
-          phone: values.phone
-        }
+          phone: values.phone,
+        },
       });
 
       // Sadece oturum açmamış kullanıcılar için kayıt işlemi yap
@@ -219,13 +228,15 @@ export default function ReservationPage() {
         try {
           // Quickesta API ile kullanıcı kaydı
           const registerData = {
-            name: values.name.split(' ')[0],
-            surname: values.name.includes(' ') ? values.name.substring(values.name.indexOf(' ') + 1) : '',
+            name: values.name.split(" ")[0],
+            surname: values.name.includes(" ")
+              ? values.name.substring(values.name.indexOf(" ") + 1)
+              : "",
             email: values.email,
-            password: values.password || '',
-            confirmPassword: values.password || '',
+            password: values.password || "",
+            confirmPassword: values.password || "",
             mobileNumber: formatPhoneNumber(values.phone, countryCode),
-            countryCode: countryCode
+            countryCode: countryCode,
           };
 
           const registerResponse = await register(registerData);
@@ -235,15 +246,18 @@ export default function ReservationPage() {
             registrationSuccess = true;
           } else {
             // Kullanıcı zaten var olabilir, hata mesajını kontrol et
-            if (registerResponse.error && registerResponse.error.includes("already exists")) {
+            if (
+              registerResponse.error &&
+              registerResponse.error.includes("already exists")
+            ) {
               // Bu durumda kullanıcı Quickesta'da zaten var demektir
 
               // Eğer kullanıcı login yapabiliyorsa quickesta_user_id'yi almak için
               // Otomatik olarak login yapmayı dene ve id'yi almaya çalış
               try {
-                const signInResult = await signIn('credentials', {
+                const signInResult = await signIn("credentials", {
                   email: values.email,
-                  password: values.password || '',
+                  password: values.password || "",
                   redirect: false,
                 });
 
@@ -260,12 +274,14 @@ export default function ReservationPage() {
 
               // Hala ID bulunamadıysa -1 olarak işaretle (sonraki update adımlarının çalışması için)
               if (!quickestaUserId) {
-                quickestaUserId = '-1'; // Var olan kullanıcı işareti
+                quickestaUserId = "-1"; // Var olan kullanıcı işareti
                 registrationSuccess = true;
               }
             } else {
               // Başka bir hata
-              throw new Error(registerResponse.error || "Quickesta hesabı oluşturulamadı");
+              throw new Error(
+                registerResponse.error || "Quickesta hesabı oluşturulamadı"
+              );
             }
           }
         } catch (error) {
@@ -279,7 +295,10 @@ export default function ReservationPage() {
       }
 
       // 3. Handle customer creation or update
-      if (customerResult.data?.customers && customerResult.data.customers.length > 0) {
+      if (
+        customerResult.data?.customers &&
+        customerResult.data.customers.length > 0
+      ) {
         // Customer exists in our system
         const customer = customerResult.data.customers[0];
         customerId = customer.id;
@@ -291,10 +310,9 @@ export default function ReservationPage() {
             const updateResult = await updateCustomerQuickestaInfo({
               variables: {
                 customer_id: customerId,
-                quickesta_user_id: quickestaUserId
-              }
+                quickesta_user_id: quickestaUserId,
+              },
             });
-
           } catch (updateError) {
             console.error("Müşteri güncelleme hatası:", updateError);
           }
@@ -302,9 +320,9 @@ export default function ReservationPage() {
       } else {
         // Önce login denemesi yap
         try {
-          const loginResult = await signIn('credentials', {
+          const loginResult = await signIn("credentials", {
             email: values.email,
-            password: values.password || '',
+            password: values.password || "",
             redirect: false,
           });
 
@@ -331,26 +349,30 @@ export default function ReservationPage() {
               // UUID tipinde olduğu için string olarak gönderiyoruz
               quickesta_user_id: quickestaUserId ? quickestaUserId : null,
               // Quickesta kullanıcı ID'si varsa true, yoksa false
-              is_quickesta_user: quickestaUserId !== null && quickestaUserId !== '-1',
-              created_at: moment().add(3, 'hours').toISOString(),
-            }
-          }
+              is_quickesta_user:
+                quickestaUserId !== null && quickestaUserId !== "-1",
+              created_at: moment().add(3, "hours").toISOString(),
+            },
+          },
         });
 
         customerId = newCustomerResult.data.insert_customers_one.id;
 
         // Eğer geçerli bir Quickesta kullanıcı ID'si varsa ve müşteri bu ID ile oluşturulmadıysa,
         // müşteri kaydını güncelle
-        if (quickestaUserId && quickestaUserId !== '-1' &&
+        if (
+          quickestaUserId &&
+          quickestaUserId !== "-1" &&
           (!newCustomerResult.data.insert_customers_one.quickesta_user_id ||
-            !newCustomerResult.data.insert_customers_one.is_quickesta_user)) {
+            !newCustomerResult.data.insert_customers_one.is_quickesta_user)
+        ) {
           try {
             const updateResult = await updateCustomerQuickestaInfo({
               variables: {
                 customer_id: customerId,
                 // UUID tipinde olduğu için string olarak gönderiyoruz
-                quickesta_user_id: quickestaUserId
-              }
+                quickesta_user_id: quickestaUserId,
+              },
             });
           } catch (updateError) {
             console.error("Yeni müşteri güncelleme hatası:", updateError);
@@ -359,30 +381,39 @@ export default function ReservationPage() {
       }
 
       // 4. Appointment time calculation
-      const [hours, minutes] = values.time.split(':');
+      const [hours, minutes] = values.time.split(":");
       const endTime = new Date();
       endTime.setUTCHours(parseInt(hours));
       endTime.setUTCMinutes(parseInt(minutes));
       endTime.setUTCMinutes(endTime.getUTCMinutes() + 60);
-      const endTimeString = `${endTime.getUTCHours().toString().padStart(2, '0')}:${endTime.getUTCMinutes().toString().padStart(2, '0')}:00`;
+      const endTimeString = `${endTime
+        .getUTCHours()
+        .toString()
+        .padStart(2, "0")}:${endTime
+          .getUTCMinutes()
+          .toString()
+          .padStart(2, "0")}:00`;
 
       // 5. Check appointment availability
       const availabilityResult = await checkAvailability({
         variables: {
           business_id: 1,
-          appointment_date: format(values.date, 'yyyy-MM-dd'),
-          start_time: values.time + ':00',
-          end_time: endTimeString
-        }
+          appointment_date: format(values.date, "yyyy-MM-dd"),
+          start_time: values.time + ":00",
+          end_time: endTimeString,
+        },
       });
 
-      if (availabilityResult.data?.appointments?.length && availabilityResult.data.appointments.length > 0) {
+      if (
+        availabilityResult.data?.appointments?.length &&
+        availabilityResult.data.appointments.length > 0
+      ) {
         toast({
           variant: "destructive",
           title: "Hata!",
           description: "Seçilen saat dolu! Lütfen başka bir saat seçin.",
           duration: 5000,
-        })
+        });
         setIsLoading(false);
         return;
       }
@@ -395,21 +426,21 @@ export default function ReservationPage() {
             customer_id: customerId,
             team_member_id: 1,
             service_id: 1,
-            appointment_date: format(values.date, 'yyyy-MM-dd'),
-            start_time: values.time + ':00',
+            appointment_date: format(values.date, "yyyy-MM-dd"),
+            start_time: values.time + ":00",
             end_time: endTimeString,
             price_charged: 1000,
-            status: 'scheduled',
-            created_at: moment().add(3, 'hours').toISOString(),
-          }
-        }
+            status: "scheduled",
+            created_at: moment().add(3, "hours").toISOString(),
+          },
+        },
       });
 
       // 7. Otomatik giriş yap (eğer başarılı kayıt/hesap varsa ve henüz giriş yapılmadıysa)
       if (registrationSuccess && !session?.user) {
         try {
           // NextAuth ile giriş yapma
-          const signInResult = await signIn('credentials', {
+          const signInResult = await signIn("credentials", {
             email: registeredEmail,
             password: registeredPassword,
             redirect: false,
@@ -434,53 +465,62 @@ export default function ReservationPage() {
 
       toast({
         title: "Rezervasyon Başarılı!",
-        description: `${format(values.date, 'PPP')} tarihinde saat ${values.time} için randevunuz oluşturuldu.`,
+        description: `${format(values.date, "PPP")} tarihinde saat ${values.time
+          } için randevunuz oluşturuldu.`,
         duration: 5000,
         action: (
           <ToastAction altText="Tamam">
             <Check className="h-4 w-4" />
           </ToastAction>
         ),
-      })
+      });
 
-      form.reset()
-      setSelectedBarber('')
-      setStep(1)
-      setIsLoading(false)
+      form.reset();
+      setSelectedBarber("");
+      setStep(1);
+      setIsLoading(false);
 
       // İsteğe bağlı olarak kullanıcıyı hesap sayfasına yönlendirebiliriz
       // router.push('/dashboard');
     } catch (error) {
-      console.error('Rezervasyon hatası:', error)
+      console.error("Rezervasyon hatası:", error);
       toast({
         variant: "destructive",
         title: "Hata!",
         description: "Rezervasyon alınırken bir hata oluştu!",
         duration: 5000,
-      })
-      setIsLoading(false)
+      });
+      setIsLoading(false);
     }
   }
 
   // Mevcut saatleri kontrol et
-  const { data: availableSlots } = useQuery<AvailableTimeSlotsResponse>(GET_AVAILABLE_TIME_SLOTS, {
-    variables: {
-      business_id: 1,
-      date: form.watch('date') ? format(form.watch('date'), 'yyyy-MM-dd') : null
-    },
-    skip: !form.watch('date')
-  });
+  const { data: availableSlots } = useQuery<AvailableTimeSlotsResponse>(
+    GET_AVAILABLE_TIME_SLOTS,
+    {
+      variables: {
+        business_id: 1,
+        date: form.watch("date")
+          ? format(form.watch("date"), "yyyy-MM-dd")
+          : null,
+      },
+      skip: !form.watch("date"),
+    }
+  );
 
   // Kullanılabilir saatleri filtrele
-  const filteredHours = AVAILABLE_HOURS.filter(hour => {
+  const filteredHours = AVAILABLE_HOURS.filter((hour) => {
     if (!availableSlots) return true;
 
-    const selectedDate = form.watch('date');
+    const selectedDate = form.watch("date");
     const today = new Date();
 
     // Eğer seçilen tarih bugünse, geçmiş saatleri filtrele
-    if (selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')) {
-      const [hourStr, minuteStr] = hour.split(':');
+    if (
+      selectedDate &&
+      format(selectedDate, "yyyy-MM-dd") === format(today, "yyyy-MM-dd")
+    ) {
+      const [hourStr, minuteStr] = hour.split(":");
       const selectedTime = new Date();
       selectedTime.setHours(parseInt(hourStr), parseInt(minuteStr), 0);
 
@@ -489,7 +529,7 @@ export default function ReservationPage() {
       }
     }
 
-    const [startHours, startMinutes] = hour.split(':');
+    const [startHours, startMinutes] = hour.split(":");
     const startTime = new Date();
     startTime.setUTCHours(parseInt(startHours));
     startTime.setUTCMinutes(parseInt(startMinutes));
@@ -497,9 +537,10 @@ export default function ReservationPage() {
     const endTime = new Date(startTime);
     endTime.setUTCMinutes(endTime.getUTCMinutes() + 60);
 
-    return !availableSlots.appointments.some(appointment => {
-      const [appStartHours, appStartMinutes] = appointment.start_time.split(':');
-      const [appEndHours, appEndMinutes] = appointment.end_time.split(':');
+    return !availableSlots.appointments.some((appointment) => {
+      const [appStartHours, appStartMinutes] =
+        appointment.start_time.split(":");
+      const [appEndHours, appEndMinutes] = appointment.end_time.split(":");
 
       const appointmentStart = new Date();
       appointmentStart.setUTCHours(parseInt(appStartHours));
@@ -517,8 +558,8 @@ export default function ReservationPage() {
   });
 
   const selectedBarberData = BARBERS.find(
-    (barber) => barber.id.toString() === selectedBarber,
-  )
+    (barber) => barber.id.toString() === selectedBarber
+  );
 
   /**
    * Bir sonraki adıma geçiş fonksiyonu
@@ -526,7 +567,6 @@ export default function ReservationPage() {
    * Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atlar
    */
   const nextStep = () => {
-
     // Berber seçimi kontrolü
     if (step === 1 && !selectedBarber) {
       toast({
@@ -534,46 +574,45 @@ export default function ReservationPage() {
         title: "Hata!",
         description: "Lütfen bir berber seçin",
         duration: 5000,
-      })
-      return
+      });
+      return;
     }
 
     // Hizmet seçimi kontrolü
-    if (step === 2 && !form.getValues('service')) {
+    if (step === 2 && !form.getValues("service")) {
       toast({
         variant: "destructive",
         title: "Hata!",
         description: "Lütfen bir hizmet seçin",
         duration: 5000,
-      })
-      return
+      });
+      return;
     }
 
     // Tarih seçimi kontrolü
-    if (step === 3 && !form.getValues('date')) {
+    if (step === 3 && !form.getValues("date")) {
       toast({
         variant: "destructive",
         title: "Hata!",
         description: "Lütfen bir tarih seçin",
         duration: 5000,
-      })
-      return
+      });
+      return;
     }
 
     // Saat seçimi kontrolü
-    if (step === 4 && !form.getValues('time')) {
+    if (step === 4 && !form.getValues("time")) {
       toast({
         variant: "destructive",
         title: "Hata!",
         description: "Lütfen bir saat seçin",
         duration: 5000,
-      })
-      return
+      });
+      return;
     }
 
     // Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atla
     if (step === 4 && session?.user) {
-
       // Form değerlerini al
       const formValues = form.getValues();
 
@@ -583,7 +622,7 @@ export default function ReservationPage() {
         name: session.user.name || formValues.name,
         email: session.user.email || formValues.email,
         phone: session.user.phone || formValues.phone,
-        password: '********' // Şifre için yer tutucu
+        password: "********", // Şifre için yer tutucu
       };
 
       // Formu doğrudan gönder
@@ -592,31 +631,49 @@ export default function ReservationPage() {
     }
 
     // Bir sonraki adıma geç
-    setStep(step + 1)
-  }
+    setStep(step + 1);
+  };
 
   /**
    * Bir önceki adıma dönüş fonksiyonu
    */
   const prevStep = () => {
-    setStep(step - 1)
-  }
+    setStep(step - 1);
+  };
 
   return (
     <>
       <Head>
         <title>Randevu Al | 1Barbers</title>
-        <meta name="description" content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun." />
-        <meta name="keywords" content="berber randevu, online randevu, kuaför randevu, 1barbers, berber rezervasyon" />
+        <meta
+          name="description"
+          content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun."
+        />
+        <meta
+          name="keywords"
+          content="berber randevu, online randevu, kuaför randevu, 1barbers, berber rezervasyon"
+        />
         <meta property="og:title" content="Randevu Al | 1Barbers" />
-        <meta property="og:description" content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun." />
+        <meta
+          property="og:description"
+          content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun."
+        />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://1barbers.com/reservation" />
-        <meta property="og:image" content="https://1barbers.com/assets/images/og-image.jpg" />
+        <meta
+          property="og:image"
+          content="https://1barbers.com/assets/images/og-image.jpg"
+        />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Randevu Al | 1Barbers" />
-        <meta name="twitter:description" content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun." />
-        <meta name="twitter:image" content="https://1barbers.com/assets/images/og-image.jpg" />
+        <meta
+          name="twitter:description"
+          content="1Barbers ile online randevu alın. Profesyonel berberlerimizle tanışın ve randevunuzu hemen oluşturun."
+        />
+        <meta
+          name="twitter:image"
+          content="https://1barbers.com/assets/images/og-image.jpg"
+        />
         <link rel="canonical" href="https://1barbers.com/reservation" />
       </Head>
       <main className="min-h-screen bg-background text-foreground">
@@ -635,16 +692,19 @@ export default function ReservationPage() {
 
           <div className="mx-auto max-w-2xl">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <div className="mb-8 flex justify-center space-x-2">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <div
                       key={s}
                       className={cn(
-                        'h-2 w-2 rounded-full transition-all',
-                        s <= step ? 'bg-primary' : 'bg-muted',
+                        "h-2 w-2 rounded-full transition-all",
+                        s <= step ? "bg-primary" : "bg-muted",
                         // Session varsa 5. adım noktasını gizle
-                        s === 5 && session?.user ? 'hidden' : ''
+                        s === 5 && session?.user ? "hidden" : ""
                       )}
                     />
                   ))}
@@ -677,13 +737,14 @@ export default function ReservationPage() {
                                   >
                                     <Card
                                       className={cn(
-                                        'cursor-pointer transition-all',
-                                        selectedBarber === barber.id.toString() &&
-                                        'border-2 border-primary shadow-lg',
+                                        "cursor-pointer transition-all",
+                                        selectedBarber ===
+                                        barber.id.toString() &&
+                                        "border-2 border-primary shadow-lg"
                                       )}
                                       onClick={() => {
-                                        field.onChange(barber.id.toString())
-                                        setSelectedBarber(barber.id.toString())
+                                        field.onChange(barber.id.toString());
+                                        setSelectedBarber(barber.id.toString());
                                       }}
                                     >
                                       <CardContent className="p-4">
@@ -739,9 +800,9 @@ export default function ReservationPage() {
                                 >
                                   <Card
                                     className={cn(
-                                      'cursor-pointer transition-all',
+                                      "cursor-pointer transition-all",
                                       field.value === service.id.toString() &&
-                                      'border-2 border-primary shadow-lg',
+                                      "border-2 border-primary shadow-lg"
                                     )}
                                     onClick={() =>
                                       field.onChange(service.id.toString())
@@ -787,19 +848,21 @@ export default function ReservationPage() {
                         name="date"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
-                            <FormLabel className="text-md">Tarih Seçin</FormLabel>
+                            <FormLabel className="text-md">
+                              Tarih Seçin
+                            </FormLabel>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <FormControl>
                                   <Button
-                                    variant={'outline'}
+                                    variant={"outline"}
                                     className={cn(
-                                      'h-12 w-full pl-3 text-left text-lg font-normal',
-                                      !field.value && 'text-muted-foreground',
+                                      "h-12 w-full pl-3 text-left text-lg font-normal",
+                                      !field.value && "text-muted-foreground"
                                     )}
                                   >
                                     {field.value ? (
-                                      format(field.value, 'PPP')
+                                      format(field.value, "PPP")
                                     ) : (
                                       <span>Tarih seçin</span>
                                     )}
@@ -856,7 +919,9 @@ export default function ReservationPage() {
                         name="time"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-md">Saat Seçin</FormLabel>
+                            <FormLabel className="text-md">
+                              Saat Seçin
+                            </FormLabel>
                             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
                               {filteredHours.map((hour) => (
                                 <motion.div
@@ -867,7 +932,9 @@ export default function ReservationPage() {
                                   <Button
                                     type="button"
                                     variant={
-                                      field.value === hour ? 'default' : 'outline'
+                                      field.value === hour
+                                        ? "default"
+                                        : "outline"
                                     }
                                     className="w-full"
                                     onClick={() => field.onChange(hour)}
@@ -925,7 +992,7 @@ export default function ReservationPage() {
                             <FormControl>
                               <div className="relative">
                                 <PhoneInput
-                                  country={'tr'}
+                                  country={"tr"}
                                   value={field.value}
                                   onChange={handlePhoneChange}
                                   inputClass="!w-full !h-10 !text-xs !pl-12 !rounded-md !border-input"
@@ -935,11 +1002,11 @@ export default function ReservationPage() {
                                   enableSearch
                                   searchPlaceholder="Ülke Ara..."
                                   searchNotFound="Ülke Bulunamadı"
-                                  preferredCountries={['tr', 'us', 'gb', 'de']}
+                                  preferredCountries={["tr", "us", "gb", "de"]}
                                   inputProps={{
-                                    name: 'phone',
+                                    name: "phone",
                                     required: true,
-                                    autoFocus: false
+                                    autoFocus: false,
                                   }}
                                 />
                               </div>
@@ -1013,13 +1080,19 @@ export default function ReservationPage() {
                     <Button
                       type="button"
                       onClick={nextStep}
-                      className={cn('ml-auto', step === 1 && 'w-full')}
+                      className={cn("ml-auto", step === 1 && "w-full")}
                     >
-                      {step === 4 && session?.user ? 'Rezervasyon Yap' : 'İleri'}
+                      {step === 4 && session?.user
+                        ? "Rezervasyon Yap"
+                        : "İleri"}
                     </Button>
                   ) : (
-                    <Button type="submit" className="ml-auto" disabled={isLoading}>
-                      {isLoading ? 'İşleniyor...' : 'Rezervasyon Yap'}
+                    <Button
+                      type="submit"
+                      className="ml-auto"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "İşleniyor..." : "Rezervasyon Yap"}
                     </Button>
                   )}
                 </div>
@@ -1029,5 +1102,5 @@ export default function ReservationPage() {
         </div>
       </main>
     </>
-  )
+  );
 }
