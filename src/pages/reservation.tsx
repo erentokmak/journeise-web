@@ -214,9 +214,6 @@ export default function ReservationPage() {
         }
       });
 
-      // 2. Quickesta hesabı oluştur veya al
-      let quickestaAccount = null;
-
       // Sadece oturum açmamış kullanıcılar için kayıt işlemi yap
       if (!session?.user) {
         try {
@@ -235,7 +232,6 @@ export default function ReservationPage() {
 
           if (registerResponse.isSuccess) {
             quickestaUserId = registerResponse.value.userIdentity.id || null;
-            quickestaAccount = registerResponse.value.userIdentity;
             registrationSuccess = true;
           } else {
             // Kullanıcı zaten var olabilir, hata mesajını kontrol et
@@ -305,6 +301,7 @@ export default function ReservationPage() {
         }
       } else {
         // Yeni müşteri oluşturma - Quickesta ilişkisi varsa
+        console.log("Müşteri oluşturma - Quickesta ilişkisi varsa")
         const newCustomerResult = await createCustomer({
           variables: {
             input: {
