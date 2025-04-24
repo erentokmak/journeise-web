@@ -98,10 +98,6 @@ interface QuickestaUser {
   full_name: string
 }
 
-interface QuickestaAccountResponse {
-  users: QuickestaUser[]
-}
-
 interface AvailableTimeSlotsResponse {
   appointments: Appointment[]
 }
@@ -112,7 +108,6 @@ interface CheckAvailabilityResponse {
 
 export default function ReservationPage() {
   const { toast } = useToast()
-  const router = useRouter()
   const [selectedBarber, setSelectedBarber] = useState<string>('')
   const [step, setStep] = useState(1)
   const [countryCode, setCountryCode] = useState(90) // Türkiye için varsayılan ülke kodu
@@ -145,6 +140,43 @@ export default function ReservationPage() {
     },
   })
 
+  // Session varsa form değerlerini otomatik doldur
+  useEffect(() => {
+    if (session?.user) {
+      form.setValue('name', session.user.name || '');
+      form.setValue('email', session.user.email || '');
+      // Telefon numarası varsa ayarla
+      if (session.user.phone) {
+        form.setValue('phone', session.user.phone);
+        // Ülke kodunu ayarla
+        const phoneCountryCode = extractCountryCode(session.user.phone);
+        if (phoneCountryCode) {
+          setCountryCode(phoneCountryCode);
+        }
+      }
+    }
+  }, [session, form]);
+
+  // Form şemasını session durumuna göre dinamik olarak ayarla
+  const dynamicFormSchema = z.object({
+    name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
+    phone: z.string().min(10, 'Geçerli bir telefon numarası giriniz'),
+    email: z.string().email('Geçerli bir email adresi giriniz'),
+    password: session?.user ? z.string().optional() : z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
+    date: z.date({
+      required_error: 'Lütfen bir tarih seçin',
+    }),
+    time: z.string({
+      required_error: 'Lütfen bir saat seçin',
+    }),
+    barber: z.string({
+      required_error: 'Lütfen bir berber seçin',
+    }),
+    service: z.string({
+      required_error: 'Lütfen bir hizmet seçin',
+    }),
+  });
+
   const handlePhoneChange = (value: string, data: any) => {
     form.setValue('phone', value)
     setCountryCode(extractCountryCode(data.dialCode))
@@ -155,14 +187,14 @@ export default function ReservationPage() {
    * Kullanıcı bilgilerini ve randevu detaylarını işler
    * Oturum açmış kullanıcılar için farklı, yeni kullanıcılar için farklı işlem yapar
    */
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof dynamicFormSchema>) {
     try {
       setIsLoading(true)
       let customerId: number;
       let quickestaUserId: number | null = null;
       let registrationSuccess = false;
       let registeredEmail = values.email;
-      let registeredPassword = values.password;
+      let registeredPassword = values.password || '';
 
       // Eğer kullanıcı oturum açmışsa, oturum verilerini kullan
       if (session?.user) {
@@ -190,8 +222,8 @@ export default function ReservationPage() {
             name: values.name.split(' ')[0],
             surname: values.name.includes(' ') ? values.name.substring(values.name.indexOf(' ') + 1) : '',
             email: values.email,
-            password: values.password,
-            confirmPassword: values.password,
+            password: values.password || '',
+            confirmPassword: values.password || '',
             mobileNumber: formatPhoneNumber(values.phone, countryCode),
             countryCode: countryCode
           };
@@ -214,7 +246,7 @@ export default function ReservationPage() {
               try {
                 const signInResult = await signIn('credentials', {
                   email: values.email,
-                  password: values.password,
+                  password: values.password || '',
                   redirect: false,
                 });
 
@@ -262,7 +294,7 @@ export default function ReservationPage() {
             const updateResult = await updateCustomerQuickestaInfo({
               variables: {
                 customer_id: customerId,
-                quickesta_user_id: quickestaUserId
+                quickesta_user_id: quickestaUserId.toString()
               }
             });
 
@@ -272,7 +304,6 @@ export default function ReservationPage() {
           }
         }
       } else {
-
         // Yeni müşteri oluşturma - Quickesta ilişkisi varsa
         const newCustomerResult = await createCustomer({
           variables: {
@@ -360,7 +391,7 @@ export default function ReservationPage() {
       });
 
       // 7. Otomatik giriş yap (eğer başarılı kayıt/hesap varsa ve henüz giriş yapılmadıysa)
-      if (registrationSuccess) {
+      if (registrationSuccess && !session?.user) {
         try {
           // NextAuth ile giriş yapma
           const signInResult = await signIn('credentials', {
@@ -481,6 +512,8 @@ export default function ReservationPage() {
    * Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atlar
    */
   const nextStep = () => {
+    console.log("nextStep çağrıldı, step:", step, "session:", session);
+    
     // Berber seçimi kontrolü
     if (step === 1 && !selectedBarber) {
       toast({
@@ -527,6 +560,7 @@ export default function ReservationPage() {
 
     // Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atla
     if (step === 4 && session?.user) {
+      console.log("Kullanıcı oturum açmış, formu doğrudan gönder");
       // Formu doğrudan gönder
       form.handleSubmit(onSubmit)();
       return;
@@ -584,6 +618,8 @@ export default function ReservationPage() {
                       className={cn(
                         'h-2 w-2 rounded-full transition-all',
                         s <= step ? 'bg-primary' : 'bg-muted',
+                        // Session varsa 5. adım noktasını gizle
+                        s === 5 && session?.user ? 'hidden' : ''
                       )}
                     />
                   ))}
@@ -824,6 +860,7 @@ export default function ReservationPage() {
                     </motion.div>
                   )}
 
+                  {/* Sadece oturum açmamış kullanıcılar için bilgi formunu göster */}
                   {step === 5 && !session?.user && (
                     <motion.div
                       key="step5"
@@ -950,9 +987,9 @@ export default function ReservationPage() {
                     <Button
                       type="button"
                       onClick={nextStep}
-                      className={cn('ml-auto w-24', step === 1 && 'w-full')}
+                      className={cn('ml-auto', step === 1 && 'w-full')}
                     >
-                      İleri
+                      {step === 4 && session?.user ? 'Rezervasyon Yap' : 'İleri'}
                     </Button>
                   ) : (
                     <Button type="submit" className="ml-auto" disabled={isLoading}>
