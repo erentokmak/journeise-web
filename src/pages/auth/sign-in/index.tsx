@@ -111,9 +111,9 @@ export default function SignIn() {
 
 
       if (isAddMode) {
-        router.push('/dashboard')
+        router.push('/')
       } else {
-        router.push('/dashboard')
+        router.push('/')
       }
     } catch (error) {
       toast({
@@ -178,7 +178,7 @@ export default function SignIn() {
             type="button"
             variant="outline"
             className="w-full"
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/')}
           >
             Vazgeç
           </Button>

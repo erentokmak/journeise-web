@@ -23,7 +23,7 @@ export default function SSOPage() {
 
         // Kullanıcı zaten giriş yapmışsa, yönlendir
         if (session) {
-          const redirectPath = redirect ? String(redirect) : '/dashboard'
+          const redirectPath = redirect ? String(redirect) : '/'
           router.push(redirectPath)
           return
         }
@@ -41,7 +41,7 @@ export default function SSOPage() {
         }
 
         // Başarılı giriş sonrası yönlendirme
-        const redirectPath = redirect ? String(redirect) : '/dashboard'
+        const redirectPath = redirect ? String(redirect) : '/'
         router.push(redirectPath)
       } catch (err) {
         console.error('SSO Error:', err)
