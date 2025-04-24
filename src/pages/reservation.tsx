@@ -39,13 +39,6 @@ import {
   FormMessage,
 } from "@/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/ui/select";
 import { BARBERS, AVAILABLE_HOURS } from "@/constants/data";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/ui/toast";
@@ -72,6 +65,11 @@ import {
   CHECK_APPOINTMENT_AVAILABILITY,
 } from "@/graphql/queries/appointment";
 import { TermsAndPrivacy } from "@/components/auth/terms-and-privacy";
+import {
+  ICustomerByPhoneResponse,
+  IAvailableTimeSlotsResponse,
+  ICheckAvailabilityResponse,
+} from "@/types/appointment";
 
 // Form şeması tanımlaması
 const formSchema = z.object({
@@ -92,38 +90,6 @@ const formSchema = z.object({
     required_error: "Lütfen bir hizmet seçin",
   }),
 });
-
-/**
- * GraphQL yanıt tipleri
- */
-interface Appointment {
-  id: number;
-  start_time: string;
-  end_time: string;
-}
-
-interface Customer {
-  id: number;
-  business_id: number;
-  full_name: string;
-  phone: string;
-  email?: string;
-  notes?: string;
-  quickesta_user_id?: number;
-  is_quickesta_user: boolean;
-}
-
-interface CustomerByPhoneResponse {
-  customers: Customer[];
-}
-
-interface AvailableTimeSlotsResponse {
-  appointments: Appointment[];
-}
-
-interface CheckAvailabilityResponse {
-  appointments: Appointment[];
-}
 
 /**
  * @component ReservationPage
@@ -147,8 +113,8 @@ export default function ReservationPage() {
   const [createCustomer] = useMutation(CREATE_CUSTOMER);
   const [createAppointment] = useMutation(CREATE_APPOINTMENT);
   const [updateCustomerQuickestaInfo] = useMutation(UPDATE_CUSTOMER_QUICKESTA_INFO);
-  const [checkAvailability, { data: availabilityData }] = useLazyQuery<CheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY);
-  const [getCustomerByEmailOrPhone] = useLazyQuery<CustomerByPhoneResponse>(GET_CUSTOMER_BY_EMAIL_OR_PHONE);
+  const [checkAvailability] = useLazyQuery<ICheckAvailabilityResponse>(CHECK_APPOINTMENT_AVAILABILITY);
+  const [getCustomerByEmailOrPhone] = useLazyQuery<ICustomerByPhoneResponse>(GET_CUSTOMER_BY_EMAIL_OR_PHONE);
 
   /**
    * Form tanımlaması ve validasyon
@@ -162,6 +128,31 @@ export default function ReservationPage() {
       password: "",
     },
   });
+
+  /**
+ * Dinamik form şeması - session durumuna göre güncellenir
+ */
+  const dynamicFormSchema = z.object({
+    name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
+    phone: z.string().min(10, "Geçerli bir telefon numarası giriniz"),
+    email: z.string().email("Geçerli bir email adresi giriniz"),
+    password: session?.user
+      ? z.string().optional()
+      : z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
+    date: z.date({
+      required_error: "Lütfen bir tarih seçin",
+    }),
+    time: z.string({
+      required_error: "Lütfen bir saat seçin",
+    }),
+    barber: z.string({
+      required_error: "Lütfen bir berber seçin",
+    }),
+    service: z.string({
+      required_error: "Lütfen bir hizmet seçin",
+    }),
+  });
+
 
   /**
    * Oturum kontrolü ve form otomatik doldurma
@@ -193,30 +184,6 @@ export default function ReservationPage() {
       }
     }
   }, [session, form]);
-
-  /**
-   * Dinamik form şeması - session durumuna göre güncellenir
-   */
-  const dynamicFormSchema = z.object({
-    name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
-    phone: z.string().min(10, "Geçerli bir telefon numarası giriniz"),
-    email: z.string().email("Geçerli bir email adresi giriniz"),
-    password: session?.user
-      ? z.string().optional()
-      : z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
-    date: z.date({
-      required_error: "Lütfen bir tarih seçin",
-    }),
-    time: z.string({
-      required_error: "Lütfen bir saat seçin",
-    }),
-    barber: z.string({
-      required_error: "Lütfen bir berber seçin",
-    }),
-    service: z.string({
-      required_error: "Lütfen bir hizmet seçin",
-    }),
-  });
 
   /**
    * Telefon numarası değişikliği handler'ı
@@ -327,16 +294,16 @@ export default function ReservationPage() {
         registrationSuccess = true;
       }
 
-      // 3. Handle customer creation or update
+      // 3. Müşteri var mı kontrol et
       if (
         customerResult.data?.customers &&
         customerResult.data.customers.length > 0
       ) {
-        // Customer exists in our system
+        // Müşteri var
         const customer = customerResult.data.customers[0];
         customerId = customer.id;
 
-        // Update with Quickesta ID if needed (if we have a valid ID)
+        // Quickesta ID'si varsa ve müşteri Quickesta ID'si yoksa, güncelle
         if (!customer.is_quickesta_user && quickestaUserId) {
           // Müşteri kaydını güncelle
           try {
@@ -427,7 +394,7 @@ export default function ReservationPage() {
           .toString()
           .padStart(2, "0")}:00`;
 
-      // 5. Check appointment availability
+      // 5. Randevu kontrolü
       const availabilityResult = await checkAvailability({
         variables: {
           business_id: 1,
@@ -451,7 +418,7 @@ export default function ReservationPage() {
         return;
       }
 
-      // 6. Create appointment
+      // 6. Randevu oluşturma
       await createAppointment({
         variables: {
           input: {
@@ -530,7 +497,7 @@ export default function ReservationPage() {
   /**
    * Müsait saatleri kontrol etme query'si
    */
-  const { data: availableSlots } = useQuery<AvailableTimeSlotsResponse>(
+  const { data: availableSlots } = useQuery<IAvailableTimeSlotsResponse>(
     GET_AVAILABLE_TIME_SLOTS,
     {
       variables: {
