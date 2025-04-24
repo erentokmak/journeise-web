@@ -513,7 +513,7 @@ export default function ReservationPage() {
    */
   const nextStep = () => {
     console.log("nextStep çağrıldı, step:", step, "session:", session);
-    
+
     // Berber seçimi kontrolü
     if (step === 1 && !selectedBarber) {
       toast({
@@ -561,8 +561,21 @@ export default function ReservationPage() {
     // Eğer kullanıcı oturum açmışsa ve saat seçiminden sonra bilgi formunu atla
     if (step === 4 && session?.user) {
       console.log("Kullanıcı oturum açmış, formu doğrudan gönder");
+
+      // Form değerlerini al
+      const formValues = form.getValues();
+
+      // Form değerlerini session bilgileriyle güncelle
+      const updatedValues = {
+        ...formValues,
+        name: session.user.name || formValues.name,
+        email: session.user.email || formValues.email,
+        phone: session.user.phone || formValues.phone,
+        password: '********' // Şifre için yer tutucu
+      };
+
       // Formu doğrudan gönder
-      form.handleSubmit(onSubmit)();
+      onSubmit(updatedValues);
       return;
     }
 
