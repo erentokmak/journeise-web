@@ -110,8 +110,6 @@ export default function SignIn() {
         }
       })
 
-      console.log("Yeni müşteri oluşturuldu:", newCustomerResult.data)
-
       // Eğer quickesta_user_id veya is_quickesta_user alanları doğru şekilde atanmadıysa güncelle
       if (newCustomerResult.data && newCustomerResult.data.insert_customers_one) {
         const customerId = newCustomerResult.data.insert_customers_one.id
@@ -125,7 +123,6 @@ export default function SignIn() {
                 quickesta_user_id: quickestaUserId
               }
             })
-            console.log("Müşteri Quickesta bilgileri güncellendi:", updateResult.data)
           } catch (updateError) {
             console.error("Müşteri güncelleme hatası:", updateError)
           }

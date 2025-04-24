@@ -194,7 +194,7 @@ export default function ReservationPage() {
     try {
       setIsLoading(true)
       let customerId: number;
-      let quickestaUserId: number | null = null;
+      let quickestaUserId: string | null = null;
       let registrationSuccess = false;
       let registeredEmail = values.email;
       let registeredPassword = values.password || '';
@@ -250,7 +250,7 @@ export default function ReservationPage() {
                 if (!signInResult?.error) {
                   const session = await getSession();
                   if (session?.user?.id) {
-                    quickestaUserId = Number(session.user.id);
+                    quickestaUserId = session.user.id;
                     registrationSuccess = true;
                   }
                 }
@@ -260,7 +260,7 @@ export default function ReservationPage() {
 
               // Hala ID bulunamadıysa -1 olarak işaretle (sonraki update adımlarının çalışması için)
               if (!quickestaUserId) {
-                quickestaUserId = -1; // Var olan kullanıcı işareti
+                quickestaUserId = '-1'; // Var olan kullanıcı işareti
                 registrationSuccess = true;
               }
             } else {
@@ -274,7 +274,7 @@ export default function ReservationPage() {
         }
       } else {
         // Kullanıcı oturum açmış, oturum ID'sini kullan
-        quickestaUserId = Number(session.user.id);
+        quickestaUserId = session.user.id;
         registrationSuccess = true;
       }
 
@@ -291,7 +291,7 @@ export default function ReservationPage() {
             const updateResult = await updateCustomerQuickestaInfo({
               variables: {
                 customer_id: customerId,
-                quickesta_user_id: quickestaUserId.toString()
+                quickesta_user_id: quickestaUserId
               }
             });
 
@@ -300,8 +300,27 @@ export default function ReservationPage() {
           }
         }
       } else {
-        // Yeni müşteri oluşturma - Quickesta ilişkisi varsa
-        console.log("Müşteri oluşturma - Quickesta ilişkisi varsa")
+        // Önce login denemesi yap
+        try {
+          const loginResult = await signIn('credentials', {
+            email: values.email,
+            password: values.password || '',
+            redirect: false,
+          });
+
+          if (!loginResult?.error) {
+            // Login başarılı, session'ı al
+            const newSession = await getSession();
+            if (newSession?.user?.id) {
+              quickestaUserId = newSession.user.id;
+              registrationSuccess = true;
+              setSession(newSession); // Session'ı güncelle
+            }
+          }
+        } catch (loginError) {
+          console.error("Login denemesi hatası:", loginError);
+        }
+
         const newCustomerResult = await createCustomer({
           variables: {
             input: {
@@ -310,9 +329,9 @@ export default function ReservationPage() {
               phone: values.phone,
               email: values.email,
               // UUID tipinde olduğu için string olarak gönderiyoruz
-              quickesta_user_id: quickestaUserId ? quickestaUserId.toString() : null,
+              quickesta_user_id: quickestaUserId ? quickestaUserId : null,
               // Quickesta kullanıcı ID'si varsa true, yoksa false
-              is_quickesta_user: quickestaUserId !== null && quickestaUserId !== -1,
+              is_quickesta_user: quickestaUserId !== null && quickestaUserId !== '-1',
               created_at: moment().add(3, 'hours').toISOString(),
             }
           }
@@ -322,7 +341,7 @@ export default function ReservationPage() {
 
         // Eğer geçerli bir Quickesta kullanıcı ID'si varsa ve müşteri bu ID ile oluşturulmadıysa,
         // müşteri kaydını güncelle
-        if (quickestaUserId && quickestaUserId > 0 &&
+        if (quickestaUserId && quickestaUserId !== '-1' &&
           (!newCustomerResult.data.insert_customers_one.quickesta_user_id ||
             !newCustomerResult.data.insert_customers_one.is_quickesta_user)) {
           try {
@@ -330,7 +349,7 @@ export default function ReservationPage() {
               variables: {
                 customer_id: customerId,
                 // UUID tipinde olduğu için string olarak gönderiyoruz
-                quickesta_user_id: quickestaUserId.toString()
+                quickesta_user_id: quickestaUserId
               }
             });
           } catch (updateError) {
