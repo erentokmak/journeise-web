@@ -27,6 +27,7 @@ const PUBLIC_PATHS = [
   '/blog',
   '/faq',
   '/contact',
+  '/blog/slug',
 ] as const
 
 // App Content Component
