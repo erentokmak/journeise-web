@@ -38,7 +38,7 @@ const Header = () => {
             />
           </Link>
 
-          <nav className="flex gap-6 items-center">
+          <nav className="hidden space-x-6 md:flex">
             <Link href="/" className="text-foreground/80 hover:text-foreground">Ana Sayfa</Link>
             <Link href="/about" className="text-foreground/80 hover:text-foreground">Hakkımızda</Link>
             <Link href="/countries" className="text-foreground/80 hover:text-foreground">Ülkeler</Link>
