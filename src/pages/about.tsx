@@ -96,6 +96,16 @@ export default function AboutPage() {
               </CardContent>
             </Card>
           </div>
+
+          <div className="mt-12">
+            <h2 className="text-2xl font-semibold mb-4">Vize İşlemleri Nasıl İşliyor?</h2>
+            <ol className="list-decimal ml-6 space-y-2 text-lg">
+              <li><b>Başvuru:</b> Bizimle iletişime geçerek başvurunuzu basit bir şekilde gerçekleştirin.</li>
+              <li><b>Evrak Teslimi:</b> Sizden istenilen evrakları eksiksiz bir şekilde deneyimli personellerimize teslim edin.</li>
+              <li><b>Konsolosluk İşlemleri:</b> Resmi kurumlarda ki tüm süreçleri sizin adınıza yönetelim ve sizi bilgilendirelim.</li>
+              <li><b>Hayallerinize Ulaşın:</b> Tüm bu sürecin sonunda hızlı ve yüksek başarı oranı ile vizenizi teslim edelim.</li>
+            </ol>
+          </div>
         </div>
       </div>
     </>

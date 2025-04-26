@@ -11,6 +11,10 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     '/about',
     '/gallery',
     '/reservation',
+    '/countries',
+    '/blog',
+    '/faq',
+    '/contact',
   ]
   
   // Create sitemap XML

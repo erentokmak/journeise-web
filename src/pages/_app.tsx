@@ -23,6 +23,10 @@ const PUBLIC_PATHS = [
   '/',
   '/about',
   '/gallery',
+  '/countries',
+  '/blog',
+  '/faq',
+  '/contact',
 ] as const
 
 // App Content Component

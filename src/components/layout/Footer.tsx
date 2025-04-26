@@ -104,6 +104,10 @@ export function Footer() {
                 { href: "/reservation", label: "Rezervasyon" },
                 { href: "/gallery", label: "Galeri" },
                 { href: "/about", label: "Hakkımızda" },
+                { href: "/countries", label: "Ülkeler" },
+                { href: "/blog", label: "Blog" },
+                { href: "/faq", label: "SSS" },
+                { href: "/contact", label: "İletişim" },
                 { href: "/auth/sign-in", label: "Giriş Yap" }
               ].map((link, index) => (
                 <motion.li

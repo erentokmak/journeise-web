@@ -38,19 +38,13 @@ const Header = () => {
             />
           </Link>
 
-          <nav className="hidden space-x-6 md:flex">
-            <Link href="/" className="text-foreground/80 hover:text-foreground">
-              Ana Sayfa
-            </Link>
-            <Link href="/gallery" className="text-foreground/80 hover:text-foreground">
-              Galeri
-            </Link>
-            <Link href="/reservation" className="text-foreground/80 hover:text-foreground">
-              Rezervasyon
-            </Link>
-            <Link href="/about" className="text-foreground/80 hover:text-foreground">
-              Hakkımızda
-            </Link>
+          <nav className="flex gap-6 items-center">
+            <Link href="/" className="text-foreground/80 hover:text-foreground">Ana Sayfa</Link>
+            <Link href="/about" className="text-foreground/80 hover:text-foreground">Hakkımızda</Link>
+            <Link href="/countries" className="text-foreground/80 hover:text-foreground">Ülkeler</Link>
+            <Link href="/blog" className="text-foreground/80 hover:text-foreground">Blog</Link>
+            <Link href="/faq" className="text-foreground/80 hover:text-foreground">SSS</Link>
+            <Link href="/contact" className="text-foreground/80 hover:text-foreground">İletişim</Link>
           </nav>
 
           <div className="flex items-center space-x-4">
