@@ -92,14 +92,14 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <Image
+            {/* <Image
               src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop"
               alt="Hero Background"
               fill
               className="object-cover"
               priority
-            />
-            <div className="absolute inset-0 bg-black/50" />
+            /> */}
+            <div className="absolute inset-0 bg-white dark:bg-background" />
           </div>
           {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4">
