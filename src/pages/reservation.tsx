@@ -83,11 +83,11 @@ const formSchema = z.object({
   time: z.string({
     required_error: "Lütfen bir saat seçin",
   }),
-  barber: z.string({
-    required_error: "Lütfen bir berber seçin",
-  }),
   service: z.string({
     required_error: "Lütfen bir hizmet seçin",
+  }),
+  barber: z.string({
+    required_error: "Lütfen bir danışman seçin",
   }),
 });
 
@@ -146,7 +146,7 @@ export default function ReservationPage() {
       required_error: "Lütfen bir saat seçin",
     }),
     barber: z.string({
-      required_error: "Lütfen bir berber seçin",
+      required_error: "Lütfen bir danışman seçin",
     }),
     service: z.string({
       required_error: "Lütfen bir hizmet seçin",
@@ -577,7 +577,7 @@ export default function ReservationPage() {
       toast({
         variant: "destructive",
         title: "Hata!",
-        description: "Lütfen bir berber seçin",
+        description: "Lütfen bir danışman seçin",
         duration: 5000,
       });
       return;
@@ -730,7 +730,7 @@ export default function ReservationPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-md">
-                              Berber Seçin
+                              Danışman Seçin
                             </FormLabel>
                             <FormControl>
                               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
