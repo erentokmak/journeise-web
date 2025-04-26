@@ -10,6 +10,9 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   distDir: process.env.BUILD_DIR || '.next',
+  images: {
+    domains: ['images.unsplash.com'],
+  },
 }
 
 export default nextConfig

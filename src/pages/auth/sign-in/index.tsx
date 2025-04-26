@@ -68,7 +68,7 @@ export default function SignIn() {
   }
 
   /**
-   * Kullanıcının 1Barbers customer tablosunda kaydı var mı kontrol eder
+   * Kullanıcının Journeise customer tablosunda kaydı var mı kontrol eder
    * @param email - Kullanıcı email adresi
    * @param phone - Kullanıcı telefon numarası
    * @returns Customer kaydı varsa true, yoksa false
@@ -178,7 +178,7 @@ export default function SignIn() {
       // Telefon numarasını formatla
       const formattedPhone = formatPhoneNumber(phoneNumber, 90) // Varsayılan olarak Türkiye kodu
 
-      // Kullanıcının 1Barbers customer tablosunda kaydı var mı kontrol et
+      // Kullanıcının Journeise customer tablosunda kaydı var mı kontrol et
       const customerExists = await checkCustomerExists(email, formattedPhone)
 
       // Eğer customer kaydı yoksa oluştur
@@ -284,7 +284,7 @@ export default function SignIn() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2">
               <h1 className="text-xl font-bold">
-                {isAddMode ? 'Hesap Ekle' : "1BARBERS'a Giriş Yapın"}
+                {isAddMode ? 'Hesap Ekle' : "JOURNEISE'a Giriş Yapın"}
               </h1>
               {!isAddMode && (
                 <div className="text-center text-sm">

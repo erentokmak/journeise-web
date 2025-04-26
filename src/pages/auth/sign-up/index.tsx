@@ -416,7 +416,7 @@ export default function SignUp() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2">
               <h1 className="text-xl font-bold">
-                1BARBERS&apos;a Kayıt Olun
+                JOURNEISE&apos;a Kayıt Olun
               </h1>
               <div className="text-center text-sm">
                 Zaten hesabınız var mı?{' '}

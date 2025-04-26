@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 const Sitemap = () => null
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const baseUrl = 'https://1barbers.com'
+  const baseUrl = 'https://journeise.com'
   
   // Define your site's pages
   const pages = [

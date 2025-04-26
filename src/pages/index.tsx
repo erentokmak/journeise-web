@@ -1,15 +1,14 @@
 import { Button } from "@/ui/button";
-import { BARBERS, GALLERY_IMAGES } from "@/constants/data";
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import { MoveRight, Scissors, Clock, Star, Award, Trophy } from "lucide-react";
+import { MoveRight, Globe, Clock, Star, Award, Trophy, Plane, Building, FileText, Shield, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { Card, CardContent } from "@/ui/card";
 
 export default function Home() {
-  const [selectedBarber, setSelectedBarber] = useState<string | null>(null);
   const { data: session } = useSession();
 
   // Günün saatine göre selamlama mesajı oluştur
@@ -24,26 +23,84 @@ export default function Home() {
     }
   };
 
+  const FEATURES = [
+    {
+      title: "Profesyonel Danışmanlık",
+      description: "Uzman kadromuz ile vize başvurunuzu güvenle yapın",
+      icon: Shield,
+      image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      title: "Hızlı Başvuru",
+      description: "Vize başvurunuzu hızlı ve kolay bir şekilde yapın",
+      icon: Zap,
+      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      title: "7/24 Destek",
+      description: "Vize süreciniz boyunca yanınızdayız",
+      icon: Clock,
+      image: "https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=2070&auto=format&fit=crop"
+    }
+  ];
+
+  const SERVICES = [
+    {
+      title: "Schengen Vizesi",
+      description: "Avrupa'nın 26 ülkesine serbestçe seyahat edin",
+      icon: Globe,
+      image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop"
+    },
+    {
+      title: "Amerika Vizesi",
+      description: "B1/B2 vizesi ile Amerika'da hayallerinizi gerçekleştirin",
+      icon: Building,
+      image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      title: "İngiltere Vizesi",
+      description: "İngiltere'de eğitim ve iş fırsatlarını değerlendirin",
+      icon: Plane,
+      image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      title: "Diğer Vizeler",
+      description: "Tüm dünya ülkelerine vize başvurusu yapıyoruz",
+      icon: FileText,
+      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop"
+    }
+  ];
+
   return (
     <>
       <Head>
-        <title>1Barbers | Profesyonel Berber Hizmetleri</title>
-        <meta name="description" content="1Barbers ile profesyonel berber hizmetleri alın. Kuştepe'nin en iyi berberleri ile tanışın, online randevu alın." />
-        <meta name="keywords" content="berber, kuaför, saç kesimi, sakal tıraşı, online randevu, 1barbers, kuştepe berber" />
-        <meta property="og:title" content="1Barbers | Profesyonel Berber Hizmetleri" />
-        <meta property="og:description" content="1Barbers ile profesyonel berber hizmetleri alın. Kuştepe'nin en iyi berberleri ile tanışın, online randevu alın." />
+        <title>Journeise | Profesyonel Vize Danışmanlığı</title>
+        <meta name="description" content="Journeise ile profesyonel vize danışmanlığı hizmetleri alın. Uzman kadromuz ile vize başvurunuzu güvenle yapın." />
+        <meta name="keywords" content="vize, vize danışmanlığı, schengen vizesi, amerika vizesi, ingiltere vizesi, vize başvurusu" />
+        <meta property="og:title" content="Journeise | Profesyonel Vize Danışmanlığı" />
+        <meta property="og:description" content="Journeise ile profesyonel vize danışmanlığı hizmetleri alın. Uzman kadromuz ile vize başvurunuzu güvenle yapın." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://1barbers.com" />
-        <meta property="og:image" content="https://1barbers.com/assets/images/og-image.jpg" />
+        <meta property="og:url" content="https://journeise.com" />
+        <meta property="og:image" content="https://journeise.com/assets/images/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="1Barbers | Profesyonel Berber Hizmetleri" />
-        <meta name="twitter:description" content="1Barbers ile profesyonel berber hizmetleri alın. Kuştepe'nin en iyi berberleri ile tanışın, online randevu alın." />
-        <meta name="twitter:image" content="https://1barbers.com/assets/images/og-image.jpg" />
-        <link rel="canonical" href="https://1barbers.com" />
+        <meta name="twitter:title" content="Journeise | Profesyonel Vize Danışmanlığı" />
+        <meta name="twitter:description" content="Journeise ile profesyonel vize danışmanlığı hizmetleri alın. Uzman kadromuz ile vize başvurunuzu güvenle yapın." />
+        <meta name="twitter:image" content="https://journeise.com/assets/images/og-image.jpg" />
+        <link rel="canonical" href="https://journeise.com" />
       </Head>
       <main className="min-h-screen bg-background text-foreground">
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-background to-muted/30">
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop"
+              alt="Hero Background"
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-black/50" />
+          </div>
           {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -69,9 +126,9 @@ export default function Home() {
                   className="text-3xl text-foreground/90 mb-8 leading-relaxed"
                 >
                   {session?.user ? (
-                    'Tekrardan Hoşgeldin,'
+                    'Hayalinizdeki Ülkeye Yolculuk Başlıyor'
                   ) : (
-                    'Tekrardan Hoşgeldin,'
+                    'Hayalinizdeki Ülkeye Yolculuk Başlıyor'
                   )}
                 </motion.h3>
                 <motion.div
@@ -84,7 +141,7 @@ export default function Home() {
                       size="lg"
                       className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 px-8"
                     >
-                      Hemen Rezervasyon Yap
+                      Hemen Başvuru Yap
                       <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </Link>
@@ -98,12 +155,11 @@ export default function Home() {
                 className="relative h-[500px] w-full rounded-lg overflow-hidden"
               >
                 <Image
-                  src="/assets/images/gallery-images/4.jpg"
-                  alt="1Barbers Dükkan"
+                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop"
+                  alt="Journeise Vize Danışmanlığı"
                   className="object-cover"
                   priority
-                  width={1000}
-                  height={1000}
+                  fill
                 />
               </motion.div>
             </div>
@@ -128,48 +184,34 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-muted/30">
+        <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <Scissors className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Profesyonel Hizmet</h3>
-                <p className="text-muted-foreground">En son trendler ve klasik kesim teknikleri</p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <Clock className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Hızlı Servis</h3>
-                <p className="text-muted-foreground">Minimum bekleme süresi, maksimum memnuniyet</p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <Star className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Kaliteli Hizmet</h3>
-                <p className="text-muted-foreground">Uzman kadro ve steril ortam</p>
-              </motion.div>
+              {FEATURES.map((feature, index) => (
+                <Card key={index} className="overflow-hidden">
+                  <CardContent className="p-6">
+                    <div className="relative h-48 w-full mb-4 overflow-hidden rounded-lg">
+                      <Image
+                        src={feature.image}
+                        alt={feature.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <feature.icon className="h-6 w-6 text-primary" />
+                      <h3 className="text-xl font-semibold">{feature.title}</h3>
+                    </div>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* MMA Career Section */}
-        <section className="py-20 bg-background">
+        {/* Popular Destinations Section */}
+        <section className="py-20 bg-muted/50">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -178,9 +220,9 @@ export default function Home() {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="text-4xl font-bold mb-6">MMA Kariyeri</h2>
+              <h2 className="text-4xl font-bold mb-6">Popüler Destinasyonlar</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-                Profesyonel MMA dövüşçüsü olarak kariyerime odaklanıyorum. Spor tutkum ve disiplinli çalışma anlayışım, hem ringde hem de hayatın her alanında başarıya ulaşmamı sağlıyor.
+                En çok tercih edilen ülkelere vize başvurusu yapıyoruz. Uzman kadromuz ile başvurunuzu güvenle yapın.
               </p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -192,8 +234,8 @@ export default function Home() {
                 className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-xl"
               >
                 <Image
-                  src="/assets/images/barber-images/1.JPG"
-                  alt="Cömert Paşa Sebebci - MMA Dövüşçüsü"
+                  src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop"
+                  alt="Popüler Destinasyonlar"
                   fill
                   className="object-cover"
                 />
@@ -206,17 +248,18 @@ export default function Home() {
                 className="space-y-6"
               >
                 <div className="flex items-center gap-2">
-                  <Trophy className="h-6 w-6 text-primary" />
-                  <h3 className="text-2xl font-semibold">Profesyonel MMA Dövüşçüsü</h3>
+                  <Plane className="h-6 w-6 text-primary" />
+                  <h3 className="text-2xl font-semibold">Schengen Vizesi</h3>
                 </div>
                 <p className="text-muted-foreground text-lg">
-                  Hayatımda aşık olduğum tek şey MMA. Bu spor beni ben yapan, karakterimi inşa eden, hayallerimi besleyen şey. Allah'ın izniyle bayrağımı en onurlu şekilde taşımak benim görevim, sorumluluğum ve ekmek kapım.
+                  Avrupa'nın kapılarını aralayın. Schengen vizesi ile 26 Avrupa ülkesine serbestçe seyahat edin.
                 </p>
+                <div className="flex items-center gap-2">
+                  <Building className="h-6 w-6 text-primary" />
+                  <h3 className="text-2xl font-semibold">Amerika Vizesi</h3>
+                </div>
                 <p className="text-muted-foreground text-lg">
-                  Aynı zamanda 1Barbers çatısı altında kendi berber dükkanımda çalışıyor, aileme destek olmaya devam ediyorum. Daha yolun çok başındayım, öğrenilecek çok şey var. Ama bu yoldayım ve pes etmeye hiç niyetim yok.
-                </p>
-                <p className="text-muted-foreground text-lg">
-                  – Cömert Paşa Sebebci
+                  Amerika'da hayallerinizi gerçekleştirin. B1/B2 vizesi ile turistik ve iş seyahatleri yapın.
                 </p>
                 <Link href="/about">
                   <Button className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -230,7 +273,7 @@ export default function Home() {
         </section>
 
         {/* Services Section */}
-        <section className="py-20 bg-muted/30">
+        <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -241,195 +284,29 @@ export default function Home() {
             >
               <h2 className="text-4xl font-bold mb-6">Hizmetlerimiz</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-                Modern ve klasik kesim teknikleriyle, yüz hatlarınıza en uygun saç stilini buluyoruz.
+                Tüm vize türleri için profesyonel danışmanlık ve başvuru hizmetleri sunuyoruz.
               </p>
             </motion.div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 justify-items-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                viewport={{ once: true }}
-              >
-                <div className="group rounded-lg bg-card p-6 transition-all hover:bg-card/80 border border-primary/10 shadow-lg hover:shadow-xl">
-                  <h3 className="mb-4 text-2xl font-semibold">Saç & Sakal Kesimi</h3>
-                  <p className="mb-4 text-muted-foreground">
-                    Komple bakım paketi ile tamamen yenilenmiş bir görünüme kavuş.
-                  </p>
-                  <p className="text-lg font-semibold text-primary">1000 TL</p>
-                  <Link href="/reservation">
-                    <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
-                      Randevu Al
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* Barbers Section */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl font-bold mb-6">Ustalarımız</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-                Deneyimli ve uzman kadromuzla sizlere en iyi hizmeti sunuyoruz.
-              </p>
-            </motion.div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {BARBERS.map((barber, index) => (
-                <motion.div
-                  key={barber.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.2 }}
-                  viewport={{ once: true }}
-                >
-                  <motion.div
-                    className={`group overflow-hidden rounded-lg bg-card transition-all hover:bg-card/80 border ${selectedBarber === barber.id.toString()
-                      ? "border-primary shadow-xl"
-                      : "border-primary/10 shadow-lg hover:shadow-xl"
-                      }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedBarber(barber.id.toString())}
-                  >
-                    <div className="relative mb-4 h-80 w-full overflow-hidden">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {SERVICES.map((service, index) => (
+                <Card key={index} className="overflow-hidden">
+                  <CardContent className="p-6">
+                    <div className="relative h-48 w-full mb-4 overflow-hidden rounded-lg">
                       <Image
-                        src={barber.image}
-                        alt={barber.name}
+                        src={service.image}
+                        alt={service.title}
                         fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="object-cover"
                       />
-                      {selectedBarber === barber.id.toString() && (
-                        <div className="absolute inset-0 bg-primary/10" />
-                      )}
                     </div>
-                    <div className="p-6">
-                      <h3 className="mb-2 text-2xl font-semibold">{barber.name}</h3>
-                      <p className="text-muted-foreground flex items-center">
-                        <Award className="h-4 w-4 mr-2 text-primary" />
-                        {barber.experience} Yıl Deneyim
-                      </p>
-                      <Link href={`/reservation?barber=${barber.id}`}>
-                        <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
-                          Randevu Al
-                        </Button>
-                      </Link>
+                    <div className="flex items-center gap-2 mb-2">
+                      <service.icon className="h-6 w-6 text-primary" />
+                      <h3 className="text-xl font-semibold">{service.title}</h3>
                     </div>
-                  </motion.div>
-                </motion.div>
+                    <p className="text-muted-foreground">{service.description}</p>
+                  </CardContent>
+                </Card>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Gallery Section */}
-        <section className="py-20 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl font-bold mb-6">Galeri</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-                Çalışmalarımızdan örnekler ve müşteri memnuniyeti.
-              </p>
-            </motion.div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {GALLERY_IMAGES.map((image, index) => (
-                <motion.div
-                  key={image.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="group relative aspect-square overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Button variant="secondary" className="bg-background/10 backdrop-blur-sm hover:bg-background/20">
-                        Detayları Gör
-                      </Button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            <div className="mt-8 text-center">
-              <Link href="/gallery">
-                <Button size="lg" className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Tüm Galeriyi Gör
-                  <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Contact Section */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl font-bold mb-6">İletişim</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-                Bize ulaşın ve randevu alın.
-              </p>
-            </motion.div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <h3 className="text-xl font-semibold mb-2">Adres</h3>
-                <p className="text-muted-foreground">
-                  Küçük Piyale, Fişekhane Deresi Cd. No:19, 34440 Beyoğlu/İstanbul
-                </p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <h3 className="text-xl font-semibold mb-2">Telefon</h3>
-                <p className="text-muted-foreground">+90 530 239 40 05 Sadece WhatsApp Üzerinden Ulaşınız</p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="text-center p-6 rounded-lg bg-card shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <h3 className="text-xl font-semibold mb-2">Email</h3>
-                <p className="text-muted-foreground">info@1barbers.com</p>
-              </motion.div>
             </div>
           </div>
         </section>

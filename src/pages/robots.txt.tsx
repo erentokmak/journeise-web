@@ -9,7 +9,7 @@ Disallow: /api/
 Disallow: /_next/
 Disallow: /static/
 
-Sitemap: https://1barbers.com/sitemap.xml
+Sitemap: https://journeise.com/sitemap.xml
 `
 
   res.setHeader('Content-Type', 'text/plain')

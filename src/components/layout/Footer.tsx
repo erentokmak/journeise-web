@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, Clock, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/ui/hover-card";
 import { Button } from "@/ui/button";
+import { useTheme } from "next-themes";
 
 // Animasyon varyantları
 const containerVariants = {
@@ -28,6 +30,8 @@ const itemVariants = {
 };
 
 export function Footer() {
+  const { theme } = useTheme();
+  
   return (
     <motion.footer
       className="border-t bg-background relative overflow-hidden"
@@ -49,14 +53,17 @@ export function Footer() {
             className="space-y-6"
             variants={itemVariants}
           >
-            <div className="relative">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                1BARBERS
-              </h3>
-              <div className="absolute -bottom-2 left-0 h-1 w-16 bg-primary rounded-full" />
+            <div className="relative h-12 w-48">
+              <Image
+                src={theme === "dark" ? "/assets/images/brand-images/journeise-white.png" : "/assets/images/brand-images/journeise-black.png"}
+                alt="Journeise"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Profesyonel berberlik hizmetleri için doğru adres. Modern ve klasik kesim teknikleriyle, yüz hatlarınıza en uygun saç stilini buluyoruz.
+              Profesyonel vize danışmanlığı hizmetleri için doğru adres. Uzman kadromuz ile vize başvurunuzu güvenle yapın.
             </p>
             <div className="flex space-x-4">
               {[
@@ -128,7 +135,7 @@ export function Footer() {
               {[
                 { icon: MapPin, text: "Küçük Piyale, Fişekhane Deresi Cd. No:19, 34440 Beyoğlu/İstanbul" },
                 { icon: Phone, text: "+90 530 239 40 05 Sadece WhatsApp Üzerinden Ulaşınız" },
-                { icon: Mail, text: "info@1barbers.com" }
+                { icon: Mail, text: "info@journeise.com" }
               ].map((contact, index) => (
                 <motion.li
                   key={index}
@@ -183,7 +190,7 @@ export function Footer() {
         >
           <div className="flex flex-col items-center justify-between space-y-4 md:flex-row">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} 1Barbers. Tüm hakları saklıdır.
+              © {new Date().getFullYear()} Journeise. Tüm hakları saklıdır.
             </p>
             <div className="flex space-x-6">
               <Link
