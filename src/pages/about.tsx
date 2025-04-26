@@ -29,10 +29,10 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div className="relative h-[400px] w-full">
               <Image
-                src="/assets/images/brand-images/journeise-logo.png"
-                alt="Journeise Logo"
+                src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80"
+                alt="Journeise Ofis"
                 fill
-                className="object-contain rounded-lg"
+                className="object-cover rounded-lg"
                 priority
               />
             </div>
