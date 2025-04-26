@@ -101,7 +101,7 @@ export function Footer() {
             <ul className="space-y-3">
               {[
                 { href: "/", label: "Ana Sayfa" },
-                { href: "/reservation", label: "Rezervasyon" },
+                { href: "/reservation", label: "Başvuru" },
                 { href: "/gallery", label: "Galeri" },
                 { href: "/about", label: "Hakkımızda" },
                 { href: "/countries", label: "Ülkeler" },

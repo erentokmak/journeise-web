@@ -464,7 +464,7 @@ export default function ReservationPage() {
       }
 
       toast({
-        title: "Rezervasyon Başarılı!",
+        title: "Randevu Başarılı!",
         description: `${format(values.date, "PPP")} tarihinde saat ${values.time
           } için randevunuz oluşturuldu.`,
         duration: 5000,
@@ -483,11 +483,11 @@ export default function ReservationPage() {
       // İsteğe bağlı olarak kullanıcıyı hesap sayfasına yönlendirebiliriz
       // router.push('/dashboard');
     } catch (error) {
-      console.error("Rezervasyon hatası:", error);
+      console.error("Randevu hatası:", error);
       toast({
         variant: "destructive",
         title: "Hata!",
-        description: "Rezervasyon alınırken bir hata oluştu!",
+        description: "Randevu alınırken bir hata oluştu!",
         duration: 5000,
       });
       setIsLoading(false);
@@ -689,7 +689,7 @@ export default function ReservationPage() {
             transition={{ duration: 0.5 }}
             className="mb-12 text-center"
           >
-            <h1 className="text-4xl font-bold">Rezervasyon</h1>
+            <h1 className="text-4xl font-bold">Randevu Al</h1>
             <p className="mt-2 text-base text-muted-foreground">
               Profesyonel ekibimizle tanışın ve randevunuzu hemen alın.
             </p>
@@ -1088,7 +1088,7 @@ export default function ReservationPage() {
                       className={cn("ml-auto", step === 1 && "w-full")}
                     >
                       {step === 4 && session?.user
-                        ? "Rezervasyon Yap"
+                        ? "Randevu Yap"
                         : "İleri"}
                     </Button>
                   ) : (
@@ -1097,7 +1097,7 @@ export default function ReservationPage() {
                       className="ml-auto"
                       disabled={isLoading}
                     >
-                      {isLoading ? "İşleniyor..." : "Rezervasyon Yap"}
+                      {isLoading ? "İşleniyor..." : "Randevu Yap"}
                     </Button>
                   )}
                 </div>
