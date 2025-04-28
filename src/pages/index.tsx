@@ -46,6 +46,51 @@ const gradientAnimation = `
     background-size: 200% 200%;
     animation: gradientAnimationReverse 20s ease infinite;
   }
+  
+  @keyframes float {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+      transform: translate(10px, -10px) rotate(5deg);
+    }
+    50% {
+      transform: translate(0, -20px) rotate(0deg);
+    }
+    75% {
+      transform: translate(-10px, -10px) rotate(-5deg);
+    }
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+  }
+  
+  @keyframes morph {
+    0% {
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+    50% {
+      border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+    100% {
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+  }
 `;
 
 export default function Home() {
@@ -206,24 +251,104 @@ export default function Home() {
           {/* Hareketli, blur'lu daireler */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <motion.div
-              className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-[#b8c0ff] opacity-60 blur-3xl"
-              animate={{ x: [0, 40, 0], y: [0, 30, 0], scale: [1, 1.1, 1] }}
-              transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-[-15%] left-[-15%] w-[600px] h-[600px] rounded-[60%_40%_30%_70%] bg-[#b8c0ff] opacity-70 blur-3xl"
+              animate={{
+                x: [0, 100, 50, 0],
+                y: [0, 50, 100, 0],
+                scale: [1, 1.2, 1.1, 1],
+                borderRadius: [
+                  "60% 40% 30% 70% / 60% 30% 70% 40%",
+                  "30% 60% 70% 40% / 50% 60% 30% 60%",
+                  "40% 50% 60% 30% / 40% 50% 60% 30%",
+                  "60% 40% 30% 70% / 60% 30% 70% 40%"
+                ]
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.3, 0.6, 1]
+              }}
             />
             <motion.div
-              className="absolute top-[20%] right-[-10%] w-[350px] h-[350px] rounded-full bg-[#f7d1ba] opacity-60 blur-3xl"
-              animate={{ x: [0, -30, 0], y: [0, -20, 0], scale: [1, 1.08, 1] }}
-              transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-[10%] right-[-10%] w-[550px] h-[550px] rounded-[40%_60%_70%_30%] bg-[#f7d1ba] opacity-70 blur-3xl"
+              animate={{
+                x: [0, -80, -40, 0],
+                y: [0, -60, -100, 0],
+                scale: [1, 1.15, 1.05, 1],
+                borderRadius: [
+                  "40% 60% 70% 30% / 40% 50% 60% 30%",
+                  "60% 40% 30% 70% / 60% 30% 70% 40%",
+                  "30% 60% 70% 40% / 50% 60% 30% 60%",
+                  "40% 60% 70% 30% / 40% 50% 60% 30%"
+                ]
+              }}
+              transition={{
+                duration: 28,
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.3, 0.6, 1]
+              }}
             />
             <motion.div
-              className="absolute bottom-[-10%] left-[20%] w-[300px] h-[300px] rounded-full bg-[#e7c6ff] opacity-60 blur-3xl"
-              animate={{ x: [0, 25, 0], y: [0, -25, 0], scale: [1, 1.12, 1] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute bottom-[-15%] left-[10%] w-[500px] h-[500px] rounded-[50%_50%_40%_60%] bg-[#e7c6ff] opacity-70 blur-3xl"
+              animate={{
+                x: [0, 60, 30, 0],
+                y: [0, -80, -40, 0],
+                scale: [1, 1.1, 1.2, 1],
+                borderRadius: [
+                  "50% 50% 40% 60% / 50% 40% 60% 50%",
+                  "40% 60% 70% 30% / 40% 50% 60% 30%",
+                  "60% 40% 30% 70% / 60% 30% 70% 40%",
+                  "50% 50% 40% 60% / 50% 40% 60% 50%"
+                ]
+              }}
+              transition={{
+                duration: 30,
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.3, 0.6, 1]
+              }}
             />
             <motion.div
-              className="absolute bottom-[-15%] right-[10%] w-[350px] h-[350px] rounded-full bg-[#c8ffd4] opacity-50 blur-3xl"
-              animate={{ x: [0, -35, 0], y: [0, 20, 0], scale: [1, 1.07, 1] }}
-              transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute bottom-[-10%] right-[5%] w-[550px] h-[550px] rounded-[30%_70%_50%_50%] bg-[#c8ffd4] opacity-60 blur-3xl"
+              animate={{
+                x: [0, -70, -30, 0],
+                y: [0, 60, 90, 0],
+                scale: [1, 1.15, 1.05, 1],
+                borderRadius: [
+                  "30% 70% 50% 50% / 30% 50% 50% 70%",
+                  "50% 50% 40% 60% / 50% 40% 60% 50%",
+                  "40% 60% 70% 30% / 40% 50% 60% 30%",
+                  "30% 70% 50% 50% / 30% 50% 50% 70%"
+                ]
+              }}
+              transition={{
+                duration: 32,
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.3, 0.6, 1]
+              }}
+            />
+            <motion.div
+              className="absolute top-[40%] left-[30%] w-[450px] h-[450px] rounded-[70%_30%_50%_50%] bg-[#a8d8ff] opacity-60 blur-3xl"
+              animate={{
+                x: [0, 40, -20, 0],
+                y: [0, -50, 30, 0],
+                scale: [1, 1.1, 1.05, 1],
+                borderRadius: [
+                  "70% 30% 50% 50% / 70% 50% 50% 30%",
+                  "50% 50% 40% 60% / 50% 40% 60% 50%",
+                  "30% 70% 50% 50% / 30% 50% 50% 70%",
+                  "70% 30% 50% 50% / 70% 50% 50% 30%"
+                ]
+              }}
+              transition={{
+                duration: 27,
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.3, 0.6, 1]
+              }}
             />
           </div>
           {/* Hero Content */}
