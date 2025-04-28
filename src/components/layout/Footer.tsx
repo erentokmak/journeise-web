@@ -6,6 +6,7 @@ import Lottie from 'lottie-react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/ui/hover-card";
 import { Button } from "@/ui/button";
 import { useTheme } from "next-themes";
+import { CONTACT_INFO } from "@/constants/contact";
 
 // Animasyon varyantları
 const containerVariants = {
@@ -137,9 +138,9 @@ export function Footer() {
             </h4>
             <ul className="space-y-4">
               {[
-                { icon: MapPin, text: "Küçük Piyale, Fişekhane Deresi Cd. No:19, 34440 Beyoğlu/İstanbul" },
-                { icon: Phone, text: "+90 530 239 40 05 Sadece WhatsApp Üzerinden Ulaşınız" },
-                { icon: Mail, text: "info@journeise.com" }
+                { icon: MapPin, text: CONTACT_INFO.address },
+                { icon: Phone, text: CONTACT_INFO.phone },
+                { icon: Mail, text: CONTACT_INFO.email }
               ].map((contact, index) => (
                 <motion.li
                   key={index}

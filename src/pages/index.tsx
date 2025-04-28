@@ -2,7 +2,7 @@ import { Button } from "@/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import { MoveRight, Globe, Clock, Star, Award, Trophy, Plane, Building, FileText, Shield, Zap } from "lucide-react";
+import { MoveRight, Globe, Clock, Star, Award, Trophy, Plane, Building, FileText, Shield, Zap, Check, Truck, Users, FileCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
@@ -71,6 +71,24 @@ export default function Home() {
     }
   ];
 
+  const COUNTRY_INFO = [
+    {
+      name: "Türkiye",
+      description: "Türkiye'nin önemli özellikleri ve detayları",
+      details: ["Türkiye'nin başkentini Ankara'dır", "Türkiye'nin en büyük şehri İstanbul'dur", "Türkiye'nin en büyük deniz kıyısı Marmara Denizi'dir"]
+    },
+    {
+      name: "Almanya",
+      description: "Almanya'nın önemli özellikleri ve detayları",
+      details: ["Almanya'nın başkentini Berlin'dir", "Almanya'nın en büyük şehri Münih'dir", "Almanya'nın en büyük deniz kıyısı Büyük Britanya Denizi'dir"]
+    },
+    {
+      name: "İtalya",
+      description: "İtalya'nın önemli özellikleri ve detayları",
+      details: ["İtalya'nın başkentini Roma'dır", "İtalya'nın en büyük şehri Milano'dur", "İtalya'nın en büyük deniz kıyısı Tırmızı Denizi'dir"]
+    }
+  ];
+
   return (
     <>
       <Head>
@@ -136,12 +154,12 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
                 >
-                  <Link href="/reservation">
+                  <Link href="/contact">
                     <Button
                       size="lg"
                       className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 px-8"
                     >
-                      Hemen Başvuru Yap
+                      İletişime Geç
                       <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </Link>
@@ -181,6 +199,140 @@ export default function Home() {
               <div className="w-1.5 h-1.5 bg-primary/60 rounded-full mx-auto" />
             </div>
           </motion.div>
+        </section>
+
+        {/* Where do you want to go? Section */}
+        <section className="py-20 bg-muted/50">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-4xl font-bold mb-6">Nereye Gitmek İstiyorsun?</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+                Hayalinizdeki ülkeye giden yolda size yardımcı olmak için buradayız.
+              </p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {COUNTRY_INFO.map((country, index) => (
+                <Card key={index} className="overflow-hidden">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">{country.name}</h3>
+                    <p className="text-muted-foreground mb-4">{country.description}</p>
+                    <ul className="space-y-2">
+                      {country.details.map((detail, idx) => (
+                        <li key={idx} className="flex items-start">
+                          <Check className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                          <span>{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Why Choose Visa Consultancy Section */}
+        <section className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-4xl font-bold mb-6">Neden Vize Danışmanlık Hizmeti Almalısınız?</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+                İstanbul'da bulunan ofisimizde tüm vize işlemleriniz için bilgi alabileceğiniz uzman kadromuzla ziyaretinizi bekliyoruz.
+              </p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 bg-primary/10 rounded-full">
+                      <Truck className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold">Evraklarınızı Ücretsiz Alıyoruz</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    İstanbul'da ikamet ediyorsanız evraklarınızı moto kurye ile ücretsiz teslim alıyoruz.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 bg-primary/10 rounded-full">
+                      <Clock className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold">Konsolosluk Kuyruğunda Beklemeyin</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Sizin adınıza tüm prosedürlerle biz ilgileniyoruz. Siz sadece hayallerinize yaklaşmanın mutluluğunu yaşayın.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 bg-primary/10 rounded-full">
+                      <Users className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold">Uzman Ekibimiz Hizmetinizde</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Uzman ekibimiz tüm koşullarda yanınızda ve işlemleri sizin adınıza yürütüyor.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 bg-primary/10 rounded-full">
+                      <Globe className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold">Tüm Ülkelere Vize Alıyoruz</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Gitmek istediğiniz tüm ülkeler için size yardımcı olmak için buradayız.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 bg-primary/10 rounded-full">
+                      <FileCheck className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold">Az Evrak, Yüksek Başarı</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    En az evrakla en doğru başvuruyu yapmanızı sağlıyoruz.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 bg-primary/10 rounded-full">
+                      <Shield className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold">Güvenilir Hizmet</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Lütfen unutmayın ki vize başvurusu önemli bir işlemdir ve başvurunuzu riske atmak yerine bu konuda uzman olan deneyimli ekibimize güvenebilirsiniz.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </section>
 
         {/* Features Section */}
