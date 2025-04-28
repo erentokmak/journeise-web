@@ -342,26 +342,34 @@ export default function Home() {
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {POPULAR_COUNTRIES.map((country, index) => (
-                <Link href={`/countries/${country.name.toLowerCase().replace(/\s+/g, '-')}`} key={index}>
-                  <Card className="overflow-hidden h-full transition-all hover:shadow-lg hover:scale-[1.02]">
-                    <div className="relative h-48 w-full">
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.15 }}
+                  viewport={{ once: true }}
+                >
+                  <Link href={`/countries/${country.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <div className="relative group rounded-3xl overflow-hidden h-80 cursor-pointer transition-transform hover:scale-[1.02]">
                       <Image
                         src={country.imageUrl}
                         alt={country.name}
                         fill
-                        className="object-cover"
+                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                       />
-                    </div>
-                    <CardContent className="p-6">
-                      <h3 className="text-xl font-semibold mb-2">{country.name}</h3>
-                      <p className="text-muted-foreground mb-4">{country.description}</p>
-                      <div className="flex items-center text-primary">
-                        <span className="text-sm font-medium">Detayları Gör</span>
-                        <MoveRight className="ml-2 h-4 w-4" />
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                      {/* İçerik */}
+                      <div className="absolute bottom-0 left-0 w-full p-6 flex flex-col items-start z-10">
+                        <div className="flex items-center mb-2">
+                          <h3 className="text-2xl font-semibold text-white drop-shadow-lg">{country.name}</h3>
+                        </div>
+                        <p className="text-white/90 text-base mb-3 line-clamp-2 drop-shadow-lg">{country.description}</p>
+                        <span className="text-sm font-medium text-primary-foreground bg-primary/80 rounded-full px-4 py-1 mt-2 shadow-lg">Detaylı Bilgiler</span>
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </div>
