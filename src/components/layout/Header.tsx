@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/ui/button";
 import { ModeToggle } from "./mode-toggle";
+import { MobileModeToggle } from "./mobile-menu-toggle";
 import { useSession } from "next-auth/react";
 import {
   DropdownMenu,
@@ -48,13 +49,15 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
+            <MobileModeToggle />
+
             <ModeToggle />
 
             {session?.user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Avatar className="h-9 w-9 cursor-pointer bg-primary text-primary-foreground justify-center items-center">
-                      <User className="h-5 w-5 " />
+                    <User className="h-5 w-5 " />
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
