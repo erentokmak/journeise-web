@@ -28,6 +28,7 @@ const PUBLIC_PATHS = [
   '/faq',
   '/contact',
   '/blog/slug',
+  
 ] as const
 
 // App Content Component
@@ -40,12 +41,12 @@ function AppContent({ Component, pageProps }: AppProps) {
   )
 
   // Simplified auth redirect logic
-  useEffect(() => {
+  /*useEffect(() => {
     // Only redirect to sign-in if user is not authenticated and tries to access protected route
     if (status === 'unauthenticated' && !isPublicPath) {
       router?.push('/auth/sign-in')
     }
-  }, [status, router, isPublicPath])
+  }, [status, router, isPublicPath])*/
 
   // Show loading state or content
   if (status === 'loading') {
