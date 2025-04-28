@@ -8,16 +8,6 @@ export const CONTACT_INFO: ContactInfo = {
 
 export const COUNTRY_INFO: CountryInfo[] = [
   {
-    name: 'Türkiye',
-    description: 'Türkiye\'nin eşsiz kültürel mirası ve doğal güzellikleri',
-    details: [
-      'Zengin tarihi ve kültürel miras',
-      'Muhteşem plajlar ve doğal güzellikler',
-      'Eşsiz mutfak kültürü',
-      'Modern şehirler ve geleneksel köyler'
-    ]
-  },
-  {
     name: 'Yunanistan',
     description: 'Antik medeniyetlerin beşiği ve muhteşem adaları',
     details: [
