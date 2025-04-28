@@ -203,10 +203,28 @@ export default function Home() {
       <main className="min-h-screen bg-background text-foreground">
         {/* Hero Section with Search */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-background dark:from-primary/30 dark:via-primary/20 dark:to-background" />
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-background dark:from-primary/40 dark:via-primary/30 dark:to-background animate-gradient" style={{ animationDuration: '18s' }} />
-            <div className="absolute inset-0 bg-gradient-to-tl from-primary/20 via-transparent to-background dark:from-primary/30 dark:via-transparent dark:to-background animate-gradient-reverse" style={{ animationDuration: '22s' }} />
+          {/* Hareketli, blur'lu daireler */}
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            <motion.div
+              className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-[#b8c0ff] opacity-60 blur-3xl"
+              animate={{ x: [0, 40, 0], y: [0, 30, 0], scale: [1, 1.1, 1] }}
+              transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute top-[20%] right-[-10%] w-[350px] h-[350px] rounded-full bg-[#f7d1ba] opacity-60 blur-3xl"
+              animate={{ x: [0, -30, 0], y: [0, -20, 0], scale: [1, 1.08, 1] }}
+              transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute bottom-[-10%] left-[20%] w-[300px] h-[300px] rounded-full bg-[#e7c6ff] opacity-60 blur-3xl"
+              animate={{ x: [0, 25, 0], y: [0, -25, 0], scale: [1, 1.12, 1] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute bottom-[-15%] right-[10%] w-[350px] h-[350px] rounded-full bg-[#c8ffd4] opacity-50 blur-3xl"
+              animate={{ x: [0, -35, 0], y: [0, 20, 0], scale: [1, 1.07, 1] }}
+              transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+            />
           </div>
           {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4">

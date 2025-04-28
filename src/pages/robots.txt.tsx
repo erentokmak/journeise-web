@@ -10,6 +10,9 @@ Allow: /countries
 Allow: /blog
 Allow: /faq
 Allow: /contact
+Allow: /reservation
+Allow: /privacy-policy
+Allow: /terms
 Disallow: /api/
 Disallow: /_next/
 Disallow: /static/
