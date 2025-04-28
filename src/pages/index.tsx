@@ -362,9 +362,9 @@ export default function Home() {
                       {/* İçerik */}
                       <div className="absolute bottom-0 left-0 w-full p-6 flex flex-col items-start z-10">
                         <div className="flex items-center mb-2">
-                          <h3 className="text-2xl font-semibold text-white drop-shadow-lg">{country.name}</h3>
+                          <h3 className="text-2xl font-semibold text-white drop-shadow-2xl" style={{ textShadow: '0 4px 24px rgba(0,0,0,0.95), 0 1.5px 0 rgb(0, 0, 0)' }}>{country.name}</h3>
                         </div>
-                        <p className="text-white/90 text-base mb-3 line-clamp-2 drop-shadow-lg">{country.description}</p>
+                        <p className="text-white/90 text-base mb-3 line-clamp-2 drop-shadow-2xl" style={{ textShadow: '0 4px 24px rgba(0,0,0,0.95), 0 1.5px 0 rgba(0,0,0,0.7)' }}>{country.description}</p>
                         <span className="text-sm font-medium text-primary-foreground bg-primary/80 rounded-full px-4 py-1 mt-2 shadow-lg">Detaylı Bilgiler</span>
                       </div>
                     </div>
