@@ -71,7 +71,7 @@ export const COUNTRIES: CountryDetail[] = [
   {
     name: "Almanya",
     description: "Avrupa'nın en büyük ekonomisine sahip ülkesi, zengin kültürel mirası ve modern şehirleriyle dikkat çekiyor.",
-    imageUrl: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80",
     details: [
       "Avrupa'nın en büyük ekonomisi",
       "Zengin kültürel miras",
@@ -226,7 +226,7 @@ export const COUNTRIES: CountryDetail[] = [
   {
     name: "Belçika",
     description: "Çikolata, waffle ve biralarıyla ünlü Belçika, Orta Çağ mimarisi ve modern sanatın buluştuğu bir ülke.",
-    imageUrl: "https://images.unsplash.com/photo-1512724441997-5def1ff4a391?q=80&w=2070&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
     details: [
       "Çikolata ve waffle",
       "Orta Çağ mimarisi",
@@ -257,7 +257,7 @@ export const COUNTRIES: CountryDetail[] = [
   {
     name: "Avusturya",
     description: "Alpler'in muhteşem manzaraları, klasik müzik ve barok mimarisiyle Avusturya, Orta Avrupa'nın incisi.",
-    imageUrl: "https://images.unsplash.com/photo-1516550135131-fe0b9b9b9b9b?q=80&w=2070&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80",
     details: [
       "Alpler manzaraları",
       "Klasik müzik",
@@ -288,7 +288,7 @@ export const COUNTRIES: CountryDetail[] = [
   {
     name: "İsviçre",
     description: "Alpler'in zirvelerinde yer alan İsviçre, doğal güzellikleri, çikolataları ve saatleriyle dünya çapında ünlü.",
-    imageUrl: "https://images.unsplash.com/photo-1530126483408-aa53355b1932?q=80&w=2070&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80",
     details: [
       "Alpler manzaraları",
       "Çikolata üretimi",
@@ -350,7 +350,7 @@ export const COUNTRIES: CountryDetail[] = [
   {
     name: "Portekiz",
     description: "Atlantik kıyısında yer alan Portekiz, tarihi şehirleri, plajları ve lezzetli mutfağıyla ziyaretçilerini büyülüyor.",
-    imageUrl: "https://images.unsplash.com/photo-1555881300-74d7acac1df5?q=80&w=2070&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
     details: [
       "Atlantik kıyısı",
       "Tarihi şehirler",
@@ -597,6 +597,7 @@ export const COUNTRIES: CountryDetail[] = [
   {
     name: "Slovakya",
     description: "Doğal güzellikleri, tarihi şehirleri ve uygun fiyatları ile keşfedilmeyi bekleyen bir ülke.",
+    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
     details: [
       "Tarihi şehirler",
       "Doğal güzellikler",
@@ -618,7 +619,6 @@ export const COUNTRIES: CountryDetail[] = [
       "Tatra dağları",
       "Bojnice şatosu",
       "Devín kalesi"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1519197924294-4ba991a11128?q=80&w=2070&auto=format&fit=crop"
+    ]
   }
 ] 
