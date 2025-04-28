@@ -70,273 +70,313 @@ export const COUNTRIES: CountryDetail[] = [
   },
   {
     name: "Almanya",
-    description: "Avrupa'nın ekonomik gücü, mühendislik ve teknoloji alanında dünya lideri.",
+    description: "Avrupa'nın en büyük ekonomisine sahip ülkesi, zengin kültürel mirası ve modern şehirleriyle dikkat çekiyor.",
+    imageUrl: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop",
     details: [
-      "Güçlü ekonomi ve sanayi",
-      "Yüksek yaşam kalitesi",
-      "Ücretsiz üniversite eğitimi",
-      "Gelişmiş sosyal sistem"
+      "Avrupa'nın en büyük ekonomisi",
+      "Zengin kültürel miras",
+      "Modern şehirler",
+      "Eğitim ve teknoloji merkezi"
     ],
     visaInfo: {
-      processingTime: "10-15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
-      "Berlin Duvarı kalıntıları",
-      "Oktoberfest festivali",
-      "Neuschwanstein Şatosu",
-      "Karayip Denizi sahilleri"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop"
+      "Berlin Duvarı ve Brandenburg Kapısı",
+      "Bavyera Alpleri ve Neuschwanstein Şatosu",
+      "Köln Katedrali",
+      "Münih Oktoberfest",
+      "Romantik Yol"
+    ]
   },
   {
     name: "Fransa",
-    description: "Sanat, moda ve gastronominin başkenti, romantik şehirleri ve zengin kültürel mirası ile ünlü.",
+    description: "Sanat, moda ve gastronominin merkezi olan Fransa, dünyanın en çok ziyaret edilen ülkelerinden biri.",
+    imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
     details: [
-      "Dünya moda başkenti",
-      "Zengin sanat koleksiyonları",
-      "Eşsiz mutfak kültürü",
-      "Tarihi şatolar ve müzeler"
+      "Sanat ve moda merkezi",
+      "Zengin gastronomi kültürü",
+      "Tarihi yapılar",
+      "Şarap bölgeleri"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Uçuş rezervasyonu",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
       "Eyfel Kulesi",
       "Louvre Müzesi",
       "Versay Sarayı",
-      "Riviera sahilleri"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop"
+      "Riviera Sahili",
+      "Şarap Bölgeleri"
+    ]
   },
   {
     name: "İtalya",
-    description: "Rönesans'ın beşiği, tarihi şehirleri ve dünya çapında ünlü mutfağı ile büyüleyici bir ülke.",
+    description: "Antik Roma uygarlığından Rönesans'a, İtalya tarih ve sanatın merkezi olarak öne çıkıyor.",
+    imageUrl: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=2070&auto=format&fit=crop",
     details: [
-      "Zengin tarihi miras",
-      "Dünya çapında ünlü mutfak",
-      "Sanat ve mimari hazineler",
-      "Akdeniz iklimi"
+      "Antik Roma uygarlığı",
+      "Rönesans sanatı",
+      "Zengin mutfak kültürü",
+      "Tarihi şehirler"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
-      "Roma Kolezyum",
-      "Venedik kanalları",
-      "Floransa katedrali",
-      "Toskana şarapları"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=2070&auto=format&fit=crop"
+      "Roma Kolezyumu",
+      "Venedik Kanalları",
+      "Floransa Duomo",
+      "Pisa Kulesi",
+      "Toskana Şarap Bölgesi"
+    ]
   },
   {
     name: "İspanya",
-    description: "Flamenko, tapas ve güneşin ülkesi, canlı kültürü ve tarihi zenginlikleri ile dikkat çekiyor.",
+    description: "Akdeniz kıyısında yer alan İspanya, zengin kültürel mirası ve canlı gece hayatıyla ünlü.",
+    imageUrl: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?q=80&w=2070&auto=format&fit=crop",
     details: [
+      "Akdeniz kıyısı",
       "Zengin kültürel miras",
       "Canlı gece hayatı",
-      "Akdeniz mutfağı",
-      "Güzel plajlar"
+      "Flamenko dansı"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
       "Sagrada Familia",
       "Alhambra Sarayı",
       "Madrid Prado Müzesi",
-      "Barselona plajları"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=2070&auto=format&fit=crop"
+      "Barselona Plajları",
+      "Flamenko Gösterileri"
+    ]
   },
   {
     name: "Hollanda",
-    description: "Lale bahçeleri, yel değirmenleri ve özgürlükçü kültürü ile tanınan modern bir ülke.",
+    description: "Lale tarlaları, yel değirmenleri ve bisiklet dostu şehirleriyle Hollanda, Avrupa'nın en yaşanabilir ülkelerinden biri.",
+    imageUrl: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?q=80&w=2070&auto=format&fit=crop",
     details: [
-      "Gelişmiş bisiklet kültürü",
-      "Özgürlükçü toplum yapısı",
-      "Zengin sanat koleksiyonları",
-      "Modern şehir planlaması"
+      "Lale tarlaları",
+      "Yel değirmenleri",
+      "Bisiklet dostu şehirler",
+      "Modern mimari"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
-      "Amsterdam kanalları",
-      "Keukenhof bahçeleri",
+      "Amsterdam Kanalları",
+      "Keukenhof Lale Bahçeleri",
+      "Zaanse Schans Yel Değirmenleri",
       "Van Gogh Müzesi",
-      "Zaanse Schans değirmenleri"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=2070&auto=format&fit=crop"
+      "Rijksmuseum"
+    ]
   },
   {
     name: "Belçika",
-    description: "Çikolata, waffle ve biraları ile ünlü, tarihi şehirleri ve Avrupa Birliği'nin kalbi.",
+    description: "Çikolata, waffle ve biralarıyla ünlü Belçika, Orta Çağ mimarisi ve modern sanatın buluştuğu bir ülke.",
+    imageUrl: "https://images.unsplash.com/photo-1512724441997-5def1ff4a391?q=80&w=2070&auto=format&fit=crop",
     details: [
-      "Zengin çikolata kültürü",
-      "Tarihi şehir merkezleri",
-      "AB kurumları",
-      "Sanat ve mimari"
+      "Çikolata ve waffle",
+      "Orta Çağ mimarisi",
+      "Modern sanat",
+      "Bira kültürü"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
       "Grand Place",
       "Atomium",
-      "Bruges kanalları",
-      "Manneken Pis"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2070&auto=format&fit=crop"
+      "Manneken Pis",
+      "Brugge Tarihi Merkezi",
+      "Belçika Çikolataları"
+    ]
   },
   {
     name: "Avusturya",
-    description: "Alpler'in muhteşem manzaraları, klasik müzik ve tarihi şehirleri ile büyüleyici bir ülke.",
+    description: "Alpler'in muhteşem manzaraları, klasik müzik ve barok mimarisiyle Avusturya, Orta Avrupa'nın incisi.",
+    imageUrl: "https://images.unsplash.com/photo-1516550135131-fe0b9b9b9b9b?q=80&w=2070&auto=format&fit=crop",
     details: [
-      "Zengin müzik kültürü",
-      "Alp dağları",
-      "Tarihi şehirler",
-      "Yüksek yaşam kalitesi"
+      "Alpler manzaraları",
+      "Klasik müzik",
+      "Barok mimarisi",
+      "Viyana kültürü"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
-      "Viyana Opera Binası",
       "Schönbrunn Sarayı",
-      "Salzburg şehri",
-      "Alp kayak merkezleri"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1516550135131-fe0b9b9b9b9b?q=80&w=2070&auto=format&fit=crop"
+      "Viyana Opera Binası",
+      "Salzburg Tarihi Merkezi",
+      "Hallstatt Gölü",
+      "Viyana Kahve Kültürü"
+    ]
   },
   {
     name: "İsviçre",
-    description: "Alpler'in kalbi, çikolata, saat ve bankacılık merkezi olarak dünya çapında ünlü.",
+    description: "Alpler'in zirvelerinde yer alan İsviçre, doğal güzellikleri, çikolataları ve saatleriyle dünya çapında ünlü.",
+    imageUrl: "https://images.unsplash.com/photo-1530126483408-aa53355b1932?q=80&w=2070&auto=format&fit=crop",
     details: [
-      "Yüksek yaşam standardı",
-      "Doğal güzellikler",
-      "Finans merkezi",
-      "Çok dilli toplum"
+      "Alpler manzaraları",
+      "Çikolata üretimi",
+      "Saat endüstrisi",
+      "Doğal güzellikler"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
-      "Matterhorn dağı",
-      "Zürih gölü",
-      "Lüksern gölü",
-      "Cenevre çeşmesi"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1530126483408-aa53355b1932?q=80&w=2070&auto=format&fit=crop"
+      "Matterhorn Dağı",
+      "Zürih Gölü",
+      "Lüksern Gölü",
+      "Bern Tarihi Merkezi",
+      "İsviçre Çikolataları"
+    ]
   },
   {
     name: "Yunanistan",
-    description: "Antik medeniyetlerin beşiği, muhteşem adaları ve zengin kültürel mirası ile dikkat çekiyor.",
+    description: "Antik uygarlıkların beşiği olan Yunanistan, muhteşem adaları ve tarihi zenginlikleriyle dikkat çekiyor.",
+    imageUrl: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2070&auto=format&fit=crop",
     details: [
-      "Antik Yunan medeniyeti",
-      "Güzel adalar",
-      "Akdeniz mutfağı",
-      "Tarihi yapılar"
+      "Antik uygarlıklar",
+      "Muhteşem adalar",
+      "Tarihi zenginlikler",
+      "Akdeniz mutfağı"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
       "Akropol",
-      "Santorini adası",
-      "Mikonos adası",
-      "Atina Akropolü"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=2070&auto=format&fit=crop"
+      "Santorini Adası",
+      "Mikonos Adası",
+      "Atina Akropolü",
+      "Yunan Mutfağı"
+    ]
   },
   {
     name: "Portekiz",
-    description: "Atlantik kıyıları, tarihi şehirleri ve lezzetli mutfağı ile keşfedilmeyi bekleyen bir ülke.",
+    description: "Atlantik kıyısında yer alan Portekiz, tarihi şehirleri, plajları ve lezzetli mutfağıyla ziyaretçilerini büyülüyor.",
+    imageUrl: "https://images.unsplash.com/photo-1555881300-74d7acac1df5?q=80&w=2070&auto=format&fit=crop",
     details: [
-      "Tarihi liman şehirleri",
-      "Porto şarabı",
+      "Atlantik kıyısı",
+      "Tarihi şehirler",
       "Güzel plajlar",
-      "Zengin kültür"
+      "Lezzetli mutfak"
     ],
     visaInfo: {
-      processingTime: "15 iş günü",
-      validity: "90 gün - 5 yıl",
+      processingTime: "5-15 iş günü",
+      validity: "90 gün",
       requirements: [
-        "Schengen vizesi başvurusu",
+        "Pasaport (en az 6 ay geçerli)",
+        "Vize başvuru formu",
+        "Fotoğraf",
         "Seyahat sigortası",
-        "Konaklama belgeleri",
-        "Finansal belgeler"
+        "Uçak rezervasyonu",
+        "Otel rezervasyonu",
+        "Banko hesap dökümü"
       ]
     },
     highlights: [
-      "Lizbon tramvayları",
-      "Porto köprüleri",
-      "Algarve plajları",
-      "Madeira adası"
-    ],
-    imageUrl: "https://images.unsplash.com/photo-1555881300-74d7acac1df5?q=80&w=2070&auto=format&fit=crop"
+      "Lizbon Tramvayları",
+      "Porto Şarap Bölgesi",
+      "Algarve Plajları",
+      "Sintra Sarayları",
+      "Portekiz Mutfağı"
+    ]
   },
   {
     name: "İrlanda",

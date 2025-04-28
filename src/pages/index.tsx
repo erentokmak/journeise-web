@@ -4,7 +4,7 @@ import Link from "next/link";
 import Head from "next/head";
 import { MoveRight, Globe, Clock, Star, Award, Trophy, Plane, Building, FileText, Shield, Zap, Check, Truck, Users, FileCheck, Search } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { Card, CardContent } from "@/ui/card";
 import { Input } from "@/ui/input";
@@ -52,6 +52,9 @@ export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<typeof COUNTRIES>([]);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   // Günün saatine göre selamlama mesajı oluştur
   const getGreeting = () => {
@@ -65,6 +68,35 @@ export default function Home() {
     }
   };
 
+  // Arama sonuçlarını filtrele
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = COUNTRIES.filter(country =>
+        country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        country.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(filtered);
+      setShowResults(true);
+    } else {
+      setSearchResults([]);
+      setShowResults(false);
+    }
+  }, [searchQuery]);
+
+  // Dışarı tıklandığında sonuçları gizle
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -72,6 +104,13 @@ export default function Home() {
     } else {
       router.push('/countries');
     }
+  };
+
+  const handleCountryClick = (countryName: string) => {
+    const slug = countryName.toLowerCase().replace(/\s+/g, '-');
+    router.push(`/countries/${slug}`);
+    setShowResults(false);
+    setSearchQuery('');
   };
 
   const FEATURES = [
@@ -202,22 +241,48 @@ export default function Home() {
                 className="max-w-2xl mx-auto"
               >
                 <form onSubmit={handleSearch} className="relative">
-                  <div className="relative">
+                  <div className="relative" ref={searchRef}>
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                     <Input
                       type="text"
                       placeholder="Ülke ara..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 py-6 text-lg h-auto rounded-full shadow-lg"
+                      className="pl-12 py-6 text-lg h-auto rounded-full shadow-lg bg-background/80 backdrop-blur-sm border-primary/20 focus:border-primary/50"
                     />
                     <Button
                       type="submit"
                       size="lg"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
                     >
                       Ara
                     </Button>
+
+                    {/* Arama Sonuçları */}
+                    {showResults && searchResults.length > 0 && (
+                      <div className="absolute z-50 w-full mt-2 bg-background/95 backdrop-blur-sm border border-primary/20 rounded-lg shadow-xl max-h-80 overflow-y-auto">
+                        {searchResults.map((country, index) => (
+                          <div
+                            key={index}
+                            className="p-3 hover:bg-muted cursor-pointer flex items-center gap-3 border-b border-primary/10 last:border-0"
+                            onClick={() => handleCountryClick(country.name)}
+                          >
+                            <div className="relative h-10 w-10 rounded-md overflow-hidden flex-shrink-0">
+                              <Image
+                                src={country.imageUrl}
+                                alt={country.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="text-left">
+                              <h3 className="font-medium text-foreground">{country.name}</h3>
+                              <p className="text-sm text-muted-foreground line-clamp-1">{country.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </form>
               </motion.div>
