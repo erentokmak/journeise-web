@@ -2,14 +2,56 @@ import { Button } from "@/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import { MoveRight, Globe, Clock, Star, Award, Trophy, Plane, Building, FileText, Shield, Zap, Check, Truck, Users, FileCheck } from "lucide-react";
+import { MoveRight, Globe, Clock, Star, Award, Trophy, Plane, Building, FileText, Shield, Zap, Check, Truck, Users, FileCheck, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card, CardContent } from "@/ui/card";
+import { Input } from "@/ui/input";
+import { COUNTRIES } from "@/constants/countries";
+import { useRouter } from "next/router";
+
+// Animasyonlu gradient için CSS
+const gradientAnimation = `
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+  
+  @keyframes gradientAnimationReverse {
+    0% {
+      background-position: 100% 100%;
+    }
+    50% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
+  }
+  
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradientAnimation 15s ease infinite;
+  }
+  
+  .animate-gradient-reverse {
+    background-size: 200% 200%;
+    animation: gradientAnimationReverse 20s ease infinite;
+  }
+`;
 
 export default function Home() {
   const { data: session } = useSession();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Günün saatine göre selamlama mesajı oluştur
   const getGreeting = () => {
@@ -20,6 +62,15 @@ export default function Home() {
       return 'İyi günler';
     } else {
       return 'İyi akşamlar';
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/countries?search=${encodeURIComponent(searchQuery)}`);
+    } else {
+      router.push('/countries');
     }
   };
 
@@ -89,6 +140,9 @@ export default function Home() {
     }
   ];
 
+  // Popüler ülkeler
+  const POPULAR_COUNTRIES = COUNTRIES.slice(0, 6);
+
   return (
     <>
       <Head>
@@ -105,87 +159,92 @@ export default function Home() {
         <meta name="twitter:description" content="Journeise ile profesyonel vize danışmanlığı hizmetleri alın. Uzman kadromuz ile vize başvurunuzu güvenle yapın." />
         <meta name="twitter:image" content="https://journeise.com/assets/images/og-image.jpg" />
         <link rel="canonical" href="https://journeise.com" />
+        <style>{gradientAnimation}</style>
       </Head>
       <main className="min-h-screen bg-background text-foreground">
-        {/* Hero Section */}
+        {/* Hero Section with Search */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
-            {/* <Image
-              src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop"
-              alt="Hero Background"
-              fill
-              className="object-cover"
-              priority
-            /> */}
-            <div className="absolute inset-0 bg-white dark:bg-background" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-background dark:from-primary/30 dark:via-primary/20 dark:to-background" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-background dark:from-primary/40 dark:via-primary/30 dark:to-background animate-gradient" style={{ animationDuration: '18s' }} />
+            <div className="absolute inset-0 bg-gradient-to-tl from-primary/20 via-transparent to-background dark:from-primary/30 dark:via-transparent dark:to-background animate-gradient-reverse" style={{ animationDuration: '22s' }} />
           </div>
           {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="text-left">
-                <motion.h1
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-3xl font-bold text-primary tracking-tight"
-                >
-                  {session?.user ? (
-                    <>
-                      {getGreeting()}, {session.user.name}
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </motion.h1>
-                <motion.h3
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  className="text-3xl text-foreground/90 mb-8 leading-relaxed"
-                >
-                  {session?.user ? (
-                    'Hayalinizdeki Ülkeye Yolculuk Başlıyor'
-                  ) : (
-                    'Hayalinizdeki Ülkeye Yolculuk Başlıyor'
-                  )}
-                </motion.h3>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                >
-                  <Link href="/contact">
-                    <Button
-                      size="lg"
-                      className="text-lg group bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 px-8"
-                    >
-                      İletişime Geç
-                      <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                    </Button>
-                  </Link>
-                </motion.div>
-              </div>
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-4xl md:text-5xl font-bold text-primary tracking-tight mb-4"
+              >
+                {session?.user ? (
+                  <>
+                    {getGreeting()}, {session.user.name}
+                  </>
+                ) : (
+                  'Hayalinizdeki Ülkeye Yolculuk Başlıyor'
+                )}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-xl text-foreground/90 mb-8 leading-relaxed"
+              >
+                Nereye gitmek istiyorsunuz? Size en uygun destinasyonu seçin ve vize başvurunuzu hemen yapın.
+              </motion.p>
 
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="relative h-[500px] w-full rounded-lg overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="max-w-2xl mx-auto"
               >
-                <Image
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop"
-                  alt="Journeise Vize Danışmanlığı"
-                  className="object-cover"
-                  priority
-                  fill
-                />
+                <form onSubmit={handleSearch} className="relative">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="Ülke ara..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-12 py-6 text-lg h-auto rounded-full shadow-lg"
+                    />
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      Ara
+                    </Button>
+                  </div>
+                </form>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="mt-8"
+              >
+                <Link href="/countries">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="text-lg group bg-background/80 backdrop-blur-sm hover:bg-background/90 text-foreground shadow-lg px-8"
+                  >
+                    Tüm Ülkeleri Keşfet
+                    <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </div>
 
           {/* Scroll Indicator */}
           <motion.div
-            className="absolute bottom-8 -translate-x-1/2"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2"
             animate={{
               y: [0, 10, 0],
             }}
@@ -201,8 +260,50 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* Where do you want to go? Section */}
+        {/* Recommendations Section */}
         <section className="py-20 bg-muted/50">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-4xl font-bold mb-6">Karar Veremediyseniz Önerilerimiz</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed mb-8">
+                Popüler destinasyonlarımızı keşfedin ve size en uygun ülkeyi seçin.
+              </p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {POPULAR_COUNTRIES.map((country, index) => (
+                <Link href={`/countries/${country.name.toLowerCase().replace(/\s+/g, '-')}`} key={index}>
+                  <Card className="overflow-hidden h-full transition-all hover:shadow-lg hover:scale-[1.02]">
+                    <div className="relative h-48 w-full">
+                      <Image
+                        src={country.imageUrl}
+                        alt={country.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-semibold mb-2">{country.name}</h3>
+                      <p className="text-muted-foreground mb-4">{country.description}</p>
+                      <div className="flex items-center text-primary">
+                        <span className="text-sm font-medium">Detayları Gör</span>
+                        <MoveRight className="ml-2 h-4 w-4" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Where do you want to go? Section */}
+        <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -244,7 +345,7 @@ export default function Home() {
         </section>
 
         {/* Why Choose Visa Consultancy Section */}
-        <section className="py-20 bg-background">
+        <section className="py-20 bg-muted/50">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
