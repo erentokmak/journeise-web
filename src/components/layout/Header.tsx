@@ -97,9 +97,10 @@ const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link href="/auth/sign-in">
+              <></>
+              /*<Link href="/auth/sign-in">
                 <Button>Giriş Yap</Button>
-              </Link>
+              </Link>*/
             )}
           </div>
         </div>

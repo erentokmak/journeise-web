@@ -102,14 +102,14 @@ export function Footer() {
             <ul className="space-y-3">
               {[
                 { href: "/", label: "Ana Sayfa" },
-                { href: "/reservation", label: "Başvuru" },
+                //{ href: "/reservation", label: "Başvuru" },
                 { href: "/gallery", label: "Galeri" },
                 { href: "/about", label: "Hakkımızda" },
                 { href: "/countries", label: "Ülkeler" },
                 { href: "/blog", label: "Blog" },
                 { href: "/faq", label: "SSS" },
                 { href: "/contact", label: "İletişim" },
-                { href: "/auth/sign-in", label: "Giriş Yap" }
+                //{ href: "/auth/sign-in", label: "Giriş Yap" }
               ].map((link, index) => (
                 <motion.li
                   key={index}

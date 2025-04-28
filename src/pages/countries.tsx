@@ -1,47 +1,108 @@
-import Head from "next/head";
-import Image from "next/image";
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
+import { Search } from 'lucide-react'
+import { COUNTRIES } from '@/constants/countries'
+import { Input } from '@/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card'
 
-const COUNTRIES = [
-  { name: "Amerika", image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80" },
-  { name: "Almanya", image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" },
-  { name: "İngiltere", image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80" },
-  { name: "Fransa", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80" },
-  { name: "Rusya", image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=80" },
-  { name: "Kanada", image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80" },
-  { name: "Yunanistan", image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80" },
-  { name: "Hollanda", image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=600&q=80" },
-  { name: "Avustralya", image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80" },
-  { name: "Belçika", image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=600&q=80" },
-  { name: "Bulgaristan", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80" },
-  { name: "İsviçre", image: "https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80" }
-];
+const CountriesPage = () => {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedTab, setSelectedTab] = useState('all')
 
-export default function Countries() {
+  const filteredCountries = COUNTRIES.filter(country => {
+    const matchesSearch = country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      country.description.toLowerCase().includes(searchQuery.toLowerCase())
+    
+    if (selectedTab === 'all') return matchesSearch
+    if (selectedTab === 'schengen') {
+      const schengenCountries = ['Almanya', 'Fransa', 'İtalya', 'İspanya', 'Hollanda', 'Belçika', 'Avusturya', 'İsviçre', 'Yunanistan', 'Portekiz', 'İrlanda', 'Norveç', 'İsveç', 'Danimarka', 'Finlandiya', 'Polonya', 'Çek Cumhuriyeti', 'Macaristan', 'Slovakya']
+      return matchesSearch && schengenCountries.includes(country.name)
+    }
+    return matchesSearch && !['Almanya', 'Fransa', 'İtalya', 'İspanya', 'Hollanda', 'Belçika', 'Avusturya', 'İsviçre', 'Yunanistan', 'Portekiz', 'İrlanda', 'Norveç', 'İsveç', 'Danimarka', 'Finlandiya', 'Polonya', 'Çek Cumhuriyeti', 'Macaristan', 'Slovakya'].includes(country.name)
+  })
+
   return (
-    <>
-      <Head>
-        <title>Vize Hizmeti Verdiğimiz Ülkeler | Journeise</title>
-      </Head>
-      <main className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-8">Vize Hizmeti Verdiğimiz Başlıca Ülkeler</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {COUNTRIES.map((country, i) => (
-            <div key={i} className="rounded-lg overflow-hidden shadow bg-white dark:bg-background">
-              <div className="relative h-40 w-full">
-                <Image
-                  src={country.image}
-                  alt={country.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-4 text-center">
-                <h2 className="text-lg font-semibold">{country.name}</h2>
-              </div>
-            </div>
+    <div className="container mx-auto px-4 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-8"
+      >
+        <h1 className="text-4xl font-bold mb-4">Nereye Gitmek İstiyorsunuz?</h1>
+        <p className="text-lg text-gray-600 mb-8">
+          Size en uygun destinasyonu seçin ve vize başvurunuzu hemen yapın.
+        </p>
+
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Ülke ara..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full md:w-auto">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="all">Tümü</TabsTrigger>
+              <TabsTrigger value="schengen">Schengen</TabsTrigger>
+              <TabsTrigger value="non-schengen">Diğer</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCountries.map((country, index) => (
+            <motion.div
+              key={country.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="h-full">
+                <div className="relative h-48 w-full">
+                  <Image
+                    src={country.imageUrl}
+                    alt={country.name}
+                    fill
+                    className="object-cover rounded-t-lg"
+                  />
+                </div>
+                <CardHeader>
+                  <CardTitle>{country.name}</CardTitle>
+                  <CardDescription>{country.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-semibold mb-2">Vize Bilgileri</h3>
+                      <ul className="list-disc list-inside text-sm text-gray-600">
+                        <li>İşlem Süresi: {country.visaInfo.processingTime}</li>
+                        <li>Geçerlilik: {country.visaInfo.validity}</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">Öne Çıkanlar</h3>
+                      <ul className="list-disc list-inside text-sm text-gray-600">
+                        {country.highlights.map((highlight, i) => (
+                          <li key={i}>{highlight}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
-      </main>
-    </>
-  );
-} 
+      </motion.div>
+    </div>
+  )
+}
+
+export default CountriesPage 

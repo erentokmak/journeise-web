@@ -212,12 +212,18 @@ export default function Home() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl font-bold mb-6">Nereye Gitmek İstiyorsun?</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed mb-8">
                 Hayalinizdeki ülkeye giden yolda size yardımcı olmak için buradayız.
               </p>
+              <Link href="/countries">
+                <Button size="lg" variant="outline" className="group">
+                  Tüm Ülkeleri Keşfet
+                  <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {COUNTRY_INFO.map((country, index) => (
+              {COUNTRY_INFO.slice(0, 3).map((country, index) => (
                 <Card key={index} className="overflow-hidden">
                   <CardContent className="p-6">
                     <h3 className="text-xl font-semibold mb-2">{country.name}</h3>
