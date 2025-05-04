@@ -167,8 +167,8 @@ export function Footer() {
             </h4>
             <ul className="space-y-4">
               {[
-                { day: "Hafta İçi", hours: "10:00 - 22:00" },
-                { day: "Cumartesi", hours: "10:00 - 22:00" },
+                { day: "Hafta İçi", hours: "10:00 - 15:00" },
+                { day: "Cumartesi", hours: "10:00 - 15:00" },
                 { day: "Pazar", hours: "Kapalı" }
               ].map((schedule, index) => (
                 <motion.li
