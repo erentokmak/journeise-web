@@ -21,6 +21,7 @@ import { CREATE_CONTACT, CreateContactInput } from '@/graphql/mutations/contact'
 import { useToast } from '@/hooks/use-toast'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/ui/accordion'
 
 const formSchema = z.object({
   name: z.string()
@@ -37,8 +38,8 @@ const formSchema = z.object({
   message: z.string()
     .min(10, 'Mesaj en az 10 karakter olmalıdır')
     .max(1000, 'Mesaj en fazla 1000 karakter olabilir'),
-  serviceType: z.nativeEnum(ServiceType),
-  serviceDetails: z.object({
+  selectedServices: z.array(z.nativeEnum(ServiceType)).min(1, 'En az bir hizmet seçmelisiniz'),
+  serviceForms: z.record(z.nativeEnum(ServiceType), z.object({
     visaType: z.nativeEnum(VisaType).optional(),
     travelDates: z.object({
       startDate: z.string().optional(),
@@ -52,97 +53,99 @@ const formSchema = z.object({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
     }).optional(),
-  })
+  }))
 }).superRefine((data, ctx) => {
-  // Vize Danışmanlığı
-  if (data.serviceType === ServiceType.VISA) {
-    if (!data.serviceDetails.visaType) {
+  // Her seçili hizmet için ilgili validasyonları kontrol et
+  data.selectedServices.forEach(serviceType => {
+    const serviceForm = data.serviceForms[serviceType]
+
+    if (serviceType === ServiceType.VISA && !serviceForm?.visaType) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'visaType'],
+        path: ['serviceForms', serviceType, 'visaType'],
         message: 'Vize türü zorunludur',
       })
     }
-  }
-  // Otel Konaklama
-  if (data.serviceType === ServiceType.HOTEL) {
-    if (!data.serviceDetails.destinationCountry) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'destinationCountry'],
-        message: 'Gidilecek ülke zorunludur',
-      })
+
+    if (serviceType === ServiceType.HOTEL) {
+      if (!serviceForm?.destinationCountry) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'destinationCountry'],
+          message: 'Gidilecek ülke zorunludur',
+        })
+      }
+      if (!serviceForm?.travelDates?.startDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'travelDates', 'startDate'],
+          message: 'Giriş tarihi zorunludur',
+        })
+      }
+      if (!serviceForm?.travelDates?.endDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'travelDates', 'endDate'],
+          message: 'Çıkış tarihi zorunludur',
+        })
+      }
     }
-    if (!data.serviceDetails.travelDates?.startDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'travelDates', 'startDate'],
-        message: 'Giriş tarihi zorunludur',
-      })
+
+    if (serviceType === ServiceType.FLIGHT) {
+      if (!serviceForm?.destinationCountry) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'destinationCountry'],
+          message: 'Gidilecek ülke zorunludur',
+        })
+      }
+      if (!serviceForm?.flightType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'flightType'],
+          message: 'Uçuş tipi zorunludur',
+        })
+      }
+      if (!serviceForm?.travelDates?.startDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'travelDates', 'startDate'],
+          message: 'Gidiş tarihi zorunludur',
+        })
+      }
+      if (serviceForm?.flightType === FlightType.ROUND_TRIP && !serviceForm?.travelDates?.endDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'travelDates', 'endDate'],
+          message: 'Dönüş tarihi zorunludur',
+        })
+      }
     }
-    if (!data.serviceDetails.travelDates?.endDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'travelDates', 'endDate'],
-        message: 'Çıkış tarihi zorunludur',
-      })
+
+    if (serviceType === ServiceType.INSURANCE) {
+      if (!serviceForm?.insuranceType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'insuranceType'],
+          message: 'Sigorta türü zorunludur',
+        })
+      }
+      if (!serviceForm?.insuranceDates?.startDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'insuranceDates', 'startDate'],
+          message: 'Sigorta başlangıç tarihi zorunludur',
+        })
+      }
+      if (!serviceForm?.insuranceDates?.endDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['serviceForms', serviceType, 'insuranceDates', 'endDate'],
+          message: 'Sigorta bitiş tarihi zorunludur',
+        })
+      }
     }
-  }
-  // Uçak Biletleri
-  if (data.serviceType === ServiceType.FLIGHT) {
-    if (!data.serviceDetails.destinationCountry) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'destinationCountry'],
-        message: 'Gidilecek ülke zorunludur',
-      })
-    }
-    if (!data.serviceDetails.flightType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'flightType'],
-        message: 'Uçuş tipi zorunludur',
-      })
-    }
-    if (!data.serviceDetails.travelDates?.startDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'travelDates', 'startDate'],
-        message: 'Gidiş tarihi zorunludur',
-      })
-    }
-    if (data.serviceDetails.flightType === FlightType.ROUND_TRIP && !data.serviceDetails.travelDates?.endDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'travelDates', 'endDate'],
-        message: 'Dönüş tarihi zorunludur',
-      })
-    }
-  }
-  // Seyahat Sağlık Sigortası
-  if (data.serviceType === ServiceType.INSURANCE) {
-    if (!data.serviceDetails.insuranceType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'insuranceType'],
-        message: 'Sigorta türü zorunludur',
-      })
-    }
-    if (!data.serviceDetails.insuranceDates?.startDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'insuranceDates', 'startDate'],
-        message: 'Sigorta başlangıç tarihi zorunludur',
-      })
-    }
-    if (!data.serviceDetails.insuranceDates?.endDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['serviceDetails', 'insuranceDates', 'endDate'],
-        message: 'Sigorta bitiş tarihi zorunludur',
-      })
-    }
-  }
+  })
 })
 
 const COUNTRIES = [
@@ -158,12 +161,38 @@ const COUNTRIES = [
   'Güney Kore',
 ]
 
+const SERVICE_LABELS = {
+  [ServiceType.VISA]: 'Vize Danışmanlığı',
+  [ServiceType.HOTEL]: 'Otel Konaklama',
+  [ServiceType.FLIGHT]: 'Uçak Biletleri',
+  [ServiceType.INSURANCE]: 'Seyahat Sağlık Sigortası',
+}
+
 export function ContactForm() {
-  const [selectedService, setSelectedService] = useState<ServiceType>(ServiceType.VISA)
-  const [startDate, setStartDate] = useState<Date>()
-  const [endDate, setEndDate] = useState<Date>()
-  const [insuranceStartDate, setInsuranceStartDate] = useState<Date>()
-  const [insuranceEndDate, setInsuranceEndDate] = useState<Date>()
+  const [startDates, setStartDates] = useState<Record<ServiceType, Date | undefined>>({
+    [ServiceType.VISA]: undefined,
+    [ServiceType.HOTEL]: undefined,
+    [ServiceType.FLIGHT]: undefined,
+    [ServiceType.INSURANCE]: undefined,
+  })
+  const [endDates, setEndDates] = useState<Record<ServiceType, Date | undefined>>({
+    [ServiceType.VISA]: undefined,
+    [ServiceType.HOTEL]: undefined,
+    [ServiceType.FLIGHT]: undefined,
+    [ServiceType.INSURANCE]: undefined,
+  })
+  const [insuranceStartDates, setInsuranceStartDates] = useState<Record<ServiceType, Date | undefined>>({
+    [ServiceType.VISA]: undefined,
+    [ServiceType.HOTEL]: undefined,
+    [ServiceType.FLIGHT]: undefined,
+    [ServiceType.INSURANCE]: undefined,
+  })
+  const [insuranceEndDates, setInsuranceEndDates] = useState<Record<ServiceType, Date | undefined>>({
+    [ServiceType.VISA]: undefined,
+    [ServiceType.HOTEL]: undefined,
+    [ServiceType.FLIGHT]: undefined,
+    [ServiceType.INSURANCE]: undefined,
+  })
   const [createContact] = useMutation(CREATE_CONTACT)
   const { toast } = useToast()
 
@@ -174,33 +203,41 @@ export function ContactForm() {
       email: '',
       phone: '',
       message: '',
-      serviceType: ServiceType.VISA,
-      serviceDetails: {
-        flightType: FlightType.ROUND_TRIP,
+      selectedServices: [],
+      serviceForms: {
+        [ServiceType.VISA]: {},
+        [ServiceType.HOTEL]: {},
+        [ServiceType.FLIGHT]: { flightType: FlightType.ROUND_TRIP },
+        [ServiceType.INSURANCE]: {},
       },
     },
   })
 
+  const selectedServices = form.watch('selectedServices')
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // service_id: UI'da seçili servisin id'si burada belirlenmeli. Örnek olarak 1 atanıyor, gerçek id ile değiştirin.
-      const serviceIdMap = {
-        [ServiceType.VISA]: 1,
-        [ServiceType.HOTEL]: 2,
-        [ServiceType.FLIGHT]: 3,
-        [ServiceType.INSURANCE]: 4,
-      }
-      const input: CreateContactInput = {
-        business_id: 3,
-        service_id: serviceIdMap[values.serviceType],
-        contact_type: values.serviceType,
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-        message: values.message,
-        details: values.serviceDetails,
-      }
-      await createContact({ variables: { input } })
+      // Her seçili hizmet için ayrı bir form gönder
+      await Promise.all(values.selectedServices.map(async (serviceType) => {
+        const serviceIdMap = {
+          [ServiceType.VISA]: 1,
+          [ServiceType.HOTEL]: 2,
+          [ServiceType.FLIGHT]: 3,
+          [ServiceType.INSURANCE]: 4,
+        }
+        const input: CreateContactInput = {
+          business_id: 3,
+          service_id: serviceIdMap[serviceType],
+          contact_type: serviceType,
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          message: values.message,
+          details: values.serviceForms[serviceType],
+        }
+        await createContact({ variables: { input } })
+      }))
+
       form.reset()
       toast({
         title: 'Başarılı!',
@@ -218,548 +255,551 @@ export function ContactForm() {
     }
   }
 
+  const toggleService = (serviceType: ServiceType) => {
+    const currentServices = form.getValues('selectedServices')
+    if (currentServices.includes(serviceType)) {
+      form.setValue('selectedServices', currentServices.filter(s => s !== serviceType))
+    } else {
+      form.setValue('selectedServices', [...currentServices, serviceType])
+    }
+  }
+
   return (
-    <Card className="w-full mx-auto">
-      <CardHeader>
-        <CardTitle>İletişim Formu</CardTitle>
-        <CardDescription>
-          Bizimle iletişime geçmek için aşağıdaki formu doldurun.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="flex flex-col md:flex-row gap-2 mb-4">
+    <>
+      <Card className="w-full mx-auto">
+        <CardHeader>
+          <CardTitle>Hizmet Formu</CardTitle>
+          <CardDescription>
+            Almak istediğiniz hizmeti seçiniz.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-8">
+          <div className="flex flex-col md:flex-row gap-2 mb-4">
+            {Object.entries(SERVICE_LABELS).map(([type, label]) => (
               <Button
+                key={type}
                 type="button"
-                variant={selectedService === ServiceType.VISA ? 'default' : 'outline'}
-                onClick={() => setSelectedService(ServiceType.VISA)}
+                variant={selectedServices.includes(type as ServiceType) ? 'default' : 'outline'}
+                onClick={() => toggleService(type as ServiceType)}
                 className="w-full md:flex-1"
               >
-                Vize Danışmanlığı
+                {label}
               </Button>
-              <Button
-                type="button"
-                variant={selectedService === ServiceType.HOTEL ? 'default' : 'outline'}
-                onClick={() => setSelectedService(ServiceType.HOTEL)}
-                className="w-full md:flex-1"
-              >
-                Otel Konaklama
-              </Button>
-              <Button
-                type="button"
-                variant={selectedService === ServiceType.FLIGHT ? 'default' : 'outline'}
-                onClick={() => setSelectedService(ServiceType.FLIGHT)}
-                className="w-full md:flex-1"
-              >
-                Uçak Biletleri
-              </Button>
-              <Button
-                type="button"
-                variant={selectedService === ServiceType.INSURANCE ? 'default' : 'outline'}
-                onClick={() => setSelectedService(ServiceType.INSURANCE)}
-                className="w-full md:flex-1"
-              >
-                Seyahat Sağlık Sigortası
-              </Button>
-            </div>
+            ))}
+          </div>
 
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Adınız Soyadınız</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Adınız Soyadınız" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>E-posta Adresiniz</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="ornek@email.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Telefon Numaranız</FormLabel>
-                  <FormControl>
-                    <PhoneInput
-                      country={'tr'}
-                      value={field.value}
-                      onChange={field.onChange}
-                      inputClass="!w-full !h-10 !text-xs !pl-12 !rounded-md !border-input !bg-background"
-                      containerClass="!w-full !bg-background"
-                      buttonClass="!h-10 !border !border-input !rounded-l-md !bg-background"
-                      dropdownClass="!w-[300px] !bg-background"
-                      searchClass="!bg-background"
-                      enableSearch
-                      searchPlaceholder="Ülke Ara..."
-                      searchNotFound="Ülke Bulunamadı"
-                      preferredCountries={['tr', 'us', 'gb', 'de']}
-                      inputProps={{
-                        name: 'phone',
-                        required: true,
-                        autoFocus: false,
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {selectedService === ServiceType.VISA && (
-              <FormField
-                control={form.control}
-                name="serviceDetails.visaType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vize Türü</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Vize türünü seçin" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={VisaType.USA}>Amerika Birleşik Devletleri</SelectItem>
-                        <SelectItem value={VisaType.SCHENGEN}>Schengen</SelectItem>
-                        <SelectItem value={VisaType.UK}>İngiltere</SelectItem>
-                        <SelectItem value={VisaType.CANADA}>Kanada</SelectItem>
-                        <SelectItem value={VisaType.OTHER}>Diğer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {selectedService === ServiceType.HOTEL && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="serviceDetails.destinationCountry"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Gidilecek Ülke</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Ülke seçin" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {COUNTRIES.map((country) => (
-                            <SelectItem key={country} value={country}>
-                              {country}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="serviceDetails.travelDates.startDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Giriş Tarihi</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="w-full pl-3 text-left font-normal"
-                              >
-                                {startDate ? (
-                                  format(startDate, 'PPP', { locale: tr })
-                                ) : (
-                                  <span>Tarih seçin</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={startDate}
-                              onSelect={(date) => {
-                                setStartDate(date)
-                                field.onChange(date?.toISOString())
-                              }}
-                              disabled={(date) => date < new Date()}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="serviceDetails.travelDates.endDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Çıkış Tarihi</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="w-full pl-3 text-left font-normal"
-                              >
-                                {endDate ? (
-                                  format(endDate, 'PPP', { locale: tr })
-                                ) : (
-                                  <span>Tarih seçin</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={endDate}
-                              onSelect={(date) => {
-                                setEndDate(date)
-                                field.onChange(date?.toISOString())
-                              }}
-                              disabled={(date) => date < (startDate || new Date())}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </>
-            )}
-
-            {selectedService === ServiceType.FLIGHT && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="serviceDetails.destinationCountry"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Gidilecek Ülke</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Ülke seçin" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {COUNTRIES.map((country) => (
-                            <SelectItem key={country} value={country}>
-                              {country}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="serviceDetails.flightType"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>Uçuş Tipi</FormLabel>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex flex-row space-x-4"
-                        >
-                          <FormItem className="flex items-center space-x-2 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem value={FlightType.ROUND_TRIP} />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              Gidiş-Dönüş
-                            </FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-2 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem value={FlightType.ONE_WAY} />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              Tek Yön
-                            </FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="serviceDetails.travelDates.startDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Gidiş Tarihi</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="w-full pl-3 text-left font-normal"
-                              >
-                                {startDate ? (
-                                  format(startDate, 'PPP', { locale: tr })
-                                ) : (
-                                  <span>Tarih seçin</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={startDate}
-                              onSelect={(date) => {
-                                setStartDate(date)
-                                field.onChange(date?.toISOString())
-                              }}
-                              disabled={(date) => date < new Date()}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {form.watch('serviceDetails.flightType') === FlightType.ROUND_TRIP && (
-                    <FormField
-                      control={form.control}
-                      name="serviceDetails.travelDates.endDate"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel>Dönüş Tarihi</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
+          <Accordion type="multiple" className="w-full">
+            {selectedServices.map((serviceType) => (
+              <AccordionItem key={serviceType} value={serviceType}>
+                <AccordionTrigger>{SERVICE_LABELS[serviceType]}</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    {serviceType === ServiceType.VISA && (
+                      <FormField
+                        control={form.control}
+                        name={`serviceForms.${serviceType}.visaType`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Vize Türü</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
-                                <Button
-                                  variant="outline"
-                                  className="w-full pl-3 text-left font-normal"
-                                >
-                                  {endDate ? (
-                                    format(endDate, 'PPP', { locale: tr })
-                                  ) : (
-                                    <span>Tarih seçin</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Vize türünü seçin" />
+                                </SelectTrigger>
                               </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={endDate}
-                                onSelect={(date) => {
-                                  setEndDate(date)
-                                  field.onChange(date?.toISOString())
-                                }}
-                                disabled={(date) => date < (startDate || new Date())}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-                </div>
-              </>
-            )}
-
-            {selectedService === ServiceType.INSURANCE && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="serviceDetails.insuranceType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Sigorta Türü</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Sigorta türünü seçin" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value={InsuranceType.TRAVEL}>Seyahat Sağlık Sigortası</SelectItem>
-                          <SelectItem value={InsuranceType.GREEN}>Yeşil Sigorta</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="serviceDetails.insuranceDates.startDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Sigorta Başlangıç Tarihi</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="w-full pl-3 text-left font-normal"
-                              >
-                                {insuranceStartDate ? (
-                                  format(insuranceStartDate, 'PPP', { locale: tr })
-                                ) : (
-                                  <span>Tarih seçin</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={insuranceStartDate}
-                              onSelect={(date) => {
-                                setInsuranceStartDate(date)
-                                field.onChange(date?.toISOString())
-                              }}
-                              disabled={(date) => date < new Date()}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
+                              <SelectContent>
+                                <SelectItem value={VisaType.USA}>Amerika Birleşik Devletleri</SelectItem>
+                                <SelectItem value={VisaType.SCHENGEN}>Schengen</SelectItem>
+                                <SelectItem value={VisaType.UK}>İngiltere</SelectItem>
+                                <SelectItem value={VisaType.CANADA}>Kanada</SelectItem>
+                                <SelectItem value={VisaType.OTHER}>Diğer</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     )}
-                  />
 
-                  <FormField
-                    control={form.control}
-                    name="serviceDetails.insuranceDates.endDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Sigorta Bitiş Tarihi</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="w-full pl-3 text-left font-normal"
-                              >
-                                {insuranceEndDate ? (
-                                  format(insuranceEndDate, 'PPP', { locale: tr })
-                                ) : (
-                                  <span>Tarih seçin</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={insuranceEndDate}
-                              onSelect={(date) => {
-                                setInsuranceEndDate(date)
-                                field.onChange(date?.toISOString())
-                              }}
-                              disabled={(date) => date < (insuranceStartDate || new Date())}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="serviceDetails.isCarTravel"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
+                    {serviceType === ServiceType.HOTEL && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name={`serviceForms.${serviceType}.destinationCountry`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Gidilecek Ülke</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Ülke seçin" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {COUNTRIES.map((country) => (
+                                    <SelectItem key={country} value={country}>
+                                      {country}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Araç ile seyahat edeceğim</FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
 
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mesajınız</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Mesajınızı buraya yazın..."
-                      className="min-h-[150px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name={`serviceForms.${serviceType}.travelDates.startDate`}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Giriş Tarihi</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant="outline"
+                                        className="w-full pl-3 text-left font-normal"
+                                      >
+                                        {startDates[serviceType] ? (
+                                          format(startDates[serviceType]!, 'PPP', { locale: tr })
+                                        ) : (
+                                          <span>Tarih seçin</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                      mode="single"
+                                      selected={startDates[serviceType]}
+                                      onSelect={(date) => {
+                                        setStartDates(prev => ({ ...prev, [serviceType]: date }))
+                                        field.onChange(date?.toISOString())
+                                      }}
+                                      disabled={(date) => date < new Date()}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
 
-            <Button type="submit" className="w-full">
-              Gönder
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+                          <FormField
+                            control={form.control}
+                            name={`serviceForms.${serviceType}.travelDates.endDate`}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Çıkış Tarihi</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant="outline"
+                                        className="w-full pl-3 text-left font-normal"
+                                      >
+                                        {endDates[serviceType] ? (
+                                          format(endDates[serviceType]!, 'PPP', { locale: tr })
+                                        ) : (
+                                          <span>Tarih seçin</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                      mode="single"
+                                      selected={endDates[serviceType]}
+                                      onSelect={(date) => {
+                                        setEndDates(prev => ({ ...prev, [serviceType]: date }))
+                                        field.onChange(date?.toISOString())
+                                      }}
+                                      disabled={(date) => date < (startDates[serviceType] || new Date())}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {serviceType === ServiceType.FLIGHT && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name={`serviceForms.${serviceType}.destinationCountry`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Gidilecek Ülke</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Ülke seçin" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {COUNTRIES.map((country) => (
+                                    <SelectItem key={country} value={country}>
+                                      {country}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name={`serviceForms.${serviceType}.flightType`}
+                          render={({ field }) => (
+                            <FormItem className="space-y-3">
+                              <FormLabel>Uçuş Tipi</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                  className="flex flex-row space-x-4"
+                                >
+                                  <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value={FlightType.ROUND_TRIP} />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      Gidiş-Dönüş
+                                    </FormLabel>
+                                  </FormItem>
+                                  <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value={FlightType.ONE_WAY} />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      Tek Yön
+                                    </FormLabel>
+                                  </FormItem>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name={`serviceForms.${serviceType}.travelDates.startDate`}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Gidiş Tarihi</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant="outline"
+                                        className="w-full pl-3 text-left font-normal"
+                                      >
+                                        {startDates[serviceType] ? (
+                                          format(startDates[serviceType]!, 'PPP', { locale: tr })
+                                        ) : (
+                                          <span>Tarih seçin</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                      mode="single"
+                                      selected={startDates[serviceType]}
+                                      onSelect={(date) => {
+                                        setStartDates(prev => ({ ...prev, [serviceType]: date }))
+                                        field.onChange(date?.toISOString())
+                                      }}
+                                      disabled={(date) => date < new Date()}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {form.watch(`serviceForms.${serviceType}.flightType`) === FlightType.ROUND_TRIP && (
+                            <FormField
+                              control={form.control}
+                              name={`serviceForms.${serviceType}.travelDates.endDate`}
+                              render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                  <FormLabel>Dönüş Tarihi</FormLabel>
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <FormControl>
+                                        <Button
+                                          variant="outline"
+                                          className="w-full pl-3 text-left font-normal"
+                                        >
+                                          {endDates[serviceType] ? (
+                                            format(endDates[serviceType]!, 'PPP', { locale: tr })
+                                          ) : (
+                                            <span>Tarih seçin</span>
+                                          )}
+                                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                        </Button>
+                                      </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                      <Calendar
+                                        mode="single"
+                                        selected={endDates[serviceType]}
+                                        onSelect={(date) => {
+                                          setEndDates(prev => ({ ...prev, [serviceType]: date }))
+                                          field.onChange(date?.toISOString())
+                                        }}
+                                        disabled={(date) => date < (startDates[serviceType] || new Date())}
+                                        initialFocus
+                                      />
+                                    </PopoverContent>
+                                  </Popover>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {serviceType === ServiceType.INSURANCE && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name={`serviceForms.${serviceType}.insuranceType`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Sigorta Türü</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Sigorta türünü seçin" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value={InsuranceType.TRAVEL}>Seyahat Sağlık Sigortası</SelectItem>
+                                  <SelectItem value={InsuranceType.GREEN}>Yeşil Sigorta</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name={`serviceForms.${serviceType}.insuranceDates.startDate`}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Sigorta Başlangıç Tarihi</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant="outline"
+                                        className="w-full pl-3 text-left font-normal"
+                                      >
+                                        {insuranceStartDates[serviceType] ? (
+                                          format(insuranceStartDates[serviceType]!, 'PPP', { locale: tr })
+                                        ) : (
+                                          <span>Tarih seçin</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                      mode="single"
+                                      selected={insuranceStartDates[serviceType]}
+                                      onSelect={(date) => {
+                                        setInsuranceStartDates(prev => ({ ...prev, [serviceType]: date }))
+                                        field.onChange(date?.toISOString())
+                                      }}
+                                      disabled={(date) => date < new Date()}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`serviceForms.${serviceType}.insuranceDates.endDate`}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Sigorta Bitiş Tarihi</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant="outline"
+                                        className="w-full pl-3 text-left font-normal"
+                                      >
+                                        {insuranceEndDates[serviceType] ? (
+                                          format(insuranceEndDates[serviceType]!, 'PPP', { locale: tr })
+                                        ) : (
+                                          <span>Tarih seçin</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                      mode="single"
+                                      selected={insuranceEndDates[serviceType]}
+                                      onSelect={(date) => {
+                                        setInsuranceEndDates(prev => ({ ...prev, [serviceType]: date }))
+                                        field.onChange(date?.toISOString())
+                                      }}
+                                      disabled={(date) => date < (insuranceStartDates[serviceType] || new Date())}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <FormField
+                          control={form.control}
+                          name={`serviceForms.${serviceType}.isCarTravel`}
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel>Araç ile seyahat edeceğim</FormLabel>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                      </>
+                    )}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+            <AccordionItem value="contact-info">
+              <AccordionTrigger>İletişim Bilgileri</AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Adınız Soyadınız</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Adınız Soyadınız" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>E-posta Adresiniz</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="ornek@email.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telefon Numaranız</FormLabel>
+                        <FormControl>
+                          <PhoneInput
+                            country={'tr'}
+                            value={field.value}
+                            onChange={field.onChange}
+                            inputClass="!w-full !h-10 !text-xs !pl-12 !rounded-md !border-input !bg-background"
+                            containerClass="!w-full !bg-background"
+                            buttonClass="!h-10 !border !border-input !rounded-l-md !bg-background"
+                            dropdownClass="!w-[300px] !bg-background"
+                            searchClass="!bg-background"
+                            enableSearch
+                            searchPlaceholder="Ülke Ara..."
+                            searchNotFound="Ülke Bulunamadı"
+                            preferredCountries={['tr', 'us', 'gb', 'de']}
+                            inputProps={{
+                              name: 'phone',
+                              required: true,
+                              autoFocus: false,
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Mesajınız</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Mesajınızı buraya yazın..."
+                            className="min-h-[150px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <Button type="submit" className="w-full mt-6">
+            Gönder
+          </Button>
+        </form>
+      </Form>
+    </>
   )
 } 
