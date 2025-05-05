@@ -89,12 +89,12 @@ export function ContactForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="flex gap-2 mb-4">
+            <div className="flex flex-col md:flex-row gap-2 mb-4">
               <Button
                 type="button"
                 variant={selectedService === ServiceType.VISA ? 'default' : 'outline'}
                 onClick={() => setSelectedService(ServiceType.VISA)}
-                className="flex-1"
+                className="w-full md:flex-1"
               >
                 Vize Danışmanlığı
               </Button>
@@ -102,7 +102,7 @@ export function ContactForm() {
                 type="button"
                 variant={selectedService === ServiceType.HOTEL ? 'default' : 'outline'}
                 onClick={() => setSelectedService(ServiceType.HOTEL)}
-                className="flex-1"
+                className="w-full md:flex-1"
               >
                 Otel Konaklama
               </Button>
@@ -110,7 +110,7 @@ export function ContactForm() {
                 type="button"
                 variant={selectedService === ServiceType.FLIGHT ? 'default' : 'outline'}
                 onClick={() => setSelectedService(ServiceType.FLIGHT)}
-                className="flex-1"
+                className="w-full md:flex-1"
               >
                 Uçak Biletleri
               </Button>
@@ -118,7 +118,7 @@ export function ContactForm() {
                 type="button"
                 variant={selectedService === ServiceType.INSURANCE ? 'default' : 'outline'}
                 onClick={() => setSelectedService(ServiceType.INSURANCE)}
-                className="flex-1"
+                className="w-full md:flex-1"
               >
                 Seyahat Sağlık Sigortası
               </Button>
