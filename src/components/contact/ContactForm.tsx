@@ -217,7 +217,7 @@ export function ContactForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Her seçili hizmet için ayrı bir form gönder
+      let hasError = false;
       await Promise.all(values.selectedServices.map(async (serviceType) => {
         const serviceIdMap = {
           [ServiceType.VISA]: 1,
@@ -235,23 +235,36 @@ export function ContactForm() {
           message: values.message,
           details: values.serviceForms[serviceType],
         }
-        await createContact({ variables: { input } })
-      }))
+        const result = await createContact({ variables: { input } });
+        if (result.errors) {
+          hasError = true;
+        }
+      }));
 
-      form.reset()
+      if (hasError) {
+        toast({
+          variant: 'destructive',
+          title: 'Hata!',
+          description: 'Form gönderilirken bir hata oluştu. Lütfen tekrar deneyin.',
+          duration: 5000,
+        });
+        return;
+      }
+
       toast({
         title: 'Başarılı!',
         description: 'İletişim formunuz başarıyla gönderildi.',
         duration: 4000,
-      })
+      });
+      form.reset();
     } catch (error) {
-      console.error('İletişim formu gönderilemedi:', error)
+      console.error('İletişim formu gönderilemedi:', error);
       toast({
         variant: 'destructive',
         title: 'Hata!',
         description: 'Form gönderilirken bir hata oluştu. Lütfen tekrar deneyin.',
         duration: 5000,
-      })
+      });
     }
   }
 
