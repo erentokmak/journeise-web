@@ -295,7 +295,7 @@ export function ContactForm() {
             {selectedServices.map((serviceType) => (
               <AccordionItem key={serviceType} value={serviceType}>
                 <AccordionTrigger>{SERVICE_LABELS[serviceType]}</AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent className="p-2">
                   <div className="space-y-4">
                     {serviceType === ServiceType.VISA && (
                       <FormField
@@ -714,7 +714,7 @@ export function ContactForm() {
             ))}
             <AccordionItem value="contact-info">
               <AccordionTrigger>İletişim Bilgileri</AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="p-2">
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
