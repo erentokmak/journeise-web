@@ -773,7 +773,13 @@ export default function Home() {
                       <service.icon className="h-6 w-6 text-primary" />
                       <h3 className="text-xl font-semibold">{service.title}</h3>
                     </div>
-                    <p className="text-muted-foreground">{service.description}</p>
+                    <p className="text-muted-foreground mb-4">{service.description}</p>
+                    <Link href="/contact">
+                      <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                        İletişime Geç
+                        <MoveRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               ))}
