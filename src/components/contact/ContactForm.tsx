@@ -19,12 +19,24 @@ import { ContactFormData, ServiceType, VisaType, InsuranceType, FlightType } fro
 import { useMutation } from '@apollo/client'
 import { CREATE_CONTACT, CreateContactInput } from '@/graphql/mutations/contact'
 import { useToast } from '@/hooks/use-toast'
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 const formSchema = z.object({
-  name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
-  email: z.string().email('Geçerli bir e-posta adresi giriniz'),
-  phone: z.string().min(10, 'Geçerli bir telefon numarası giriniz'),
-  message: z.string().min(10, 'Mesaj en az 10 karakter olmalıdır'),
+  name: z.string()
+    .min(2, 'İsim en az 2 karakter olmalıdır')
+    .max(100, 'İsim en fazla 100 karakter olabilir')
+    .regex(/^[a-zA-ZçÇğĞıİöÖşŞüÜ\s'-]+$/, 'İsim sadece harf ve boşluk içerebilir'),
+  email: z.string()
+    .email('Geçerli bir e-posta adresi giriniz')
+    .max(100, 'E-posta en fazla 100 karakter olabilir'),
+  phone: z.string()
+    .min(10, 'Telefon numarası en az 10 hane olmalı')
+    .max(20, 'Telefon numarası en fazla 20 hane olabilir')
+    .regex(/^[0-9+\-\s]+$/, 'Telefon numarası sadece rakam, boşluk, + ve - içerebilir'),
+  message: z.string()
+    .min(10, 'Mesaj en az 10 karakter olmalıdır')
+    .max(1000, 'Mesaj en fazla 1000 karakter olabilir'),
   serviceType: z.nativeEnum(ServiceType),
   serviceDetails: z.object({
     visaType: z.nativeEnum(VisaType).optional(),
@@ -32,7 +44,7 @@ const formSchema = z.object({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
     }).optional(),
-    destinationCountry: z.string().optional(),
+    destinationCountry: z.string().max(100, 'Ülke adı en fazla 100 karakter olabilir').optional(),
     insuranceType: z.nativeEnum(InsuranceType).optional(),
     isCarTravel: z.boolean().optional(),
     flightType: z.nativeEnum(FlightType).optional(),
@@ -40,7 +52,97 @@ const formSchema = z.object({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
     }).optional(),
-  }),
+  })
+}).superRefine((data, ctx) => {
+  // Vize Danışmanlığı
+  if (data.serviceType === ServiceType.VISA) {
+    if (!data.serviceDetails.visaType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'visaType'],
+        message: 'Vize türü zorunludur',
+      })
+    }
+  }
+  // Otel Konaklama
+  if (data.serviceType === ServiceType.HOTEL) {
+    if (!data.serviceDetails.destinationCountry) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'destinationCountry'],
+        message: 'Gidilecek ülke zorunludur',
+      })
+    }
+    if (!data.serviceDetails.travelDates?.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'travelDates', 'startDate'],
+        message: 'Giriş tarihi zorunludur',
+      })
+    }
+    if (!data.serviceDetails.travelDates?.endDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'travelDates', 'endDate'],
+        message: 'Çıkış tarihi zorunludur',
+      })
+    }
+  }
+  // Uçak Biletleri
+  if (data.serviceType === ServiceType.FLIGHT) {
+    if (!data.serviceDetails.destinationCountry) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'destinationCountry'],
+        message: 'Gidilecek ülke zorunludur',
+      })
+    }
+    if (!data.serviceDetails.flightType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'flightType'],
+        message: 'Uçuş tipi zorunludur',
+      })
+    }
+    if (!data.serviceDetails.travelDates?.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'travelDates', 'startDate'],
+        message: 'Gidiş tarihi zorunludur',
+      })
+    }
+    if (data.serviceDetails.flightType === FlightType.ROUND_TRIP && !data.serviceDetails.travelDates?.endDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'travelDates', 'endDate'],
+        message: 'Dönüş tarihi zorunludur',
+      })
+    }
+  }
+  // Seyahat Sağlık Sigortası
+  if (data.serviceType === ServiceType.INSURANCE) {
+    if (!data.serviceDetails.insuranceType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'insuranceType'],
+        message: 'Sigorta türü zorunludur',
+      })
+    }
+    if (!data.serviceDetails.insuranceDates?.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'insuranceDates', 'startDate'],
+        message: 'Sigorta başlangıç tarihi zorunludur',
+      })
+    }
+    if (!data.serviceDetails.insuranceDates?.endDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['serviceDetails', 'insuranceDates', 'endDate'],
+        message: 'Sigorta bitiş tarihi zorunludur',
+      })
+    }
+  }
 })
 
 const COUNTRIES = [
@@ -197,7 +299,25 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>Telefon Numaranız</FormLabel>
                   <FormControl>
-                    <Input type="tel" placeholder="5XX XXX XX XX" {...field} />
+                    <PhoneInput
+                      country={'tr'}
+                      value={field.value}
+                      onChange={field.onChange}
+                      inputClass="!w-full !h-10 !text-xs !pl-12 !rounded-md !border-input !bg-background"
+                      containerClass="!w-full !bg-background"
+                      buttonClass="!h-10 !border !border-input !rounded-l-md !bg-background"
+                      dropdownClass="!w-[300px] !bg-background"
+                      searchClass="!bg-background"
+                      enableSearch
+                      searchPlaceholder="Ülke Ara..."
+                      searchNotFound="Ülke Bulunamadı"
+                      preferredCountries={['tr', 'us', 'gb', 'de']}
+                      inputProps={{
+                        name: 'phone',
+                        required: true,
+                        autoFocus: false,
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
