@@ -243,7 +243,15 @@ export default function Home() {
       <main className="min-h-screen bg-background text-foreground">
         {/* Hero Section with Search */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          {/* Hareketli, blur'lu daireler - sadece desktop'ta göster */}
+          {/* Mobilde statik gradientler */}
+          <div className="absolute inset-0 z-0 pointer-events-none md:hidden">
+            <div className="absolute top-[-15%] left-[-15%] w-[300px] h-[300px] rounded-[70%_30%_50%_50%] bg-[#b8c0ff] opacity-50 blur-[80px]" />
+            <div className="absolute top-[10%] right-[-10%] w-[250px] h-[250px] rounded-[50%_50%_40%_60%] bg-[#f7d1ba] opacity-50 blur-[80px]" />
+            <div className="absolute bottom-[-15%] left-[10%] w-[200px] h-[200px] rounded-[30%_70%_50%_50%] bg-[#e7c6ff] opacity-50 blur-[80px]" />
+            <div className="absolute bottom-[-10%] right-[5%] w-[250px] h-[250px] rounded-[40%_60%_70%_30%] bg-[#c8ffd4] opacity-45 blur-[80px]" />
+            <div className="absolute top-[40%] left-[30%] w-[180px] h-[180px] rounded-[60%_40%_30%_70%] bg-[#a8d8ff] opacity-45 blur-[80px]" />
+          </div>
+          {/* Masaüstünde animasyonlu gradientler */}
           <div className="absolute inset-0 z-0 pointer-events-none hidden md:block">
             <motion.div
               className="absolute top-[-15%] left-[-15%] w-[500px] h-[500px] rounded-[70%_30%_50%_50%] bg-[#b8c0ff] opacity-50 blur-[100px]"
