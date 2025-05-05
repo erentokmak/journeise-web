@@ -16,6 +16,9 @@ import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
 import { ContactFormData, ServiceType, VisaType, InsuranceType, FlightType } from '@/types/contact'
+import { useMutation } from '@apollo/client'
+import { CREATE_CONTACT, CreateContactInput } from '@/graphql/mutations/contact'
+import { useToast } from '@/hooks/use-toast'
 
 const formSchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
@@ -59,6 +62,8 @@ export function ContactForm() {
   const [endDate, setEndDate] = useState<Date>()
   const [insuranceStartDate, setInsuranceStartDate] = useState<Date>()
   const [insuranceEndDate, setInsuranceEndDate] = useState<Date>()
+  const [createContact] = useMutation(CREATE_CONTACT)
+  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,8 +79,41 @@ export function ContactForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      // service_id: UI'da seçili servisin id'si burada belirlenmeli. Örnek olarak 1 atanıyor, gerçek id ile değiştirin.
+      const serviceIdMap = {
+        [ServiceType.VISA]: 1,
+        [ServiceType.HOTEL]: 2,
+        [ServiceType.FLIGHT]: 3,
+        [ServiceType.INSURANCE]: 4,
+      }
+      const input: CreateContactInput = {
+        business_id: 3,
+        service_id: serviceIdMap[values.serviceType],
+        contact_type: values.serviceType,
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        message: values.message,
+        details: values.serviceDetails,
+      }
+      await createContact({ variables: { input } })
+      form.reset()
+      toast({
+        title: 'Başarılı!',
+        description: 'İletişim formunuz başarıyla gönderildi.',
+        duration: 4000,
+      })
+    } catch (error) {
+      console.error('İletişim formu gönderilemedi:', error)
+      toast({
+        variant: 'destructive',
+        title: 'Hata!',
+        description: 'Form gönderilirken bir hata oluştu. Lütfen tekrar deneyin.',
+        duration: 5000,
+      })
+    }
   }
 
   return (
