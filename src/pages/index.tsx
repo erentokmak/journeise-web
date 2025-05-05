@@ -181,28 +181,28 @@ export default function Home() {
 
   const SERVICES = [
     {
-      title: "Schengen Vizesi",
-      description: "Avrupa'nın 26 ülkesine serbestçe seyahat edin",
+      title: "Global Vizeler",
+      description: "Tüm dünya ülkelerine vize başvurusu ve danışmanlık hizmetleri",
       icon: Globe,
-      image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop"
-    },
-    {
-      title: "Amerika Vizesi",
-      description: "B1/B2 vizesi ile Amerika'da hayallerinizi gerçekleştirin",
-      icon: Building,
-      image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-      title: "İngiltere Vizesi",
-      description: "İngiltere'de eğitim ve iş fırsatlarını değerlendirin",
-      icon: Plane,
-      image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-      title: "Diğer Vizeler",
-      description: "Tüm dünya ülkelerine vize başvurusu yapıyoruz",
-      icon: FileText,
       image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop"
+    },
+    {
+      title: "Otel Rezervasyonları",
+      description: "En uygun fiyatlarla dünyanın her yerinde konaklama imkanı",
+      icon: Building,
+      image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      title: "Uçak Biletleri",
+      description: "En avantajlı fiyatlarla uçak bileti rezervasyonu",
+      icon: Plane,
+      image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop"
+    },
+    {
+      title: "Seyahat Sağlık Sigortası",
+      description: "Seyahatleriniz için kapsamlı sağlık sigortası hizmeti",
+      icon: FileText,
+      image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop"
     }
   ];
 
