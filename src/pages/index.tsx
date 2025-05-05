@@ -243,8 +243,8 @@ export default function Home() {
       <main className="min-h-screen bg-background text-foreground">
         {/* Hero Section with Search */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          {/* Hareketli, blur'lu daireler */}
-          <div className="absolute inset-0 z-0 pointer-events-none">
+          {/* Hareketli, blur'lu daireler - sadece desktop'ta göster */}
+          <div className="absolute inset-0 z-0 pointer-events-none hidden md:block">
             <motion.div
               className="absolute top-[-15%] left-[-15%] w-[500px] h-[500px] rounded-[70%_30%_50%_50%] bg-[#b8c0ff] opacity-50 blur-[100px]"
               animate={{
@@ -349,12 +349,7 @@ export default function Home() {
           {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-4xl md:text-5xl font-bold text-primary tracking-tight mb-4"
-              >
+              <h1 className="text-4xl md:text-5xl font-bold text-primary tracking-tight mb-4">
                 {session?.user ? (
                   <>
                     {getGreeting()}, {session.user.name}
@@ -362,22 +357,12 @@ export default function Home() {
                 ) : (
                   'Hayalinizdeki Ülkeye Yolculuk Başlıyor'
                 )}
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="text-xl text-foreground/90 mb-8 leading-relaxed"
-              >
+              </h1>
+              <p className="text-xl text-foreground/90 mb-8 leading-relaxed">
                 Nereye gitmek istiyorsunuz? Size en uygun destinasyonu seçin ve vize başvurunuzu hemen yapın.
-              </motion.p>
+              </p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="max-w-2xl mx-auto"
-              >
+              <div className="max-w-2xl mx-auto">
                 <form onSubmit={handleSearch} className="relative">
                   <div className="relative" ref={searchRef}>
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -423,14 +408,9 @@ export default function Home() {
                     )}
                   </div>
                 </form>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                className="mt-8"
-              >
+              <div className="mt-8">
                 <Link href="/countries">
                   <Button
                     size="lg"
@@ -441,26 +421,16 @@ export default function Home() {
                     <MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
-              </motion.div>
+              </div>
             </div>
           </div>
 
-          {/* Scroll Indicator */}
-          <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
-            animate={{
-              y: [0, 10, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-          >
+          {/* Scroll Indicator - sadece desktop'ta göster */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block">
             <div className="w-6 h-10 border-2 border-primary/20 rounded-full p-1">
               <div className="w-1.5 h-1.5 bg-primary/60 rounded-full mx-auto" />
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* Recommendations Section */}
